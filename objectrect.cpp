@@ -105,19 +105,31 @@ void ObjectRect::setPosPoint2(QPointF point, normalization_struct norm_params)
     this->point_2 = point;
 }
 
-void ObjectRect::moveRect(QPointF point, normalization_struct norm_params)
+void ObjectRect::moveRect(QPointF point, normalization_struct norm_params, QPointF offset)
 {
 
-    this->setPosPoint1(point, norm_params);
+    // Center point by clicking offset
+    QPointF centered_point(
+                    point.x() - offset.x(),
+                    point.y() - offset.y()
+                );
 
+    // Move object point 1
+    this->setPosPoint1(centered_point, norm_params);
+
+    // Denormalize destination point 2
     QPointF point1_denormalized = util::denormalize(this->point_1, norm_params, 1);
 
+    // Compute destination point 2 location
     QPointF size(
                 point1_denormalized.x() + (this->width() / norm_params.scale_factor),
                 point1_denormalized.y() + (this->height() / norm_params.scale_factor)
             );
+
+    // Re-normalize modified destination point 2
     QPointF size_norm = util::normalize(size, norm_params);
 
+    // Update position of point 2
     this->point_2 = size_norm;
 
 }

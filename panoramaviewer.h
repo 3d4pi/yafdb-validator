@@ -22,6 +22,8 @@ struct position_container {
     int start_x;
     int start_y;
 
+    QPointF offset;
+
     int x;
     int y;
 

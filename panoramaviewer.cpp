@@ -201,6 +201,14 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
     int MouseX = event->x();
     int MouseY = event->y();
 
+    normalization_struct norm_params;
+    norm_params.pano_width = this->scene->width();
+    norm_params.pano_height = this->scene->height();
+    norm_params.scale_factor = this->scale_factor;
+
+    // Store normalized mouse coords
+    QPointF mouse_norm = util::normalize(QPointF(event->pos()), norm_params);
+
     // Check presence of left click
     if(event->buttons() & Qt::LeftButton)
     {
@@ -230,12 +238,10 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
         // Verify that clicked object is a widget and is not null
         if (widget_proxy != NULL)
         {
-            qDebug() << "2";
+
            // Convert object to ObjectRect
            this->selected_rect = qobject_cast<ObjectRect*>(widget_proxy->widget());
         }
-
-        qDebug() << "3";
 
         if(this->selected_rect)
         {
@@ -244,6 +250,14 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
             // Store base positions (Used to determine offset to move in panorama later)
             this->position.start_x = MouseX;
             this->position.start_y = MouseY;
+
+            // Determine mouse click pointer offset
+
+
+            this->position.offset = QPointF(
+                            mouse_norm.x() - this->selected_rect->point_1.x(),
+                            mouse_norm.y() - this->selected_rect->point_1.y()
+                        );
 
             // Switch in creation mode
             this->mode = Mode::MoveCreate;
@@ -344,7 +358,6 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
             proxyWidget->setWidget(this->create_position.rect);
 
             // Add selection object to scene
-            //this->scene->addWidget(this->create_position.rect);
             this->scene->addItem(proxyWidget);
 
             // Move selection object to mouse coords
@@ -367,21 +380,7 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
     } else if(this->mode == Mode::MoveCreate)
     {
 
-        this->selected_rect->moveRect(mouse_norm, norm_params);
-
-        /*float p1_x = (MouseX / this->scene->width());
-        float p1_y = (MouseY / this->scene->height());
-
-        qDebug() << this->selected_rect->size.width() << " : " << this->selected_rect->size.height();
-
-        float p2_x = (p1_x + (this->selected_rect->size.width()) / this->scene->width());
-        float p2_y = (p1_y + (this->selected_rect->size.height() / this->scene->height()));
-
-        this->selected_rect->moveRect(
-                        QPoint(MouseX, MouseY),
-                        QSize(this->scene->width(), this->scene->height()),
-                        this->scale_factor
-                    );*/
+        this->selected_rect->moveRect(mouse_norm, norm_params, this->position.offset);
 
     }
 }
@@ -410,24 +409,24 @@ void PanoramaViewer::resizeEvent(QResizeEvent *)
 // Function to crop a selection object
 QImage PanoramaViewer::cropObject(ObjectRect* rect)
 {
-    // Get rect coordinates
-    QPointF p1 = rect->point_1;
-    QPointF p2 = rect->point_2;
 
-    // Get scene size
-    QSize sceneSize(this->scene->width(), this->scene->height());
+    // Build normalisation parameters structure
+    normalization_struct norm_params;
+    norm_params.pano_width = this->scene->width();
+    norm_params.pano_height = this->scene->height();
+    norm_params.scale_factor = this->scale_factor;
 
-    // Get scale factor
-    float scale_factor = rect->projection_parameters.scale_factor;
+    // Denormalize rect bounds
+    QPointF point1_denorm = util::denormalize(rect->point_1, norm_params);
+    QPointF point2_denorm = util::denormalize(rect->point_2, norm_params);
 
-    // Denormalize coordinates
-    float m1 = (p1.x() * sceneSize.width()) * scale_factor;
-    float m2 = (p1.y() * sceneSize.height()) * scale_factor;
+    // Convert points to a QRect
+    QRect rect_sel(
+                    QPoint(point1_denorm.x(), point1_denorm.y()),
+                    QPoint(point2_denorm.x(), point2_denorm.y())
+                );
 
-    // Denormalize and compute rectangle size
-    float calc_p2_x = ((p2.x() - p1.x()) * sceneSize.width()) * scale_factor;
-    float calc_p2_y = ((p2.y() - p1.y()) * sceneSize.height()) * scale_factor;
+    // Crop and return image
+    return this->dest_image.copy(rect_sel);
 
-    // Return cropped image
-    return this->dest_image.copy(m1, m2, calc_p2_x, calc_p2_y);
 }

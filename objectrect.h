@@ -48,7 +48,7 @@ public:
     void setPos(QPointF p1, QPointF p2, normalization_struct norm_params, int type = 1);
     void update(normalization_struct norm_params);
 
-    void moveRect(QPointF point, normalization_struct norm_params);
+    void moveRect(QPointF point, normalization_struct norm_params, QPointF offset);
 
     QPointF point_1;
     QPointF point_2;

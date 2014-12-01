@@ -19,7 +19,8 @@ SOURCES += main.cpp \
     flowlayout.cpp \
     objectitem.cpp \
     objectrect.cpp \
-    util.cpp
+    util.cpp \
+    ymlreader.cpp
 
 HEADERS  += mainwindow.h \
     panoramaviewer.h \
@@ -29,7 +30,8 @@ HEADERS  += mainwindow.h \
     objectitem.h \
     objectrect.h \
     util.h \
-    types.h
+    types.h \
+    ymlreader.h
 
 FORMS    += mainwindow.ui \
     batchview.ui \
@@ -38,7 +40,25 @@ FORMS    += mainwindow.ui \
 
 LIBS += $$PWD/libs/libgnomonic/lib/libinter/bin/libinter.a \
     $$PWD/libs/libgnomonic/bin/libgnomonic.a \
-    -fopenmp
+    -fopenmp \
+    -lopencv_calib3d \
+    -lopencv_contrib \
+    -lopencv_core \
+    -lopencv_features2d \
+    -lopencv_flann \
+    -lopencv_gpu \
+    -lopencv_highgui \
+    -lopencv_imgproc \
+    -lopencv_legacy \
+    -lopencv_ml \
+    -lopencv_objdetect \
+    -lopencv_ocl \
+    -lopencv_photo \
+    -lopencv_stitching \
+    -lopencv_superres \
+    -lopencv_ts \
+    -lopencv_video \
+    -lopencv_videostab
 
 INCLUDEPATH += $$PWD/libs/libgnomonic/lib/libinter/src/ \
     $$PWD/libs/libgnomonic/src/

@@ -46,66 +46,6 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->scene = new QGraphicsScene();
     this->setScene(this->scene);
 
-    this->def_rect_list.append(
-                    new DetectedObject(
-                                           "face",
-                                           "valid",
-                                           "",
-                                           true,
-                                           true,
-                                           QPointF(1.3208951834245974e+00, 9.8656289914658829e-02),
-                                           QPointF(1.3693934418425056e+00, 1.5755115975767880e-01),
-                                           0.0,
-                                           0.0,
-                                           0.0
-                                       )
-                );
-
-    this->def_rect_list.append(
-                    new DetectedObject(
-                                           "face",
-                                           "valid",
-                                           "",
-                                           true,
-                                           true,
-                                           QPointF(1.0709177891907444e+00, 1.0662604278241428e-01),
-                                           QPointF(1.1206981363900821e+00, 1.6912070899793463e-01),
-                                           0.0,
-                                           0.0,
-                                           0.0
-                                       )
-                );
-
-    this->def_rect_list.append(
-                    new DetectedObject(
-                                           "face",
-                                           "valid",
-                                           "",
-                                           true,
-                                           true,
-                                           QPointF(2.4779305235198335e+00, 1.0673115405514666e-01),
-                                           QPointF(2.5301383381627898e+00, 1.6929616941823034e-01),
-                                           0.0,
-                                           0.0,
-                                           0.0
-                                       )
-                );
-
-    this->def_rect_list.append(
-                    new DetectedObject(
-                                           "face",
-                                           "valid",
-                                           "",
-                                           true,
-                                           true,
-                                           QPointF(4.4763739785197654e+00, 7.3852157575024627e-02),
-                                           QPointF(4.5128031942315427e+00, 1.1540239830939350e-01),
-                                           0.0,
-                                           0.0,
-                                           0.0
-                                       )
-                );
-
 
 }
 
@@ -268,14 +208,6 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
     norm_params.pano_height = this->scene->height();
     norm_params.scale_factor = this->scale_factor;
 
-
-    /* Denormalize detected object dimensions */
-    float p1x_d  = ((this->def_rect_list.at(0)->point_1.x() / (M_PI * 2.0)) * this->scene->width());
-    float p1y_d  = ((this->def_rect_list.at(0)->point_1.y() / M_PI) * this->scene->width());
-
-    qDebug() << p1x_d;
-    qDebug() << p1y_d;
-
     // Store normalized mouse coords
     QPointF mouse_norm = util::normalize(QPointF(event->pos()), norm_params);
 
@@ -312,10 +244,10 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
            // Convert object to ObjectRect
             this->selected_rect = qobject_cast<ObjectRect*>(widget_proxy->widget());
 
-            qDebug() << this->selected_rect->point_1;
-            qDebug() << this->selected_rect->point_2;
-            qDebug() << this->selected_rect->point_3;
-            qDebug() << this->selected_rect->point_4;
+            qDebug() << util::denormalize(this->selected_rect->point_1, norm_params);
+            qDebug() << util::denormalize(this->selected_rect->point_2, norm_params);
+            qDebug() << util::denormalize(this->selected_rect->point_3, norm_params);
+            qDebug() << util::denormalize(this->selected_rect->point_4, norm_params);
 
         }
 
@@ -328,8 +260,6 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
             this->position.start_y = MouseY;
 
             // Determine mouse click pointer offset
-
-
             this->position.offset = QPointF(
                             mouse_norm.x() - this->selected_rect->point_1.x(),
                             mouse_norm.y() - this->selected_rect->point_1.y()
@@ -506,10 +436,10 @@ QImage PanoramaViewer::cropObject(ObjectRect* rect)
     QPointF point1_denorm = util::denormalize(rect->point_1, norm_params);
     QPointF point2_denorm = util::denormalize(rect->point_2, norm_params);
 
-    // Convert points to a QRect
+    // Convert points to a QRect and deduce borders sizes
     QRect rect_sel(
-                    QPoint(point1_denorm.x(), point1_denorm.y()),
-                    QPoint(point2_denorm.x(), point2_denorm.y())
+                    QPoint(point1_denorm.x() + 4, point1_denorm.y() + 4),
+                    QPoint(point2_denorm.x() - 4, point2_denorm.y() - 4)
                 );
 
     // Crop and return image

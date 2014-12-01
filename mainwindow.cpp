@@ -3,6 +3,7 @@
 
 #include <QFileDialog>
 #include <QDebug>
+#include "ymlreader.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -43,10 +44,18 @@ MainWindow::MainWindow(QWidget *parent) :
         100.0, // Default zoom level
         threads_count // Number of threads
     );
-    this->ui->horizontalSlider->setValue(60);
+
+    this->ui->horizontalSlider->setValue(this->pano->scale_factor * 100);
 
     // Load input image
     this->pano->loadImage("/home/f0x/Bureau/Photo_RMLL_2014_panoramique,_WE_grand_public.jpeg");
+
+    YMLReader reader;
+    QList<DetectedObject> objs = reader.loadYML("/home/f0x/Bureau/yml.yml");
+
+    foreach (DetectedObject obj, objs) {
+        qDebug() << obj.falsePositive;
+    }
 }
 
 MainWindow::~MainWindow()

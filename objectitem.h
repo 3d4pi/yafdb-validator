@@ -4,14 +4,8 @@
 #include <QWidget>
 #include <QImage>
 #include <QPixmap>
-
-struct ObjectType
-{
-    enum Type
-    {
-        Face = 1, NumberPlate = 2
-    };
-};
+#include "objectrect.h"
+#include "types.h"
 
 namespace Ui {
 class ObjectItem;
@@ -27,11 +21,16 @@ public:
     bool LoadImage(QString path);
     bool setImage(QImage image);
 
+    void setSize(QSize size);
     void setType(int type);
     void setBlurred(bool value);
     void setSelected(bool value);
 
+    void setAutomaticState(int state);
+    void setManualState(int state);
+
     bool selected;
+    QImage image;
 
     ~ObjectItem();
 

@@ -9,7 +9,7 @@ class DetectedObject
 public:
     DetectedObject();
     DetectedObject(QString objectType, QString autoStatus, QString manualStatus,
-                   bool blurred, bool valid, float point_1[2], float point_2[2],
+                   bool blurred, bool valid, QPointF point_1, QPointF point_2,
                    float azimuth, float elevation, float aperture);
 
     QString objectType;
@@ -19,8 +19,8 @@ public:
     bool blurred;
     bool valid;
 
-    float point_1[2];
-    float point_2[2];
+    QPointF point_1;
+    QPointF point_2;
 
     float azimuth;
     float elevation;

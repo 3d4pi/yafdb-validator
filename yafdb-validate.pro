@@ -28,7 +28,8 @@ HEADERS  += mainwindow.h \
     flowlayout.h \
     objectitem.h \
     objectrect.h \
-    util.h
+    util.h \
+    types.h
 
 FORMS    += mainwindow.ui \
     batchview.ui \

@@ -2,6 +2,7 @@
 #include <QDebug>
 #include <QApplication>
 #include <QGraphicsProxyWidget>
+#include <QToolTip>
 
 #define CHANNELS_COUNT 4
 
@@ -44,6 +45,67 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     // Create default scene
     this->scene = new QGraphicsScene();
     this->setScene(this->scene);
+
+    this->def_rect_list.append(
+                    new DetectedObject(
+                                           "face",
+                                           "valid",
+                                           "",
+                                           true,
+                                           true,
+                                           QPointF(1.3208951834245974e+00, 9.8656289914658829e-02),
+                                           QPointF(1.3693934418425056e+00, 1.5755115975767880e-01),
+                                           0.0,
+                                           0.0,
+                                           0.0
+                                       )
+                );
+
+    this->def_rect_list.append(
+                    new DetectedObject(
+                                           "face",
+                                           "valid",
+                                           "",
+                                           true,
+                                           true,
+                                           QPointF(1.0709177891907444e+00, 1.0662604278241428e-01),
+                                           QPointF(1.1206981363900821e+00, 1.6912070899793463e-01),
+                                           0.0,
+                                           0.0,
+                                           0.0
+                                       )
+                );
+
+    this->def_rect_list.append(
+                    new DetectedObject(
+                                           "face",
+                                           "valid",
+                                           "",
+                                           true,
+                                           true,
+                                           QPointF(2.4779305235198335e+00, 1.0673115405514666e-01),
+                                           QPointF(2.5301383381627898e+00, 1.6929616941823034e-01),
+                                           0.0,
+                                           0.0,
+                                           0.0
+                                       )
+                );
+
+    this->def_rect_list.append(
+                    new DetectedObject(
+                                           "face",
+                                           "valid",
+                                           "",
+                                           true,
+                                           true,
+                                           QPointF(4.4763739785197654e+00, 7.3852157575024627e-02),
+                                           QPointF(4.5128031942315427e+00, 1.1540239830939350e-01),
+                                           0.0,
+                                           0.0,
+                                           0.0
+                                       )
+                );
+
 
 }
 
@@ -206,6 +268,14 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
     norm_params.pano_height = this->scene->height();
     norm_params.scale_factor = this->scale_factor;
 
+
+    /* Denormalize detected object dimensions */
+    float p1x_d  = ((this->def_rect_list.at(0)->point_1.x() / (M_PI * 2.0)) * this->scene->width());
+    float p1y_d  = ((this->def_rect_list.at(0)->point_1.y() / M_PI) * this->scene->width());
+
+    qDebug() << p1x_d;
+    qDebug() << p1y_d;
+
     // Store normalized mouse coords
     QPointF mouse_norm = util::normalize(QPointF(event->pos()), norm_params);
 
@@ -240,7 +310,13 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
         {
 
            // Convert object to ObjectRect
-           this->selected_rect = qobject_cast<ObjectRect*>(widget_proxy->widget());
+            this->selected_rect = qobject_cast<ObjectRect*>(widget_proxy->widget());
+
+            qDebug() << this->selected_rect->point_1;
+            qDebug() << this->selected_rect->point_2;
+            qDebug() << this->selected_rect->point_3;
+            qDebug() << this->selected_rect->point_4;
+
         }
 
         if(this->selected_rect)
@@ -314,7 +390,11 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
     QPointF mouse_norm = util::normalize(QPointF(event->pos()), norm_params);
 
     // Moving mouse section (move in panorama)
-    if(this->mode == Mode::Move)
+    if(this->mode == Mode::None)
+    {
+
+    }
+    else if(this->mode == Mode::Move)
     {
 
         // Determine the displacement delta
@@ -373,8 +453,14 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
                             this->create_position.rect->point_1,
                             mouse_norm,
                             norm_params,
-                            RectMove::Only_Point2
+                            RectMoveType::Only_Point2
                         );
+
+            QToolTip::showText(event->globalPos(),
+                               QString::number( this->create_position.rect->width() ) + "x" +
+                               QString::number( this->create_position.rect->height() ),
+                               this, rect() );
+
 
         }
     } else if(this->mode == Mode::MoveCreate)

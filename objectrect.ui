@@ -24,12 +24,12 @@
 
 QWidget#frame
 {
-    border: 1px solid yellow;
+    border: 2px solid yellow;
 }
 
 QWidget#frame_2
 {
-    border: 1px solid red;
+    border: 2px solid red;
 }</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">

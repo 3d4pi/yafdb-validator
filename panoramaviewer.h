@@ -17,6 +17,7 @@
 #include <QRubberBand>
 #include "objectrect.h"
 #include "util.h"
+#include "detectedobject.h"
 
 struct position_container {
     int start_x;
@@ -78,6 +79,7 @@ public:
     position_container position;
     create_container   create_position;
     QList<ObjectRect*> rect_list;
+    QList<DetectedObject*> def_rect_list;
     ObjectRect * selected_rect;
 
     void setup(float scale_factor, float zoom_min, float zoom_max, float zoom_def, int threads);

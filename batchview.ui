@@ -11,11 +11,66 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Batch Validation</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+    <item row="2" column="2">
+     <widget class="QPushButton" name="InvalidateButton">
+      <property name="text">
+       <string>Invalidate</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="4">
+     <widget class="QPushButton" name="NoBlurButton">
+      <property name="text">
+       <string>No blur</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="6">
+     <widget class="QPushButton" name="ApplyButton">
+      <property name="text">
+       <string>Apply</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="5">
+     <widget class="QPushButton" name="CancelButton">
+      <property name="text">
+       <string>Cancel</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QPushButton" name="ValidateButton">
+      <property name="text">
+       <string>Validate</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="3">
+     <widget class="QPushButton" name="BlurButton">
+      <property name="text">
+       <string>Blur</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
+     <spacer name="horizontalSpacer">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="1" column="0" colspan="7">
      <widget class="QScrollArea" name="scrollArea">
       <property name="widgetResizable">
        <bool>true</bool>
@@ -26,10 +81,23 @@
          <x>0</x>
          <y>0</y>
          <width>1033</width>
-         <height>432</height>
+         <height>369</height>
         </rect>
        </property>
       </widget>
+     </widget>
+    </item>
+    <item row="0" column="0" colspan="7">
+     <widget class="QSlider" name="horizontalSlider">
+      <property name="maximum">
+       <number>1024</number>
+      </property>
+      <property name="value">
+       <number>128</number>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
      </widget>
     </item>
    </layout>

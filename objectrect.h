@@ -2,23 +2,9 @@
 #define OBJECTRECT_H
 
 #include <QWidget>
+
 #include "util.h"
-
-struct RectType
-{
-    enum Type
-    {
-        Valid = 1, Invalid = 2, Manual = 3
-    };
-};
-
-struct RectMove
-{
-    enum Type
-    {
-        All = 1, Only_Point1 = 2, Only_Point2 = 3
-    };
-};
+#include "types.h"
 
 struct projection_parameters_container {
     float azimuth;
@@ -43,8 +29,11 @@ public:
 
     projection_parameters_container projection_parameters;
 
-    void setType(int type);
+    void setClass(int classType);
+    void setBlurred(bool blur);
     void setValid(bool value);
+
+    void setState(int type);
     void setPos(QPointF p1, QPointF p2, normalization_struct norm_params, int type = 1);
     void update(normalization_struct norm_params);
 
@@ -52,6 +41,9 @@ public:
 
     QPointF point_1;
     QPointF point_2;
+
+    QPointF point_3;
+    QPointF point_4;
     QSize  size;
 
 private:
@@ -62,6 +54,8 @@ private:
     Ui::ObjectRect *ui;
 
     bool valid;
+    int classType;
+    bool toBlur;
 
     void setPosPoint1(QPointF point, normalization_struct norm_params);
     void setPosPoint2(QPointF point, normalization_struct norm_params);

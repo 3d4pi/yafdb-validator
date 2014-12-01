@@ -9,20 +9,20 @@ ObjectRect::ObjectRect(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->setType(RectType::Valid);
+    this->setState(RectType::Valid);
 }
 
-ObjectRect::ObjectRect(QWidget *parent, int type) :
+ObjectRect::ObjectRect(QWidget *parent, int state) :
     QWidget(parent),
     ui(new Ui::ObjectRect)
 {
     ui->setupUi(this);
 
-    this->setType(type);
+    this->setState(state);
     this->resize(1, 1);
 }
 
-void ObjectRect::setType(int type)
+void ObjectRect::setState(int type)
 {
     switch(type)
     {
@@ -71,11 +71,21 @@ void ObjectRect::setType(int type)
     }
 }
 
+void ObjectRect::setClass(int classType)
+{
+    this->classType = classType;
+}
+
+void ObjectRect::setBlurred(bool blur)
+{
+    this->toBlur = blur;
+}
+
 void ObjectRect::setValid(bool value)
 {
     if(value)
     {
-        this->ui->frame_2->setStyleSheet("QFrame#frame_2 {background-color :  rgba(255, 255, 0, 50);}");
+        this->ui->frame_2->setStyleSheet("QFrame#frame_2 {background-color :  rgba(0, 255, 0, 50);}");
         this->valid = true;
     } else {
         this->ui->frame_2->setStyleSheet("QFrame#frame_2 {background-color :  rgba(0, 0, 0, 0);}");
@@ -90,6 +100,9 @@ void ObjectRect::setPosPoint1(QPointF point, normalization_struct norm_params)
     this->move(point_denormalized.x(), point_denormalized.y());
 
     this->point_1 = point;
+
+    this->point_3 = (QPointF(this->point_2.x(), this->point_1.y()));
+    this->point_4 = (QPointF(this->point_1.x(), this->point_2.y()));
 }
 
 void ObjectRect::setPosPoint2(QPointF point, normalization_struct norm_params)
@@ -103,6 +116,9 @@ void ObjectRect::setPosPoint2(QPointF point, normalization_struct norm_params)
     this->resize(calc_w, calc_h);
 
     this->point_2 = point;
+
+    this->point_3 = (QPointF(this->point_2.x(), this->point_1.y()));
+    this->point_4 = (QPointF(this->point_1.x(), this->point_2.y()));
 }
 
 void ObjectRect::moveRect(QPointF point, normalization_struct norm_params, QPointF offset)
@@ -144,14 +160,14 @@ void ObjectRect::setPos(QPointF p1, QPointF p2, normalization_struct norm_params
 {
     switch(mode)
     {
-        case RectMove::All:
+        case RectMoveType::All:
             this->setPosPoint1(p1, norm_params);
             this->setPosPoint2(p2, norm_params);
             break;
-        case RectMove::Only_Point1:
+        case RectMoveType::Only_Point1:
             this->setPosPoint1(p1, norm_params);
             break;
-        case RectMove::Only_Point2:
+        case RectMoveType::Only_Point2:
             this->setPosPoint2(p2, norm_params);
             break;
     }

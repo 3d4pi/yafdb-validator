@@ -2,6 +2,7 @@
 #include "ui_batchview.h"
 
 #include "objectitem.h"
+#include <QLayoutItem>
 
 BatchView::BatchView(QWidget *parent, PanoramaViewer* pano) :
     QMainWindow(parent),
@@ -9,7 +10,7 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano) :
 {
     ui->setupUi(this);
 
-    FlowLayout * MainLayout = new FlowLayout();
+    this->MainLayout = new FlowLayout();
 
     // Remove margins
     //this->setContentsMargins(-5, -5, -5, -5);
@@ -27,7 +28,7 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano) :
     // Start window maximized
     this->showMaximized();
 
-    MainLayout->setContentsMargins( 10, 10, 10, 10 ) ;
+    this->MainLayout->setContentsMargins( 10, 10, 10, 10 ) ;
 
     foreach(ObjectRect* rect, pano->rect_list )
     {
@@ -37,7 +38,8 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano) :
         object->setType(1);
         object->setBlurred(true);
 
-        MainLayout->addWidget(object);
+        this->MainLayout->addWidget(object);
+        this->elements.append(object);
     }
 
     /*
@@ -66,4 +68,39 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano) :
 BatchView::~BatchView()
 {
     delete ui;
+}
+
+void BatchView::on_horizontalSlider_sliderMoved(int position)
+{
+    foreach(ObjectItem* item, this->elements )
+    {
+        item->setSize(QSize(position, position));
+    }
+}
+
+void BatchView::on_CancelButton_clicked()
+{
+    this->close();
+}
+
+void BatchView::on_NoBlurButton_clicked()
+{
+    foreach(ObjectItem* item, this->elements )
+    {
+        if(item->selected)
+        {
+            item->setBlurred(false);
+        }
+    }
+}
+
+void BatchView::on_BlurButton_clicked()
+{
+    foreach(ObjectItem* item, this->elements )
+    {
+        if(item->selected)
+        {
+            item->setBlurred(true);
+        }
+    }
 }

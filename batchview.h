@@ -20,6 +20,19 @@ public:
     explicit BatchView(QWidget *parent, PanoramaViewer* pano);
     ~BatchView();
 
+    FlowLayout * MainLayout;
+    QList<ObjectItem*> elements;
+
+
+private slots:
+    void on_horizontalSlider_sliderMoved(int position);
+
+    void on_CancelButton_clicked();
+
+    void on_NoBlurButton_clicked();
+
+    void on_BlurButton_clicked();
+
 private:
     Ui::BatchView *ui;
 };

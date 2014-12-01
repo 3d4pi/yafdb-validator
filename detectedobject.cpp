@@ -5,7 +5,7 @@ DetectedObject::DetectedObject()
 }
 
 DetectedObject::DetectedObject(QString objectType, QString autoStatus, QString manualStatus,
-                               bool blurred, bool valid, float point_1[2], float point_2[2],
+                               bool blurred, bool valid, QPointF point_1, QPointF point_2,
                                float azimuth, float elevation, float aperture
 )
 {
@@ -16,10 +16,8 @@ DetectedObject::DetectedObject(QString objectType, QString autoStatus, QString m
     this->blurred = blurred;
     this->valid = valid;
 
-    this->point_1[0] = point_1[0];
-    this->point_1[1] = point_1[1];
-    this->point_2[0] = point_2[0];
-    this->point_2[1] = point_2[1];
+    this->point_1 = point_1;
+    this->point_2 = point_2;
 
     this->azimuth = azimuth;
     this->elevation = elevation;

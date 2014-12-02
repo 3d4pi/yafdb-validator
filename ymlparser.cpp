@@ -29,16 +29,19 @@ DetectedObject YMLParser::toDetectedObject(cv::FileNodeIterator iterator)
     std::string falsePositive;
     (*iterator)["falsePositive"] >> falsePositive;
     object.falsePositive = QString(falsePositive.c_str());
+    object.falsePositive = (object.falsePositive.length() > 0 ? object.falsePositive : "No");
 
     // Parse auto status
     std::string autoStatus;
     (*iterator)["autoStatus"] >> autoStatus;
     object.autoStatus = QString(autoStatus.c_str());
+    object.autoStatus = (object.autoStatus.length() > 0 ? object.autoStatus : "None");
 
     // Parse manual status
     std::string manualStatus;
     (*iterator)["manualStatus"] >> manualStatus;
     object.manualStatus = QString(manualStatus.c_str());
+    object.manualStatus = (object.manualStatus.length() > 0 ? object.manualStatus : "None");
 
     // Return object
     return object;
@@ -106,8 +109,8 @@ void YMLParser::writeItem(cv::FileStorage &fs, DetectedObject obj)
 
     // Write status tags
     fs << "falsePositive" << obj.falsePositive.toStdString();
-    fs << "manualStatus" << obj.manualStatus.toStdString();
     fs << "autoStatus" << obj.autoStatus.toStdString();
+    fs << "manualStatus" << obj.manualStatus.toStdString();
 }
 
 void YMLParser::writeYML(QList<DetectedObject> objects, QString path)
@@ -122,7 +125,7 @@ void YMLParser::writeYML(QList<DetectedObject> objects, QString path)
     fs << "gnomonic" << "{";
         fs << "width" << objects.first().gnomonic.width;
         fs << "aperture_x" << objects.first().gnomonic.aperture_x;
-        fs << "width" << objects.first().gnomonic.aperture_y;
+        fs << "aperture_y" << objects.first().gnomonic.aperture_y;
     fs << "}";
 
     // Write source file path

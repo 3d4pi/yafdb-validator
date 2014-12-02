@@ -21,16 +21,23 @@ public:
     bool LoadImage(QString path);
     bool setImage(QImage image);
 
+    void setId(int id);
     void setSize(QSize size);
     void setType(int type);
     void setBlurred(bool value);
     void setSelected(bool value);
+    void setValid(bool value);
 
     void setAutomaticState(int state);
     void setManualState(int state);
 
     bool selected;
     QImage image;
+
+    int id;
+    int type;
+    bool valid;
+    bool blurred;
 
     ~ObjectItem();
 

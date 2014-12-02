@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>resources/icons/Face.png</file>
+        <file>resources/icons/Plate.png</file>
         <file>resources/icons/Blur.png</file>
     </qresource>
 </RCC>

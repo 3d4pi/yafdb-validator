@@ -29,7 +29,7 @@ public:
 
     projection_parameters_container projection_parameters;
 
-    void setClass(int classType);
+    void setType(int type);
     void setBlurred(bool blur);
     void setValid(bool value);
 
@@ -46,16 +46,17 @@ public:
     QPointF point_4;
     QSize  size;
 
+    int id;
+    int type;
+    bool blurred;
+    bool valid;
+
 private:
 
     //void setPosPoint1(QPoint loc, float scale_factor);
     //void setPosPoint2(QPoint loc, float scale_factor);
 
     Ui::ObjectRect *ui;
-
-    bool valid;
-    int classType;
-    bool toBlur;
 
     void setPosPoint1(QPointF point, normalization_struct norm_params);
     void setPosPoint2(QPointF point, normalization_struct norm_params);

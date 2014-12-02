@@ -51,6 +51,9 @@
 	background-color :  grey;
  }</string>
    </property>
+   <property name="lineWidth">
+    <number>0</number>
+   </property>
    <property name="text">
     <string/>
    </property>
@@ -79,6 +82,9 @@
    <property name="styleSheet">
     <string notr="true"/>
    </property>
+   <property name="lineWidth">
+    <number>0</number>
+   </property>
    <property name="text">
     <string/>
    </property>
@@ -89,8 +95,8 @@
   <widget class="QLabel" name="blurLabel">
    <property name="geometry">
     <rect>
-     <x>112</x>
-     <y>112</y>
+     <x>110</x>
+     <y>110</y>
      <width>16</width>
      <height>16</height>
     </rect>
@@ -106,6 +112,9 @@
      <width>16</width>
      <height>16</height>
     </size>
+   </property>
+   <property name="lineWidth">
+    <number>0</number>
    </property>
    <property name="text">
     <string/>
@@ -139,7 +148,27 @@
     <number>0</number>
    </property>
   </widget>
+  <widget class="QFrame" name="validFrame">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>128</width>
+     <height>128</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::StyledPanel</enum>
+   </property>
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <property name="lineWidth">
+    <number>0</number>
+   </property>
+  </widget>
   <zorder>imageLabel</zorder>
+  <zorder>validFrame</zorder>
   <zorder>selectFrame</zorder>
   <zorder>blurLabel</zorder>
   <zorder>typeLabel</zorder>

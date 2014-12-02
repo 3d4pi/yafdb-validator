@@ -13,6 +13,11 @@ ObjectItem::ObjectItem(QWidget *parent) :
     this->setSelected(false);
 }
 
+void ObjectItem::setId(int id)
+{
+    this->id = id;
+}
+
 bool ObjectItem::setImage(QImage image)
 {
     this->image = image;
@@ -35,6 +40,11 @@ bool ObjectItem::setImage(QImage image)
 
     pixmap = pixmap.scaled(QSize(w, h), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     this->ui->imageLabel->setPixmap(pixmap);
+
+    this->ui->validFrame->resize(pixmap.width(), pixmap.height());
+    float pos_x = (this->width() - pixmap.width()) / 2;
+    float pos_y = (this->height() - pixmap.height()) / 2;
+    this->ui->validFrame->move(pos_x, pos_y);
 
     return true;
 }
@@ -60,6 +70,12 @@ bool ObjectItem::LoadImage(QString path)
     int h = std::min(source_w, this->maximumHeight());
 
     pixmap = pixmap.scaled(QSize(w, h), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+
+    this->ui->validFrame->resize(pixmap.width(), pixmap.height());
+    float pos_x = (this->width() - pixmap.width()) / 2;
+    float pos_y = (this->height() - pixmap.height()) / 2;
+    this->ui->validFrame->move(pos_x, pos_y);
+
     this->ui->imageLabel->setPixmap(pixmap);
 
     return true;
@@ -95,21 +111,43 @@ void ObjectItem::setSize(QSize size)
 
 void ObjectItem::setType(int type)
 {
+    this->type = type;
+
     switch(type)
     {
         case ObjectType::Face:
             this->ui->typeLabel->setPixmap( QPixmap(":/resources/icons/Face.png") );
+            break;
+        case ObjectType::NumberPlate:
+            this->ui->typeLabel->setPixmap( QPixmap(":/resources/icons/Plate.png") );
+            break;
+        case ObjectType::BlurOnly:
+            this->ui->typeLabel->setPixmap( QPixmap(":/resources/icons/Blur.png") );
             break;
     }
 }
 
 void ObjectItem::setBlurred(bool value)
 {
+    this->blurred = value;
+
     if(value)
     {
         this->ui->blurLabel->setPixmap( QPixmap(":/resources/icons/Blur.png") );
     } else {
         this->ui->blurLabel->setPixmap( QPixmap() );
+    }
+}
+
+void ObjectItem::setValid(bool value)
+{
+    this->valid = value;
+
+    if(value)
+    {
+        this->ui->validFrame->setStyleSheet("background-color: rgba(0, 255, 0, 50);");
+    } else {
+        this->ui->validFrame->setStyleSheet("background-color: rgba(255, 0, 0, 50);");
     }
 }
 

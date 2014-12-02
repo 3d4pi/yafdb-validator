@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QDesktopWidget>
+#include <QShortcut>
 #include <flowlayout.h>
 #include "panoramaviewer.h"
 #include "objectrect.h"
@@ -33,8 +34,22 @@ private slots:
 
     void on_BlurButton_clicked();
 
+    void selectAll();
+    void unSelectAll();
+    void invertSelection();
+
+    void on_ValidateButton_clicked();
+
+    void on_InvalidateButton_clicked();
+
+    void on_setType_clicked();
+
+    void on_ApplyButton_clicked();
+
 private:
     Ui::BatchView *ui;
+
+    PanoramaViewer* pano;
 };
 
 #endif // BATCHVIEW_H

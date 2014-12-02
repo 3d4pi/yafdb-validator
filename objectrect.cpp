@@ -71,25 +71,25 @@ void ObjectRect::setState(int type)
     }
 }
 
-void ObjectRect::setClass(int classType)
+void ObjectRect::setType(int type)
 {
-    this->classType = classType;
+    this->type = type;
 }
 
 void ObjectRect::setBlurred(bool blur)
 {
-    this->toBlur = blur;
+    this->blurred = blur;
 }
 
 void ObjectRect::setValid(bool value)
 {
+    this->valid = value;
+
     if(value)
     {
         this->ui->frame_2->setStyleSheet("QFrame#frame_2 {background-color :  rgba(0, 255, 0, 50);}");
-        this->valid = true;
     } else {
-        this->ui->frame_2->setStyleSheet("QFrame#frame_2 {background-color :  rgba(0, 0, 0, 0);}");
-        this->valid = false;
+        this->ui->frame_2->setStyleSheet("QFrame#frame_2 {background-color :  rgba(255, 0, 0, 50);}");
     }
 }
 

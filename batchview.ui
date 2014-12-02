@@ -15,42 +15,59 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="2" column="2">
+    <item row="1" column="0" colspan="10">
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="widgetResizable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>1033</width>
+         <height>373</height>
+        </rect>
+       </property>
+      </widget>
+     </widget>
+    </item>
+    <item row="2" column="5">
      <widget class="QPushButton" name="InvalidateButton">
       <property name="text">
        <string>Invalidate</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="4">
+    <item row="2" column="7">
      <widget class="QPushButton" name="NoBlurButton">
       <property name="text">
        <string>No blur</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="6">
+    <item row="2" column="9">
      <widget class="QPushButton" name="ApplyButton">
       <property name="text">
        <string>Apply</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="5">
+    <item row="2" column="8">
      <widget class="QPushButton" name="CancelButton">
       <property name="text">
        <string>Cancel</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="1">
+    <item row="2" column="4">
      <widget class="QPushButton" name="ValidateButton">
       <property name="text">
        <string>Validate</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="3">
+    <item row="2" column="6">
      <widget class="QPushButton" name="BlurButton">
       <property name="text">
        <string>Blur</string>
@@ -70,25 +87,74 @@
       </property>
      </spacer>
     </item>
-    <item row="1" column="0" colspan="7">
-     <widget class="QScrollArea" name="scrollArea">
-      <property name="widgetResizable">
-       <bool>true</bool>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="TypeList">
+      <property name="editable">
+       <bool>false</bool>
       </property>
-      <widget class="QWidget" name="scrollAreaWidgetContents">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>1033</width>
-         <height>369</height>
-        </rect>
+      <property name="currentText">
+       <string>Face</string>
+      </property>
+      <item>
+       <property name="text">
+        <string>Face</string>
        </property>
-      </widget>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/resources/icons/Face.png</normaloff>:/resources/icons/Face.png</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Number Plate</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/resources/icons/Plate.png</normaloff>:/resources/icons/Plate.png</iconset>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>To blur</string>
+       </property>
+       <property name="icon">
+        <iconset resource="resources.qrc">
+         <normaloff>:/resources/icons/Blur.png</normaloff>:/resources/icons/Blur.png</iconset>
+       </property>
+      </item>
      </widget>
     </item>
-    <item row="0" column="0" colspan="7">
+    <item row="2" column="2">
+     <widget class="QPushButton" name="setType">
+      <property name="text">
+       <string>Set</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="3">
+     <spacer name="horizontalSpacer_2">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>10</width>
+        <height>10</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="0" colspan="10">
      <widget class="QSlider" name="horizontalSlider">
+      <property name="maximumSize">
+       <size>
+        <width>16777215</width>
+        <height>20</height>
+       </size>
+      </property>
       <property name="maximum">
        <number>1024</number>
       </property>
@@ -103,6 +169,8 @@
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -10,11 +10,9 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano) :
 {
     ui->setupUi(this);
 
-    this->MainLayout = new FlowLayout();
+    this->pano = pano;
 
-    // Remove margins
-    //this->setContentsMargins(-5, -5, -5, -5);
-    //this->centralWidget()->layout()->setContentsMargins(50,50,50,50);
+    this->MainLayout = new FlowLayout();
 
     // Center window on screen
     this->setGeometry(
@@ -34,40 +32,55 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano) :
     {
         ObjectItem* object = new ObjectItem();
 
+        object->setId(rect->id);
         object->setImage(pano->cropObject(rect));
-        object->setType(1);
-        object->setBlurred(true);
+        object->setType(rect->type);
+        object->setBlurred(rect->blurred);
+        object->setValid(rect->valid);
 
         this->MainLayout->addWidget(object);
         this->elements.append(object);
     }
 
-    /*
-    QDirIterator dirIt("/home/f0x/Bureau/FaceTiles");
-    while (dirIt.hasNext()) {
-        dirIt.next();
-        if (QFileInfo(dirIt.filePath()).isFile())
-            if (QFileInfo(dirIt.filePath()).suffix() == "png")
-            {
-                ObjectItem* object = new ObjectItem();
-
-                object->LoadImage(dirIt.filePath());
-                object->setType(1);
-                object->setBlurred(true);
-
-                MainLayout->addWidget(object);
-            }
-    }*/
-
     QWidget * dummy = new QWidget();
     dummy->setLayout(MainLayout);
 
     this->ui->scrollArea->setWidget(dummy);
+
+    // Keyboard shortcuts
+    new QShortcut(QKeySequence("Ctrl+a"), this, SLOT(selectAll()));
+    new QShortcut(QKeySequence("Ctrl+d"), this, SLOT(unSelectAll()));
+    new QShortcut(QKeySequence("Ctrl+i"), this, SLOT(invertSelection()));
+
 }
 
 BatchView::~BatchView()
 {
     delete ui;
+}
+
+void BatchView::selectAll()
+{
+    foreach(ObjectItem* item, this->elements )
+    {
+        item->setSelected(true);
+    }
+}
+
+void BatchView::unSelectAll()
+{
+    foreach(ObjectItem* item, this->elements )
+    {
+        item->setSelected(false);
+    }
+}
+
+void BatchView::invertSelection()
+{
+    foreach(ObjectItem* item, this->elements )
+    {
+        item->setSelected( !item->selected );
+    }
 }
 
 void BatchView::on_horizontalSlider_sliderMoved(int position)
@@ -103,4 +116,54 @@ void BatchView::on_BlurButton_clicked()
             item->setBlurred(true);
         }
     }
+}
+
+void BatchView::on_ValidateButton_clicked()
+{
+    foreach(ObjectItem* item, this->elements )
+    {
+        if(item->selected)
+        {
+            item->setValid(true);
+        }
+    }
+}
+
+void BatchView::on_InvalidateButton_clicked()
+{
+    foreach(ObjectItem* item, this->elements )
+    {
+        if(item->selected)
+        {
+            item->setValid(false);
+        }
+    }
+}
+
+void BatchView::on_setType_clicked()
+{
+    foreach(ObjectItem* item, this->elements )
+    {
+        if(item->selected)
+        {
+            item->setType(this->ui->TypeList->currentIndex() + 1);
+        }
+    }
+}
+
+void BatchView::on_ApplyButton_clicked()
+{
+    foreach(ObjectItem* item, this->elements )
+    {
+        foreach (ObjectRect* rect, this->pano->rect_list) {
+            if(rect->id == item->id)
+            {
+                rect->setValid(item->valid);
+                rect->setBlurred(item->blurred);
+                rect->setType(item->type);
+            }
+        }
+    }
+
+    this->close();
 }

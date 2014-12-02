@@ -354,6 +354,8 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
             // Create selection object
             this->create_position.rect = new ObjectRect(0, RectType::Manual);
             this->create_position.rect->setValid(true);
+            this->create_position.rect->setBlurred(true);
+            this->create_position.rect->id = this->rect_list.length();
 
             // Save projection parameters to it
             this->create_position.rect->projection_parameters.aperture  = this->current_zoom_rad;

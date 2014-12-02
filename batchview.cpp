@@ -68,6 +68,21 @@ BatchView::~BatchView()
     delete ui;
 }
 
+void BatchView::setMode(int mode)
+{
+    switch(mode)
+    {
+        case BatchMode::Manual:
+            this->ui->setType->setEnabled(true);
+            this->ui->TypeList->setEnabled(true);
+            break;
+        case BatchMode::Auto:
+            this->ui->setType->setEnabled(false);
+            this->ui->TypeList->setEnabled(false);
+            break;
+    }
+}
+
 void BatchView::selectAll()
 {
     foreach(ObjectItem* item, this->elements )
@@ -160,7 +175,7 @@ void BatchView::on_setType_clicked()
     }
 }
 
-void BatchView::on_ApplyButton_clicked()
+void BatchView::mergeResults()
 {
     foreach(ObjectItem* item, this->elements )
     {
@@ -173,8 +188,44 @@ void BatchView::on_ApplyButton_clicked()
             }
         }
     }
+}
 
-    emit refreshLabels();
+void BatchView::on_ApplyButton_clicked()
+{
+    bool replyMSG = true;
+    bool haveNoClass = false;
 
-    this->close();
+    foreach(ObjectItem* item, this->elements)
+    {
+        if(item->type == ObjectType::None)
+        {
+            haveNoClass = true;
+            break;
+        }
+    }
+
+    if(haveNoClass)
+    {
+        QMessageBox::StandardButton reply;
+         reply = QMessageBox::question(this, "Warning", "Not all objects have a class defined, quit anyway?",
+                                       QMessageBox::Yes|QMessageBox::No);
+         if (reply == QMessageBox::No) {
+           replyMSG = false;
+         }
+    }
+
+    if(haveNoClass)
+    {
+        if(replyMSG)
+        {
+            this->mergeResults();
+            emit refreshLabels();
+            this->close();
+        }
+    } else {
+        this->mergeResults();
+        emit refreshLabels();
+        this->close();
+    }
+
 }

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QDesktopWidget>
 #include <QShortcut>
+#include <QMessageBox>
 #include <flowlayout.h>
 #include "panoramaviewer.h"
 #include "objectrect.h"
@@ -23,6 +24,8 @@ public:
 
     FlowLayout * MainLayout;
     QList<ObjectItem*> elements;
+
+    void setMode(int mode);
 
 
 private slots:
@@ -46,11 +49,14 @@ private slots:
 
     void on_ApplyButton_clicked();
 
+
 private:
     Ui::BatchView *ui;
 
     PanoramaViewer* pano;
 
+    void mergeResults()
+;
 signals:
     void refreshLabels();
 

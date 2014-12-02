@@ -5,7 +5,7 @@ struct ObjectType
 {
     enum Type
     {
-       Face = 1, NumberPlate = 2, BlurOnly = 3
+       None = 0, Face = 1, NumberPlate = 2, BlurOnly = 3
     };
 };
 
@@ -24,5 +24,15 @@ struct RectMoveType
         All = 1, Only_Point1 = 2, Only_Point2 = 3
     };
 };
+
+struct BatchMode
+{
+    enum Type
+    {
+
+        Manual = 0, Auto = 1
+    };
+};
+
 
 #endif // TYPES_H

@@ -127,5 +127,6 @@ void MainWindow::on_pushButton_4_clicked()
 void MainWindow::on_untypedButton_clicked()
 {
     BatchView* w = new BatchView(this, this->pano);
+    w->setMode(BatchMode::Manual);
     w->show();
 }

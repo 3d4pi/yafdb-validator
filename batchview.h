@@ -50,6 +50,10 @@ private:
     Ui::BatchView *ui;
 
     PanoramaViewer* pano;
+
+signals:
+    void refreshLabels();
+
 };
 
 #endif // BATCHVIEW_H

@@ -93,8 +93,13 @@
        <bool>false</bool>
       </property>
       <property name="currentText">
-       <string>Face</string>
+       <string>Select...</string>
       </property>
+      <item>
+       <property name="text">
+        <string>Select...</string>
+       </property>
+      </item>
       <item>
        <property name="text">
         <string>Face</string>

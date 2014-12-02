@@ -52,6 +52,15 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano) :
     new QShortcut(QKeySequence("Ctrl+d"), this, SLOT(unSelectAll()));
     new QShortcut(QKeySequence("Ctrl+i"), this, SLOT(invertSelection()));
 
+    QStandardItemModel* model =
+            qobject_cast<QStandardItemModel*>(this->ui->TypeList->model());
+    QModelIndex firstIndex = model->index(0, this->ui->TypeList->modelColumn(),
+            this->ui->TypeList->rootModelIndex());
+    QStandardItem* firstItem = model->itemFromIndex(firstIndex);
+    firstItem->setSelectable(false);
+
+    // Connect signal for labels refresh
+    connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels()));
 }
 
 BatchView::~BatchView()
@@ -146,7 +155,7 @@ void BatchView::on_setType_clicked()
     {
         if(item->selected)
         {
-            item->setType(this->ui->TypeList->currentIndex() + 1);
+            item->setType(this->ui->TypeList->currentIndex());
         }
     }
 }
@@ -164,6 +173,8 @@ void BatchView::on_ApplyButton_clicked()
             }
         }
     }
+
+    emit refreshLabels();
 
     this->close();
 }

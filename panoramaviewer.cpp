@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QGraphicsProxyWidget>
 #include <QToolTip>
+#include <QPushButton>
 
 #define CHANNELS_COUNT 4
 
@@ -46,7 +47,8 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->scene = new QGraphicsScene();
     this->setScene(this->scene);
 
-
+    // Connect signal for labels refresh
+    connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels()));
 }
 
 inline float clamp(float x, float a, float b)
@@ -378,6 +380,9 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
                             mouse_norm,
                             norm_params
                         );
+
+            // Refresh main window labels
+            emit refreshLabels();
 
         } else  {
 

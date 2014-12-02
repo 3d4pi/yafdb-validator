@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->showMaximized();
 
     // Create panorama viewer
-    this->pano = new PanoramaViewer();
+    this->pano = new PanoramaViewer(this);
 
     // Add panorama viewer to current window
     this->ui->gridLayout->addWidget(this->pano);
@@ -45,15 +45,28 @@ MainWindow::MainWindow(QWidget *parent) :
         threads_count // Number of threads
     );
 
-    this->ui->horizontalSlider->setValue(this->pano->scale_factor * 100);
+    //this->ui->horizontalSlider->setValue(this->pano->scale_factor * 100);
 
     // Load input image
     this->pano->loadImage("/home/f0x/Bureau/Photo_RMLL_2014_panoramique,_WE_grand_public.jpeg");
 
-    YMLParser reader;
-    QList<DetectedObject> objs = reader.loadYML("/home/f0x/Bureau/yml.yml");
+}
 
-    reader.writeYML(objs, "/home/f0x/Bureau/yml2.yml");
+void MainWindow::refreshLabels()
+{
+    int untyped = 0;
+
+    foreach(ObjectRect* rect, this->pano->rect_list)
+    {
+        switch(rect->type)
+        {
+            case RectType::None:
+                untyped++;
+                break;
+        }
+    }
+
+    this->ui->untypedLabel->setText("Untyped items: " + QString::number(untyped));
 }
 
 MainWindow::~MainWindow()
@@ -62,6 +75,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+/*
 void MainWindow::on_pushButton_clicked()
 {
     foreach(ObjectRect* rect, this->pano->rect_list)
@@ -104,6 +118,13 @@ void MainWindow::on_pushButton_3_clicked()
 }
 
 void MainWindow::on_pushButton_4_clicked()
+{
+    BatchView* w = new BatchView(this, this->pano);
+    w->show();
+}
+*/
+
+void MainWindow::on_untypedButton_clicked()
 {
     BatchView* w = new BatchView(this, this->pano);
     w->show();

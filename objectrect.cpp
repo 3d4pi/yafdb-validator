@@ -18,6 +18,7 @@ ObjectRect::ObjectRect(QWidget *parent, int state) :
 {
     ui->setupUi(this);
 
+    this->setType(RectType::None);
     this->setState(state);
     this->resize(1, 1);
 }

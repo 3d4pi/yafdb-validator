@@ -9,12 +9,12 @@
 #include <QScrollBar>
 #include <QImage>
 #include <QPixmap>
-
 #include <QWheelEvent>
 #include <QMouseEvent>
 #include <QList>
 #include <QGraphicsPixmapItem>
 #include <QRubberBand>
+
 #include "objectrect.h"
 #include "util.h"
 #include "detectedobject.h"
@@ -92,7 +92,7 @@ public:
 
     QImage cropObject(ObjectRect* rect);
 
-signals:
+    void updateLabels();
 
 public slots:
 
@@ -106,6 +106,9 @@ private:
 
     int previous_height;
     int previous_width;
+
+signals:
+    void refreshLabels();
 
 };
 

@@ -3,5 +3,6 @@
         <file>resources/icons/Face.png</file>
         <file>resources/icons/Plate.png</file>
         <file>resources/icons/Blur.png</file>
+        <file>resources/icons/Tiles.png</file>
     </qresource>
 </RCC>

@@ -9,23 +9,30 @@ class DetectedObject
 public:
     DetectedObject();
 
+    QString algorithm;
+
+    struct gnomonic_struct {
+      int width;
+      int aperture_x;
+      int aperture_y;
+    } gnomonic;
+
+    QString source;
+
     QString className;
+
+    struct area_struct {
+      int system;
+      QPointF p1;
+      QPointF p2;
+    } area;
+
+    QString falsePositive;
+
     QString autoStatus;
     QString manualStatus;
 
-    bool blurred;
-    bool valid;
-    QString falsePositive;
-
-    QPointF point_1;
-    QPointF point_2;
-
-    float azimuth;
-    float elevation;
-    float aperture;
-
-    QPixmap tile;
-
+    QList<DetectedObject> childrens;
 };
 
 #endif // DETECTEDOBJECT_H

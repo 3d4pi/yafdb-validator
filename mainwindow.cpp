@@ -3,7 +3,7 @@
 
 #include <QFileDialog>
 #include <QDebug>
-#include "ymlreader.h"
+#include "ymlparser.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -50,12 +50,10 @@ MainWindow::MainWindow(QWidget *parent) :
     // Load input image
     this->pano->loadImage("/home/f0x/Bureau/Photo_RMLL_2014_panoramique,_WE_grand_public.jpeg");
 
-    YMLReader reader;
+    YMLParser reader;
     QList<DetectedObject> objs = reader.loadYML("/home/f0x/Bureau/yml.yml");
 
-    foreach (DetectedObject obj, objs) {
-        qDebug() << obj.falsePositive;
-    }
+    reader.writeYML(objs, "/home/f0x/Bureau/yml2.yml");
 }
 
 MainWindow::~MainWindow()

@@ -20,7 +20,7 @@ SOURCES += main.cpp \
     objectitem.cpp \
     objectrect.cpp \
     util.cpp \
-    ymlreader.cpp
+    ymlparser.cpp
 
 HEADERS  += mainwindow.h \
     panoramaviewer.h \
@@ -31,7 +31,7 @@ HEADERS  += mainwindow.h \
     objectrect.h \
     util.h \
     types.h \
-    ymlreader.h
+    ymlparser.h
 
 FORMS    += mainwindow.ui \
     batchview.ui \

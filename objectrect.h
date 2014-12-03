@@ -23,21 +23,24 @@ class ObjectRect : public QWidget
 
 public:
     explicit ObjectRect(QWidget *parent = 0);
-    explicit ObjectRect(QWidget *parent, int type);
 
     ~ObjectRect();
 
     projection_parameters_container projection_parameters;
 
-    void setType(int type);
+    void setRectType(int type);
+    void setObjectType(int type);
+
     void setBlurred(bool blur);
     void setValid(bool value);
 
-    void setState(int type);
     void setPos(QPointF p1, QPointF p2, normalization_struct norm_params, int type = 1);
     void update(normalization_struct norm_params);
 
     void moveRect(QPointF point, normalization_struct norm_params, QPointF offset);
+
+    void setAutomaticStatus(QString value);
+    void setManualStatus(QString value);
 
     QPointF point_1;
     QPointF point_2;
@@ -47,7 +50,13 @@ public:
     QSize  size;
 
     int id;
-    int type;
+
+
+    QString manualStatus;
+    QString autoStatus;
+
+    int recttype;
+    int objecttype;
     bool blurred;
     bool valid;
 

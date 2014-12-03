@@ -13,7 +13,7 @@ struct RectType
 {
     enum Type
     {
-        None = 0, Valid = 1, Invalid = 2, Manual = 3
+       Manual = 1, Auto = 2
     };
 };
 
@@ -31,6 +31,15 @@ struct BatchMode
     {
 
         Manual = 0, Auto = 1
+    };
+};
+
+struct BatchViewMode
+{
+    enum Type
+    {
+
+        Clear = 0, All = 1, OnlyUntyped = 2, OnlyUnapprovedFaces = 3
     };
 };
 

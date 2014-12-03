@@ -11,6 +11,9 @@ ObjectItem::ObjectItem(QWidget *parent) :
     this->ui->imageLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
     this->setSize(QSize(128, 128));
     this->setSelected(false);
+
+    this->manualStatus = "None";
+    this->autoStatus = "None";
 }
 
 void ObjectItem::setId(int id)
@@ -163,14 +166,14 @@ void ObjectItem::setSelected(bool value)
     }
 }
 
-void ObjectItem::setAutomaticState(int state)
+void ObjectItem::setAutomaticStatus(QString value)
 {
-
+    this->autoStatus = value;
 }
 
-void ObjectItem::setManualState(int state)
+void ObjectItem::setManualStatus(QString value)
 {
-
+    this->manualStatus = value;
 }
 
 void ObjectItem::mousePressEvent(QMouseEvent* ){

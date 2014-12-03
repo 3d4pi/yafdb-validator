@@ -9,38 +9,20 @@ ObjectRect::ObjectRect(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->setState(RectType::Valid);
+    this->setRectType(RectType::Manual);
+    this->setObjectType(ObjectType::None);
+    this->setValid(false);
+
+    this->autoStatus = "None";
+    this->manualStatus = "None";
 }
 
-ObjectRect::ObjectRect(QWidget *parent, int state) :
-    QWidget(parent),
-    ui(new Ui::ObjectRect)
+void ObjectRect::setRectType(int type)
 {
-    ui->setupUi(this);
+    this->recttype = type;
 
-    this->setType(RectType::None);
-    this->setState(state);
-    this->resize(1, 1);
-}
-
-void ObjectRect::setState(int type)
-{
     switch(type)
     {
-        case RectType::Invalid:
-            this->setStyleSheet(
-                "QWidget#ObjectRect{"
-                "background-color: rgba(0, 0, 0, 0);}"
-
-                "QWidget#frame{"
-                "border: 2px solid rgb(255, 255, 0);"
-                "}"
-
-                "QWidget#frame_2{"
-                "border: 2px solid rgb(255, 0, 0);"
-                "}"
-            );
-            break;
         case RectType::Manual:
             this->setStyleSheet(
                 "QWidget#ObjectRect{"
@@ -55,32 +37,43 @@ void ObjectRect::setState(int type)
                 "}"
             );
             break;
-    case RectType::Valid:
-        this->setStyleSheet(
-            "QWidget#ObjectRect{"
-            "background-color: rgba(0, 0, 0, 0);}"
+        case RectType::Auto:
+            this->setStyleSheet(
+                "QWidget#ObjectRect{"
+                "background-color: rgba(0, 0, 0, 0);}"
 
-            "QWidget#frame{"
-            "border: 2px solid rgb(255, 255, 0);"
-            "}"
+                "QWidget#frame{"
+                "border: 2px solid rgb(255, 255, 0);"
+                "}"
 
-            "QWidget#frame_2{"
-            "border: 2px solid rgb(0, 255, 0);"
-            "}"
-        );
-        break;
+                "QWidget#frame_2{"
+                "border: 2px solid rgb(0, 255, 0);"
+                "}"
+            );
+            break;
     }
 }
 
-void ObjectRect::setType(int type)
+void ObjectRect::setObjectType(int type)
 {
-    this->type = type;
+    this->objecttype = type;
 }
 
 void ObjectRect::setBlurred(bool blur)
 {
     this->blurred = blur;
 }
+
+void ObjectRect::setAutomaticStatus(QString value)
+{
+    this->autoStatus = value;
+}
+
+void ObjectRect::setManualStatus(QString value)
+{
+    this->manualStatus = value;
+}
+
 
 void ObjectRect::setValid(bool value)
 {

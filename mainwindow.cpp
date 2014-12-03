@@ -50,29 +50,69 @@ MainWindow::MainWindow(QWidget *parent) :
     // Load input image
     this->pano->loadImage("/home/f0x/Bureau/Photo_RMLL_2014_panoramique,_WE_grand_public.jpeg");
 
+    // Initialize labels
+    emit refreshLabels();
+
 }
 
 void MainWindow::refreshLabels()
 {
     int untyped = 0;
+    int facecount = 0;
+    int facesvalidated = 0;
 
     foreach(ObjectRect* rect, this->pano->rect_list)
     {
-        switch(rect->type)
+        switch(rect->objecttype)
         {
-            case RectType::None:
+            case ObjectType::None:
                 untyped++;
+                break;
+            case ObjectType::Face:
+                facecount++;
+
+                if(rect->manualStatus != "None")
+                {
+                    facesvalidated++;
+                }
+
                 break;
         }
     }
 
+    if(untyped > 0)
+    {
+       this->ui->untypedLabel->setStyleSheet("QLabel {color: yellow; }");
+        this->ui->untypedButton->setEnabled(true);
+    } else {
+        this->ui->untypedLabel->setStyleSheet("QLabel {color: green; }");
+        this->ui->untypedButton->setEnabled(false);
+    }
+
     this->ui->untypedLabel->setText("Untyped items: " + QString::number(untyped));
+
+    if(facesvalidated != facecount)
+    {
+       this->ui->facesLabel->setStyleSheet("QLabel {color: yellow; }");
+       this->ui->facesButton->setEnabled(true);
+    } else {
+        this->ui->facesLabel->setStyleSheet("QLabel {color: green; }");
+        this->ui->facesButton->setEnabled(false);
+    }
+
+    this->ui->facesLabel->setText("Faces " + QString::number(facesvalidated) + "/" + QString::number(facecount));
 }
 
 MainWindow::~MainWindow()
 {
     //delete this->pano;
     delete ui;
+}
+
+void MainWindow::on_untypedButton_clicked()
+{
+    BatchView* w = new BatchView(this, this->pano, BatchMode::Manual, BatchViewMode::OnlyUntyped);
+    w->show();
 }
 
 /*
@@ -124,9 +164,8 @@ void MainWindow::on_pushButton_4_clicked()
 }
 */
 
-void MainWindow::on_untypedButton_clicked()
+void MainWindow::on_facesButton_clicked()
 {
-    BatchView* w = new BatchView(this, this->pano);
-    w->setMode(BatchMode::Manual);
+    BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyUnapprovedFaces);
     w->show();
 }

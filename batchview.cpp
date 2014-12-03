@@ -4,7 +4,7 @@
 #include "objectitem.h"
 #include <QLayoutItem>
 
-BatchView::BatchView(QWidget *parent, PanoramaViewer* pano) :
+BatchView::BatchView(QWidget *parent, PanoramaViewer* pano, int batchmode, int batchviewmode) :
     QMainWindow(parent),
     ui(new Ui::BatchView)
 {
@@ -28,19 +28,8 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano) :
 
     this->MainLayout->setContentsMargins( 10, 10, 10, 10 ) ;
 
-    foreach(ObjectRect* rect, pano->rect_list )
-    {
-        ObjectItem* object = new ObjectItem();
-
-        object->setId(rect->id);
-        object->setImage(pano->cropObject(rect));
-        object->setType(rect->type);
-        object->setBlurred(rect->blurred);
-        object->setValid(rect->valid);
-
-        this->MainLayout->addWidget(object);
-        this->elements.append(object);
-    }
+    this->setMode(batchmode);
+    this->populate(batchviewmode);
 
     QWidget * dummy = new QWidget();
     dummy->setLayout(MainLayout);
@@ -63,6 +52,49 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano) :
     connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels()));
 }
 
+void BatchView::populate(int batchviewmode)
+{
+
+    foreach(ObjectRect* rect, pano->rect_list )
+    {
+        switch(batchviewmode)
+        {
+            case BatchViewMode::All:
+                this->insertItem(rect);
+                break;
+            case BatchViewMode::OnlyUntyped:
+                if(rect->objecttype == ObjectType::None)
+                {
+                    this->insertItem(rect);
+                }
+                break;
+            case BatchViewMode::OnlyUnapprovedFaces:
+                if(rect->objecttype == ObjectType::Face
+                        && rect->manualStatus == "None"
+                        && rect->autoStatus != "None")
+                {
+                    this->insertItem(rect);
+                }
+                break;
+        }
+    }
+}
+
+void BatchView::insertItem(ObjectRect *rect)
+{
+    ObjectItem* object = new ObjectItem();
+    object->setId(rect->id);
+    object->setImage(pano->cropObject(rect));
+    object->setType(rect->objecttype);
+    object->setBlurred(rect->blurred);
+    object->setValid(rect->valid);
+    object->setManualStatus(rect->manualStatus);
+    object->setAutomaticStatus(rect->autoStatus);
+
+    this->MainLayout->addWidget(object);
+    this->elements.append(object);
+}
+
 BatchView::~BatchView()
 {
     delete ui;
@@ -75,10 +107,14 @@ void BatchView::setMode(int mode)
         case BatchMode::Manual:
             this->ui->setType->setEnabled(true);
             this->ui->TypeList->setEnabled(true);
+            this->ui->InvalidateButton->setEnabled(false);
+            this->ui->ValidateButton->setEnabled(false);
             break;
         case BatchMode::Auto:
             this->ui->setType->setEnabled(false);
             this->ui->TypeList->setEnabled(false);
+            this->ui->InvalidateButton->setEnabled(true);
+            this->ui->ValidateButton->setEnabled(true);
             break;
     }
 }
@@ -149,6 +185,7 @@ void BatchView::on_ValidateButton_clicked()
         if(item->selected)
         {
             item->setValid(true);
+            item->setManualStatus("Valid");
         }
     }
 }
@@ -160,6 +197,7 @@ void BatchView::on_InvalidateButton_clicked()
         if(item->selected)
         {
             item->setValid(false);
+            item->setManualStatus("Invalid");
         }
     }
 }
@@ -182,9 +220,11 @@ void BatchView::mergeResults()
         foreach (ObjectRect* rect, this->pano->rect_list) {
             if(rect->id == item->id)
             {
+
                 rect->setValid(item->valid);
                 rect->setBlurred(item->blurred);
-                rect->setType(item->type);
+                rect->setObjectType(item->type);
+                rect->setManualStatus(item->manualStatus);
             }
         }
     }

@@ -28,11 +28,14 @@ public:
     void setSelected(bool value);
     void setValid(bool value);
 
-    void setAutomaticState(int state);
-    void setManualState(int state);
+    void setAutomaticStatus(QString value);
+    void setManualStatus(QString value);
 
     bool selected;
     QImage image;
+
+    QString manualStatus;
+    QString autoStatus;
 
     int id;
     int type;

@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QDesktopWidget>
 #include <QThread>
+#include <QLabel>
 #include <panoramaviewer.h>
 #include "batchview.h"
 
@@ -35,6 +36,8 @@ private slots:
     */
 
     void on_untypedButton_clicked();
+
+    void on_facesButton_clicked();
 
 private:
     Ui::MainWindow *ui;

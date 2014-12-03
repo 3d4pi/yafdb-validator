@@ -19,13 +19,14 @@ class BatchView : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit BatchView(QWidget *parent, PanoramaViewer* pano);
+    explicit BatchView(QWidget *parent, PanoramaViewer* pano, int batchmode, int batchviewmode);
     ~BatchView();
 
     FlowLayout * MainLayout;
     QList<ObjectItem*> elements;
 
     void setMode(int mode);
+    void insertItem(ObjectRect* rect);
 
 
 private slots:
@@ -49,14 +50,14 @@ private slots:
 
     void on_ApplyButton_clicked();
 
-
 private:
     Ui::BatchView *ui;
 
     PanoramaViewer* pano;
 
-    void mergeResults()
-;
+    void mergeResults();
+    void populate(int batchviewmode);
+
 signals:
     void refreshLabels();
 

@@ -5,6 +5,7 @@
 #include <QDesktopWidget>
 #include <QThread>
 #include <QLabel>
+#include <QPalette>
 #include <panoramaviewer.h>
 #include "batchview.h"
 
@@ -39,9 +40,16 @@ private slots:
 
     void on_facesButton_clicked();
 
+    void on_platesButton_clicked();
+
+    void on_preInvalidatedButton_clicked();
+
 private:
     Ui::MainWindow *ui;
     PanoramaViewer* pano;
+
+    QString good_color;
+    QString warn_color;
 };
 
 #endif // MAINWINDOW_H

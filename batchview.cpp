@@ -68,9 +68,24 @@ void BatchView::populate(int batchviewmode)
                     this->insertItem(rect);
                 }
                 break;
-            case BatchViewMode::OnlyUnapprovedFaces:
+            case BatchViewMode::OnlyFaces:
                 if(rect->objecttype == ObjectType::Face
+                        && (rect->autoStatus == "Valid" || rect->autoStatus == "None"))
+                {
+                    this->insertItem(rect);
+                }
+                break;
+            case BatchViewMode::OnlyUnapprovedNumberPlates:
+                if(rect->objecttype == ObjectType::NumberPlate
                         && rect->manualStatus == "None"
+                        && rect->autoStatus == "Valid")
+                {
+                    this->insertItem(rect);
+                }
+                break;
+            case BatchViewMode::OnlyPreInvalidated:
+                if(rect->objecttype != ObjectType::None
+                        && rect->autoStatus != "Valid"
                         && rect->autoStatus != "None")
                 {
                     this->insertItem(rect);
@@ -234,12 +249,22 @@ void BatchView::on_ApplyButton_clicked()
 {
     bool replyMSG = true;
     bool haveNoClass = false;
+    bool haveNoManualState = false;
 
     foreach(ObjectItem* item, this->elements)
     {
         if(item->type == ObjectType::None)
         {
             haveNoClass = true;
+            break;
+        }
+    }
+
+    foreach(ObjectItem* item, this->elements)
+    {
+        if(item->manualStatus == "None")
+        {
+            haveNoManualState = true;
             break;
         }
     }
@@ -252,10 +277,21 @@ void BatchView::on_ApplyButton_clicked()
          if (reply == QMessageBox::No) {
            replyMSG = false;
          }
-    }
 
-    if(haveNoClass)
-    {
+        if(replyMSG)
+        {
+            this->mergeResults();
+            emit refreshLabels();
+            this->close();
+        }
+    } else if(!haveNoClass && haveNoManualState) {
+        QMessageBox::StandardButton reply;
+         reply = QMessageBox::question(this, "Warning", "Not all objects have been validated, quit anyway?",
+                                       QMessageBox::Yes|QMessageBox::No);
+         if (reply == QMessageBox::No) {
+           replyMSG = false;
+         }
+
         if(replyMSG)
         {
             this->mergeResults();

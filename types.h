@@ -39,7 +39,7 @@ struct BatchViewMode
     enum Type
     {
 
-        Clear = 0, All = 1, OnlyUntyped = 2, OnlyUnapprovedFaces = 3
+        Clear = 0, All = 1, OnlyUntyped = 2, OnlyFaces = 3, OnlyUnapprovedNumberPlates = 4, OnlyPreInvalidated = 5
     };
 };
 

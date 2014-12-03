@@ -50,7 +50,37 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     // Connect signal for labels refresh
     connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels()));
 
+    /*
     for (int x = 0; x < 5; x++)
+    {
+        // Create selection object
+        ObjectRect* rect = new ObjectRect();
+
+        rect->setObjectType(ObjectType::Face);
+        rect->setRectType(RectType::Auto);
+        rect->setValid(true);
+        rect->setAutomaticStatus("Valid");
+        rect->setBlurred(true);
+
+        rect->id = this->rect_list.length();
+
+        // Save projection parameters to it
+        rect->projection_parameters.aperture  = this->current_zoom_rad;
+        rect->projection_parameters.azimuth   = this->position.azimuth;
+        rect->projection_parameters.elevation = this->position.elevation;
+        rect->projection_parameters.scale_factor = this->scale_factor;
+
+        // Add selection object to list
+        this->rect_list.append(rect);
+
+        QGraphicsProxyWidget *proxyWidget = new QGraphicsProxyWidget;
+        proxyWidget->setWidget(rect);
+
+        // Add selection object to scene
+        this->scene->addItem(proxyWidget);
+    }
+
+    for (int x = 0; x < 3; x++)
     {
         // Create selection object
         ObjectRect* rect = new ObjectRect();
@@ -78,6 +108,7 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
         // Add selection object to scene
         this->scene->addItem(proxyWidget);
     }
+    */
 
 }
 

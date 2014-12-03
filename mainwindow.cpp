@@ -11,6 +11,18 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // Determine good labels colors based on system theme
+    QString good_color_string = "rgb(%1, %2, %3)";
+    QColor  good_color_color = QApplication::palette().color(QPalette::Text);
+    good_color_string = good_color_string.arg(good_color_color.red()).arg(good_color_color.green()).arg(good_color_color.blue());
+
+    QString warn_color_string = "rgb(%1, %2, %3)";
+    QColor  warn_color_color = QApplication::palette().color(QPalette::Highlight);
+    warn_color_string = warn_color_string.arg(warn_color_color.red()).arg(warn_color_color.green()).arg(warn_color_color.blue());
+
+    this->good_color = good_color_string;
+    this->warn_color = warn_color_string;
+
     // Remove margins
     this->setContentsMargins(-5, -5, -5, -5);
     //this->centralWidget()->layout()->setContentsMargins(50,50,50,50);
@@ -58,8 +70,15 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::refreshLabels()
 {
     int untyped = 0;
+
     int facecount = 0;
     int facesvalidated = 0;
+
+    int numberplatescount = 0;
+    int numberplatesvalidated = 0;
+
+    int preinvalidatedcount = 0;
+    int preinvalidatedvalidated = 0;
 
     foreach(ObjectRect* rect, this->pano->rect_list)
     {
@@ -69,11 +88,33 @@ void MainWindow::refreshLabels()
                 untyped++;
                 break;
             case ObjectType::Face:
-                facecount++;
+
+                if(rect->autoStatus == "Valid" || rect->autoStatus == "None")
+                    facecount++;
+
+                if( (rect->autoStatus == "Valid" || rect->autoStatus == "None")
+                        && rect->manualStatus != "None")
+                {
+                    facesvalidated++;
+                }
+
+                if(rect->autoStatus != "None" && rect->autoStatus != "Valid")
+                {
+                    preinvalidatedcount++;
+                }
+                if(rect->autoStatus != "None" && rect->autoStatus != "Valid" && rect->manualStatus != "None")
+                {
+                    preinvalidatedvalidated++;
+                }
+
+                break;
+            case ObjectType::NumberPlate:
+
+                numberplatescount++;
 
                 if(rect->manualStatus != "None")
                 {
-                    facesvalidated++;
+                    numberplatesvalidated++;
                 }
 
                 break;
@@ -82,25 +123,45 @@ void MainWindow::refreshLabels()
 
     if(untyped > 0)
     {
-       this->ui->untypedLabel->setStyleSheet("QLabel {color: yellow; }");
+        this->ui->untypedLabel->setStyleSheet("QLabel {color: " + this->warn_color + "; }");
         this->ui->untypedButton->setEnabled(true);
     } else {
-        this->ui->untypedLabel->setStyleSheet("QLabel {color: green; }");
+        this->ui->untypedLabel->setStyleSheet("QLabel {color: " + this->good_color + "; }");
         this->ui->untypedButton->setEnabled(false);
     }
 
-    this->ui->untypedLabel->setText("Untyped items: " + QString::number(untyped));
-
     if(facesvalidated != facecount)
     {
-       this->ui->facesLabel->setStyleSheet("QLabel {color: yellow; }");
-       this->ui->facesButton->setEnabled(true);
+       this->ui->facesLabel->setStyleSheet("QLabel {color: " + this->warn_color + "; }");
     } else {
-        this->ui->facesLabel->setStyleSheet("QLabel {color: green; }");
-        this->ui->facesButton->setEnabled(false);
+        this->ui->facesLabel->setStyleSheet("QLabel {color: " + this->good_color + "; }");
     }
 
-    this->ui->facesLabel->setText("Faces " + QString::number(facesvalidated) + "/" + QString::number(facecount));
+    if(numberplatesvalidated != numberplatescount)
+    {
+       this->ui->platesLabel->setStyleSheet("QLabel {color: " + this->warn_color + "; }");
+    } else {
+        this->ui->platesLabel->setStyleSheet("QLabel {color: " + this->good_color + "; }");
+    }
+
+    if(preinvalidatedvalidated != preinvalidatedcount)
+    {
+       this->ui->preInvalidatedLabel->setStyleSheet("QLabel {color: " + this->warn_color + "; }");
+    } else {
+        this->ui->preInvalidatedLabel->setStyleSheet("QLabel {color: " + this->good_color + "; }");
+    }
+
+    if(facecount <= 0)
+    {
+        //this->ui->facesButton->setEnabled(false);
+    } else {
+
+    }
+
+    this->ui->untypedLabel->setText("Untyped items: " + QString::number(untyped));
+    this->ui->facesLabel->setText("Faces: " + QString::number(facesvalidated) + "/" + QString::number(facecount));
+    this->ui->platesLabel->setText("Number plates: " + QString::number(numberplatesvalidated) + "/" + QString::number(numberplatescount));
+    this->ui->preInvalidatedLabel->setText("Pre-invalidated: " + QString::number(preinvalidatedvalidated) + "/" + QString::number(preinvalidatedcount));
 }
 
 MainWindow::~MainWindow()
@@ -112,6 +173,24 @@ MainWindow::~MainWindow()
 void MainWindow::on_untypedButton_clicked()
 {
     BatchView* w = new BatchView(this, this->pano, BatchMode::Manual, BatchViewMode::OnlyUntyped);
+    w->show();
+}
+
+void MainWindow::on_facesButton_clicked()
+{
+    BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyFaces);
+    w->show();
+}
+
+void MainWindow::on_platesButton_clicked()
+{
+    BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyUnapprovedNumberPlates);
+    w->show();
+}
+
+void MainWindow::on_preInvalidatedButton_clicked()
+{
+    BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyPreInvalidated);
     w->show();
 }
 
@@ -163,9 +242,3 @@ void MainWindow::on_pushButton_4_clicked()
     w->show();
 }
 */
-
-void MainWindow::on_facesButton_clicked()
-{
-    BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyUnapprovedFaces);
-    w->show();
-}

@@ -130,6 +130,36 @@ void ObjectItem::setType(int type)
     }
 }
 
+void ObjectItem::setRectType(int type)
+{
+    this->recttype = type;
+
+    switch(type)
+    {
+        case ObjectItemRectType::Valid:
+            this->setStyleSheet(
+                "QLabel#imageLabel{"
+                "border: 4px solid rgb(0, 255, 0);"
+                "}"
+            );
+            break;
+        case ObjectItemRectType::Invalid:
+            this->setStyleSheet(
+                "QLabel#imageLabel{"
+                "border: 4px solid rgb(255, 0, 0);"
+                "}"
+            );
+            break;
+        case ObjectItemRectType::Manual:
+            this->setStyleSheet(
+                "QLabel#imageLabel{"
+                "border: 4px solid rgb(0, 255, 255);"
+                "}"
+            );
+            break;
+    }
+}
+
 void ObjectItem::setBlurred(bool value)
 {
     this->blurred = value;
@@ -142,15 +172,24 @@ void ObjectItem::setBlurred(bool value)
     }
 }
 
-void ObjectItem::setValid(bool value)
+void ObjectItem::setValidState(int state)
 {
-    this->valid = value;
+    this->validstate = state;
 
-    if(value)
+    switch(state)
     {
-        this->ui->validFrame->setStyleSheet("background-color: rgba(0, 255, 0, 50);");
-    } else {
-        this->ui->validFrame->setStyleSheet("background-color: rgba(255, 0, 0, 50);");
+        case ObjectValidState::Valid:
+            this->ui->validFrame->setStyleSheet("background-color: rgba(0, 255, 0, 50);");
+            this->valid = true;
+            break;
+        case ObjectValidState::Invalid:
+            this->ui->validFrame->setStyleSheet("background-color: rgba(255, 0, 0, 50);");
+            this->valid = false;
+            break;
+        case ObjectValidState::None:
+            this->ui->validFrame->setStyleSheet("background-color: rgba(0, 0, 0, 50);");
+            this->valid = false;
+            break;
     }
 }
 

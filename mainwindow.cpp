@@ -3,6 +3,7 @@
 
 #include <QFileDialog>
 #include <QDebug>
+#include <QGraphicsProxyWidget>
 #include "ymlparser.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -184,7 +185,7 @@ void MainWindow::on_facesButton_clicked()
 
 void MainWindow::on_platesButton_clicked()
 {
-    BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyUnapprovedNumberPlates);
+    BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyNumberPlates);
     w->show();
 }
 
@@ -194,51 +195,134 @@ void MainWindow::on_preInvalidatedButton_clicked()
     w->show();
 }
 
-/*
 void MainWindow::on_pushButton_clicked()
 {
-    foreach(ObjectRect* rect, this->pano->rect_list)
+    srand (time(NULL));
+
+    for (int x = 0; x < 100; x++)
     {
-        delete rect;
-        this->pano->rect_list.removeOne(rect);
+        // Create selection object
+        ObjectRect* rect = new ObjectRect();
+
+        rect->setObjectType(ObjectType::Face);
+        rect->setRectType(RectType::Auto);
+        rect->setValidState(ObjectValidState::None);
+        rect->setAutomaticStatus("Valid");
+        rect->setBlurred(true);
+
+        rect->id = this->pano->rect_list.length();
+
+        normalization_struct norm_params;
+        norm_params.pano_height = this->pano->height();
+        norm_params.pano_width = this->pano->width();
+        norm_params.scale_factor = this->pano->scale_factor;
+
+        int rw = (rand() % (int)(this->pano->scene->width() - 1)) + 1;
+        int rh = (rand() % (int)(this->pano->scene->height() - 1)) + 1;
+
+        float norm_w = util::normalize(rw, norm_params);
+        float norm_h = util::normalize(rh, norm_params);
+
+        rect->setPos(QPointF(0.0, 0.0), QPointF(norm_w, norm_h), norm_params, RectMoveType::All);
+
+        // Save projection parameters to it
+        rect->projection_parameters.aperture  = this->pano->current_zoom_rad;
+        rect->projection_parameters.azimuth   = this->pano->position.azimuth;
+        rect->projection_parameters.elevation = this->pano->position.elevation;
+        rect->projection_parameters.scale_factor = this->pano->scale_factor;
+
+        // Add selection object to list
+        this->pano->rect_list.append(rect);
+
+        QGraphicsProxyWidget *proxyWidget = new QGraphicsProxyWidget();
+        proxyWidget->setWidget(rect);
+
+        // Add selection object to scene
+        this->pano->scene->addItem(proxyWidget);
     }
 
-}
-
-void MainWindow::on_horizontalSlider_sliderMoved(int position)
-{
-    this->pano->scale_factor = (position / 100.0);
-    this->pano->render();
-}
-
-void MainWindow::on_pushButton_2_clicked()
-{
-    QString fileName = QFileDialog::getSaveFileName(this,
-        tr("Save image"), "", tr("Image Files (*.png *.jpg *.bmp)"));
-
-    if(fileName.length() > 0)
+    for (int x = 0; x < 100; x++)
     {
-        this->pano->dest_image.save(fileName);
+        // Create selection object
+        ObjectRect* rect = new ObjectRect();
+
+        rect->setObjectType(ObjectType::NumberPlate);
+        rect->setRectType(RectType::Auto);
+        rect->setAutomaticStatus("Valid");
+        rect->setBlurred(true);
+
+        rect->id = this->pano->rect_list.length();
+
+        normalization_struct norm_params;
+        norm_params.pano_height = this->pano->height();
+        norm_params.pano_width = this->pano->width();
+        norm_params.scale_factor = this->pano->scale_factor;
+
+        int rw = (rand() % (int)(this->pano->scene->width() - 1)) + 1;
+        int rh = (rand() % (int)(this->pano->scene->height() - 1)) + 1;
+
+        float norm_w = util::normalize(rw, norm_params);
+        float norm_h = util::normalize(rh, norm_params);
+
+        rect->setPos(QPointF(0.0, 0.0), QPointF(norm_w, norm_h), norm_params, RectMoveType::All);
+
+        // Save projection parameters to it
+        rect->projection_parameters.aperture  = this->pano->current_zoom_rad;
+        rect->projection_parameters.azimuth   = this->pano->position.azimuth;
+        rect->projection_parameters.elevation = this->pano->position.elevation;
+        rect->projection_parameters.scale_factor = this->pano->scale_factor;
+
+        // Add selection object to list
+        this->pano->rect_list.append(rect);
+
+        QGraphicsProxyWidget *proxyWidget = new QGraphicsProxyWidget();
+        proxyWidget->setWidget(rect);
+
+        // Add selection object to scene
+        this->pano->scene->addItem(proxyWidget);
     }
-}
 
-void MainWindow::on_pushButton_3_clicked()
-{
-    int idx = 0;
-
-    foreach(ObjectRect* rect, this->pano->rect_list)
+    for (int x = 0; x < 30; x++)
     {
+        // Create selection object
+        ObjectRect* rect = new ObjectRect();
 
-        QString path = "/home/f0x/Bureau/crops/crop_" + QString::number(idx) + ".png";
-        this->pano->cropObject(rect).save(path, "PNG");
+        rect->setObjectType(ObjectType::Face);
+        rect->setRectType(RectType::Auto);
+        rect->setValidState(ObjectValidState::None);
+        rect->setAutomaticStatus("Ratio");
+        rect->setBlurred(false);
 
-        idx++;
+        normalization_struct norm_params;
+        norm_params.pano_height = this->pano->height();
+        norm_params.pano_width = this->pano->width();
+        norm_params.scale_factor = this->pano->scale_factor;
+
+        int rw = (rand() % (int)(this->pano->scene->width() - 1)) + 1;
+        int rh = (rand() % (int)(this->pano->scene->height() - 1)) + 1;
+
+        float norm_w = util::normalize(rw, norm_params);
+        float norm_h = util::normalize(rh, norm_params);
+
+        rect->setPos(QPointF(0.0, 0.0), QPointF(norm_w, norm_h), norm_params, RectMoveType::All);
+
+        rect->id = this->pano->rect_list.length();
+
+        // Save projection parameters to it
+        rect->projection_parameters.aperture  = this->pano->current_zoom_rad;
+        rect->projection_parameters.azimuth   = this->pano->position.azimuth;
+        rect->projection_parameters.elevation = this->pano->position.elevation;
+        rect->projection_parameters.scale_factor = this->pano->scale_factor;
+
+        // Add selection object to list
+        this->pano->rect_list.append(rect);
+
+        QGraphicsProxyWidget *proxyWidget = new QGraphicsProxyWidget();
+        proxyWidget->setWidget(rect);
+
+        // Add selection object to scene
+        this->pano->scene->addItem(proxyWidget);
     }
-}
 
-void MainWindow::on_pushButton_4_clicked()
-{
-    BatchView* w = new BatchView(this, this->pano);
-    w->show();
+    emit refreshLabels();
 }
-*/

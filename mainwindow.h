@@ -24,18 +24,6 @@ public:
 private slots:
     void refreshLabels();
 
-    /*
-    void on_pushButton_clicked();
-
-    void on_horizontalSlider_sliderMoved(int position);
-
-    void on_pushButton_2_clicked();
-
-    void on_pushButton_3_clicked();
-
-    void on_pushButton_4_clicked();
-    */
-
     void on_untypedButton_clicked();
 
     void on_facesButton_clicked();
@@ -43,6 +31,8 @@ private slots:
     void on_platesButton_clicked();
 
     void on_preInvalidatedButton_clicked();
+
+    void on_pushButton_clicked();
 
 private:
     Ui::MainWindow *ui;

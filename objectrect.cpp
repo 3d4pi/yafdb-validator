@@ -11,7 +11,7 @@ ObjectRect::ObjectRect(QWidget *parent) :
 
     this->setRectType(RectType::Manual);
     this->setObjectType(ObjectType::None);
-    this->setValid(false);
+    this->setValidState(ObjectValidState::None);
 
     this->autoStatus = "None";
     this->manualStatus = "None";
@@ -74,16 +74,24 @@ void ObjectRect::setManualStatus(QString value)
     this->manualStatus = value;
 }
 
-
-void ObjectRect::setValid(bool value)
+void ObjectRect::setValidState(int state)
 {
-    this->valid = value;
+    this->validstate = state;
 
-    if(value)
+    switch(state)
     {
-        this->ui->frame_2->setStyleSheet("QFrame#frame_2 {background-color :  rgba(0, 255, 0, 50);}");
-    } else {
-        this->ui->frame_2->setStyleSheet("QFrame#frame_2 {background-color :  rgba(255, 0, 0, 50);}");
+        case ObjectValidState::Valid:
+           this->ui->frame_2->setStyleSheet("QFrame#frame_2 {background-color :  rgba(0, 255, 0, 50);}");
+            this->valid = true;
+            break;
+        case ObjectValidState::Invalid:
+            this->ui->frame_2->setStyleSheet("QFrame#frame_2 {background-color :  rgba(255, 0, 0, 50);}");
+            this->valid = false;
+            break;
+        case ObjectValidState::None:
+            this->ui->frame_2->setStyleSheet("QFrame#frame_2 {background-color :  rgba(0, 0, 0, 0);}");
+            this->valid = false;
+            break;
     }
 }
 

@@ -32,7 +32,7 @@ public:
     void setObjectType(int type);
 
     void setBlurred(bool blur);
-    void setValid(bool value);
+    void setValidState(int state);
 
     void setPos(QPointF p1, QPointF p2, normalization_struct norm_params, int type = 1);
     void update(normalization_struct norm_params);
@@ -59,6 +59,7 @@ public:
     int objecttype;
     bool blurred;
     bool valid;
+    int validstate;
 
 private:
 

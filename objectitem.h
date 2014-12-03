@@ -26,7 +26,10 @@ public:
     void setType(int type);
     void setBlurred(bool value);
     void setSelected(bool value);
-    void setValid(bool value);
+
+    void setValidState(int state);
+
+    void setRectType(int type);
 
     void setAutomaticStatus(QString value);
     void setManualStatus(QString value);
@@ -39,7 +42,9 @@ public:
 
     int id;
     int type;
+    int recttype;
     bool valid;
+    int validstate;
     bool blurred;
 
     ~ObjectItem();

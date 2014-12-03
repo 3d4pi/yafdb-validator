@@ -69,8 +69,22 @@ void BatchView::populate(int batchviewmode)
                 }
                 break;
             case BatchViewMode::OnlyFaces:
+                if(rect->objecttype == ObjectType::Face &&
+                        (rect->autoStatus == "Valid" || rect->autoStatus == "None"))
+                {
+                    this->insertItem(rect);
+                }
+                break;
+            case BatchViewMode::OnlyUnapprovedFaces:
                 if(rect->objecttype == ObjectType::Face
-                        && (rect->autoStatus == "Valid" || rect->autoStatus == "None"))
+                        && rect->manualStatus == "None"
+                        && rect->autoStatus == "Valid")
+                {
+                    this->insertItem(rect);
+                }
+                break;
+            case BatchViewMode::OnlyNumberPlates:
+                if(rect->objecttype == ObjectType::NumberPlate)
                 {
                     this->insertItem(rect);
                 }
@@ -102,9 +116,21 @@ void BatchView::insertItem(ObjectRect *rect)
     object->setImage(pano->cropObject(rect));
     object->setType(rect->objecttype);
     object->setBlurred(rect->blurred);
-    object->setValid(rect->valid);
+    object->setValidState(rect->validstate);
     object->setManualStatus(rect->manualStatus);
     object->setAutomaticStatus(rect->autoStatus);
+
+    if(rect->autoStatus != "None")
+    {
+        if(rect->autoStatus == "Valid")
+        {
+            object->setRectType(ObjectItemRectType::Valid);
+        } else {
+            object->setRectType(ObjectItemRectType::Invalid);
+        }
+    } else {
+        object->setRectType(ObjectItemRectType::Manual);
+    }
 
     this->MainLayout->addWidget(object);
     this->elements.append(object);
@@ -199,7 +225,7 @@ void BatchView::on_ValidateButton_clicked()
     {
         if(item->selected)
         {
-            item->setValid(true);
+            item->setValidState(ObjectValidState::Valid);
             item->setManualStatus("Valid");
         }
     }
@@ -211,7 +237,7 @@ void BatchView::on_InvalidateButton_clicked()
     {
         if(item->selected)
         {
-            item->setValid(false);
+            item->setValidState(ObjectValidState::Invalid);
             item->setManualStatus("Invalid");
         }
     }
@@ -236,7 +262,7 @@ void BatchView::mergeResults()
             if(rect->id == item->id)
             {
 
-                rect->setValid(item->valid);
+                rect->setValidState(item->validstate);
                 rect->setBlurred(item->blurred);
                 rect->setObjectType(item->type);
                 rect->setManualStatus(item->manualStatus);

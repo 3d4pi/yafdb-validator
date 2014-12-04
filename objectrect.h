@@ -3,7 +3,6 @@
 
 #include <QWidget>
 
-#include "util.h"
 #include "types.h"
 
 struct projection_parameters_container {
@@ -34,10 +33,9 @@ public:
     void setBlurred(bool blur);
     void setValidState(int state);
 
-    void setPos(QPointF p1, QPointF p2, normalization_struct norm_params, int type = 1);
-    void update(normalization_struct norm_params);
+    void setPos(QPointF p1, QPointF p2, int type = 1);
 
-    void moveRect(QPointF point, normalization_struct norm_params, QPointF offset);
+    void moveRect(QPointF point, QPointF offset);
 
     void setAutomaticStatus(QString value);
     void setManualStatus(QString value);
@@ -68,8 +66,8 @@ private:
 
     Ui::ObjectRect *ui;
 
-    void setPosPoint1(QPointF point, normalization_struct norm_params);
-    void setPosPoint2(QPointF point, normalization_struct norm_params);
+    void setPosPoint1(QPointF point);
+    void setPosPoint2(QPointF point);
 
 };
 

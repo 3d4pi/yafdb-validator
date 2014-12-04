@@ -9,11 +9,14 @@ ObjectItem::ObjectItem(QWidget *parent) :
     ui->setupUi(this);
 
     this->ui->imageLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
-    this->setSize(QSize(128, 128));
     this->setSelected(false);
 
     this->manualStatus = "None";
     this->autoStatus = "None";
+
+    this->border_size = 4;
+
+    this->setSize(QSize(128, 128));
 }
 
 void ObjectItem::setId(int id)
@@ -44,9 +47,22 @@ bool ObjectItem::setImage(QImage image)
     pixmap = pixmap.scaled(QSize(w, h), Qt::KeepAspectRatio, Qt::SmoothTransformation);
     this->ui->imageLabel->setPixmap(pixmap);
 
-    this->ui->validFrame->resize(pixmap.width(), pixmap.height());
-    float pos_x = (this->width() - pixmap.width()) / 2;
-    float pos_y = (this->height() - pixmap.height()) / 2;
+    int corr_pixmap_w = pixmap.width();
+    int corr_pixmap_h = pixmap.height();
+
+    if(corr_pixmap_w >= (this->width() - this->border_size))
+    {
+        corr_pixmap_w = corr_pixmap_w - (this->border_size * 2);
+    }
+
+    if(corr_pixmap_h >= (this->height() - this->border_size))
+    {
+        corr_pixmap_h = corr_pixmap_h - (this->border_size * 2);
+    }
+
+    this->ui->validFrame->resize(corr_pixmap_w, corr_pixmap_h);
+    float pos_x = (this->width() - corr_pixmap_w) / 2;
+    float pos_y = (this->height() - corr_pixmap_h) / 2;
     this->ui->validFrame->move(pos_x, pos_y);
 
     return true;
@@ -74,9 +90,22 @@ bool ObjectItem::LoadImage(QString path)
 
     pixmap = pixmap.scaled(QSize(w, h), Qt::KeepAspectRatio, Qt::SmoothTransformation);
 
-    this->ui->validFrame->resize(pixmap.width(), pixmap.height());
-    float pos_x = (this->width() - pixmap.width()) / 2;
-    float pos_y = (this->height() - pixmap.height()) / 2;
+    int corr_pixmap_w = pixmap.width();
+    int corr_pixmap_h = pixmap.height();
+
+    if(corr_pixmap_w >= (this->width() - this->border_size))
+    {
+        corr_pixmap_w = corr_pixmap_w - (this->border_size * 2);
+    }
+
+    if(corr_pixmap_h >= (this->height() - this->border_size))
+    {
+        corr_pixmap_h = corr_pixmap_h - (this->border_size * 2);
+    }
+
+    this->ui->validFrame->resize(corr_pixmap_w, corr_pixmap_h);
+    float pos_x = (this->width() - corr_pixmap_w) / 2;
+    float pos_y = (this->height() - corr_pixmap_h) / 2;
     this->ui->validFrame->move(pos_x, pos_y);
 
     this->ui->imageLabel->setPixmap(pixmap);
@@ -105,9 +134,9 @@ void ObjectItem::setSize(QSize size)
     this->ui->typeLabel->setMinimumSize(label_w, label_h);
     this->ui->typeLabel->setMaximumSize(label_w, label_h);
     this->ui->typeLabel->resize(label_w, label_h);
+    this->ui->typeLabel->move(0 + this->border_size, 0 + this->border_size);
 
-    this->ui->typeLabel->move(0, 0);
-    this->ui->blurLabel->move((size.width() - this->ui->blurLabel->width()), (size.height() - this->ui->blurLabel->height()));
+    this->ui->blurLabel->move((size.width() - this->ui->blurLabel->width()) - this->border_size, (size.height() - this->ui->blurLabel->height()) - this->border_size);
 
     this->setImage(this->image);
 }
@@ -124,7 +153,7 @@ void ObjectItem::setType(int type)
         case ObjectType::NumberPlate:
             this->ui->typeLabel->setPixmap( QPixmap(":/resources/icons/Plate.png") );
             break;
-        case ObjectType::BlurOnly:
+        case ObjectType::ToBlur:
             this->ui->typeLabel->setPixmap( QPixmap(":/resources/icons/Blur.png") );
             break;
     }
@@ -139,21 +168,21 @@ void ObjectItem::setRectType(int type)
         case ObjectItemRectType::Valid:
             this->setStyleSheet(
                 "QLabel#imageLabel{"
-                "border: 4px solid rgb(0, 255, 0);"
+                "border: " + QString::number(this->border_size) + "px solid rgb(0, 255, 0);"
                 "}"
             );
             break;
         case ObjectItemRectType::Invalid:
             this->setStyleSheet(
                 "QLabel#imageLabel{"
-                "border: 4px solid rgb(255, 0, 0);"
+                "border: " + QString::number(this->border_size) + "px solid rgb(255, 0, 0);"
                 "}"
             );
             break;
         case ObjectItemRectType::Manual:
             this->setStyleSheet(
                 "QLabel#imageLabel{"
-                "border: 4px solid rgb(0, 255, 255);"
+                "border: " + QString::number(this->border_size) + "px solid rgb(0, 255, 255);"
                 "}"
             );
             break;

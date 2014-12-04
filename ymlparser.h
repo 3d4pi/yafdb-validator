@@ -3,6 +3,7 @@
 
 #include <opencv2/core/core.hpp>
 #include "detectedobject.h"
+#include "objectrect.h"
 #include <QString>
 #include <QList>
 
@@ -14,6 +15,7 @@ public:
     QList<DetectedObject> loadYML(QString path);
     void writeYML(QList<DetectedObject> objects, QString path);
 
+    DetectedObject ObjectRectToDetectedObject(ObjectRect* obj);
 
  private:
     DetectedObject toDetectedObject(cv::FileNodeIterator iterator);

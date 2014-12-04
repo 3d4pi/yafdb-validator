@@ -13,7 +13,7 @@ struct ObjectType
 {
     enum Type
     {
-       None = 0, Face = 1, NumberPlate = 2, BlurOnly = 3
+       None = 0, Face = 1, NumberPlate = 2, ToBlur = 3
     };
 };
 

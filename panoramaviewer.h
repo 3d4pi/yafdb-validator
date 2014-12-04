@@ -3,6 +3,7 @@
 
 #include <inter-all.h>
 #include <gnomonic-all.h>
+#include "g2g_point.h"
 
 #include <QGraphicsView>
 #include <QGraphicsScene>
@@ -16,7 +17,6 @@
 #include <QRubberBand>
 
 #include "objectrect.h"
-#include "util.h"
 #include "detectedobject.h"
 
 struct position_container {
@@ -33,6 +33,12 @@ struct position_container {
 
     float azimuth;
     float elevation;
+    float aperture;
+    float aperture_delta;
+
+    float old_aperture;
+    float old_azimuth;
+    float old_elevation;
 };
 
 struct create_container {
@@ -66,8 +72,6 @@ public:
     int mode;
 
     int   threads_count;
-    float current_zoom;
-    float current_zoom_rad;
 
     float scale_factor;
     float zoom_min;
@@ -93,6 +97,10 @@ public:
     QImage cropObject(ObjectRect* rect);
 
     void updateLabels();
+
+    void insertDetectedObject(DetectedObject obj);
+
+    void TestSquare(int x, int y);
 
 public slots:
 

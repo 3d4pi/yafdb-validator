@@ -54,6 +54,8 @@ private:
 
     void mousePressEvent(QMouseEvent *ev);
 
+    int border_size;
+
 };
 
 #endif // OBJECTITEM_H

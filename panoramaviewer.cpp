@@ -28,6 +28,8 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->position.start_elevation = 0.0;
     this->position.azimuth = 0.0;
     this->position.elevation = 0.0;
+    this->position.old_azimuth = 0.0;
+    this->position.old_elevation = 0.0;
 
     // Initialize default mode
     this->mode = Mode::None;
@@ -36,8 +38,9 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->scale_factor = 1.0;
     this->zoom_min = 20.0;
     this->zoom_max = 120.0;
-    this->current_zoom = 100.0;
-    this->current_zoom_rad = ( this->current_zoom * ( LG_PI / 180.0 ) );
+    this->position.aperture_delta = 100.0;
+    this->position.aperture = ( this->position.aperture_delta * ( LG_PI / 180.0 ) );;
+    this->position.old_aperture = this->position.aperture;
     this->threads_count = 1;
     this->pixmap_initialized = false;
     this->create_position.rect = NULL;
@@ -76,8 +79,8 @@ void PanoramaViewer::setup(float scale_factor, float zoom_min, float zoom_max, f
     this->scale_factor = scale_factor;
     this->zoom_min = zoom_min;
     this->zoom_max = zoom_max;
-    this->current_zoom = zoom_def;
-    this->current_zoom_rad = (zoom_def * (LG_PI / 180.0) );
+    this->position.aperture_delta = zoom_def;
+    this->position.aperture = (zoom_def * (LG_PI / 180.0) );
     this->threads_count = threads;
 }
 
@@ -100,8 +103,8 @@ void PanoramaViewer::updateScene(float azimuth, float elevation, float zoom)
     int DEST_WIDTH = WIDTH* scale_factor;
     int DEST_HEIGHT = HEIGHT * scale_factor;
 
-    float AZIMUTH = azimuth * ( LG_PI / 180.0 );
-    float ELEVATION = elevation * ( LG_PI / 180.0 );
+    float AZIMUTH = azimuth;
+    float ELEVATION = elevation;
 
     this->dest_image = QImage (DEST_WIDTH, DEST_HEIGHT, QImage::Format_RGB32);
 
@@ -139,14 +142,22 @@ void PanoramaViewer::updateScene(float azimuth, float elevation, float zoom)
 
     this->scene->setSceneRect(this->dest_image_map.rect());
     this->fitInView(this->dest_image_map.rect());
+
 }
 
-void PanoramaViewer::render()
+/*
+ * void PanoramaViewer::render()
 {
+    int before_w = this->dest_image_map.width();
+    int before_h = this->dest_image_map.width();
+    float before_az = this->position.old_azimuth;
+    float before_el = this->position.old_elevation;
+    float before_ap = this->position.old_aperture;
+
     this->updateScene(
         this->position.azimuth,
         this->position.elevation,
-        this->current_zoom_rad
+        this->position.aperture
     );
 
     normalization_struct norm_params;
@@ -154,10 +165,128 @@ void PanoramaViewer::render()
     norm_params.pano_height = this->scene->height();
     norm_params.scale_factor = this->scale_factor;
 
+    int after_w = this->dest_image_map.width();
+    int after_h = this->dest_image_map.width();
+    float after_az = this->position.azimuth;
+    float after_el = this->position.elevation;
+    float after_ap = this->position.aperture;
+
+    foreach(ObjectRect* rect, this->rect_list)
+    {
+        QPointF denorm_p1 = util::denormalize(rect->point_1, norm_params);
+        QPointF denorm_p2 = util::denormalize(rect->point_2, norm_params);
+
+        double p1_x = 0;
+        double p1_y = 0;
+        double p2_x = 0;
+        double p2_y = 0;
+
+        g2g_point(before_w,
+                  before_h,
+                  before_az,
+                  before_el,
+                  before_ap,
+                  denorm_p1.x(),
+                  denorm_p1.y(),
+
+                  after_w,
+                  after_h,
+                  after_az,
+                  after_el,
+                  after_ap,
+                  &p1_x,
+                  &p1_y);
+
+        g2g_point(before_w,
+                  before_h,
+                  before_az,
+                  before_el,
+                  before_ap,
+                  denorm_p2.x(),
+                  denorm_p2.y(),
+
+                  after_w,
+                  after_h,
+                  after_az,
+                  after_el,
+                  after_ap,
+                  &p2_x,
+                  &p2_y);
+
+        QPointF renorm_p1 = util::normalize(denorm_p1, norm_params);
+        QPointF renorm_p2 = util::normalize(denorm_p2, norm_params);
+
+        rect->setPos(renorm_p1, renorm_p2, norm_params, RectMoveType::All);
+
+        qDebug() << denorm_p1;
+        qDebug() << renorm_p1;
+    }
+
+
     foreach(ObjectRect* rect, this->rect_list)
     {
         rect->update(norm_params);
     }
+}
+
+*/
+void PanoramaViewer::render()
+{
+    foreach(ObjectRect* rect, this->rect_list)
+    {
+        double p1_x = 0.0;
+        double p1_y = 0.0;
+        double p2_x = 0.0;
+        double p2_y = 0.0;
+
+        int state = g2g_point(this->dest_image_map.width(),
+                  this->dest_image_map.height(),
+                  this->position.old_azimuth,
+                  this->position.old_elevation,
+                  this->position.old_aperture,
+                  rect->point_1.x(),
+                  rect->point_1.y(),
+
+                  this->dest_image_map.width(),
+                  this->dest_image_map.height(),
+                  this->position.azimuth,
+                  this->position.elevation,
+                  this->position.aperture,
+                  &p1_x,
+                  &p1_y);
+
+        int state2 = g2g_point(this->dest_image_map.width(),
+                  this->dest_image_map.height(),
+                  this->position.old_azimuth,
+                  this->position.old_elevation,
+                  this->position.old_aperture,
+                  rect->point_2.x(),
+                  rect->point_2.y(),
+
+                  this->dest_image_map.width(),
+                  this->dest_image_map.height(),
+                  this->position.azimuth,
+                  this->position.elevation,
+                  this->position.aperture,
+                  &p2_x,
+                  &p2_y);
+
+        if(state || state2)
+        {
+            rect->setVisible(true);
+        } else {
+            rect->setVisible(false);
+        }
+
+        rect->setPos(QPointF(p1_x, p1_y), QPointF(p2_x, p2_y), RectMoveType::All);
+    }
+
+    this->updateScene(
+        this->position.azimuth,
+        this->position.elevation,
+        this->position.aperture
+    );
+
 }
 
 // Function to update view of current scene
@@ -175,11 +304,9 @@ void PanoramaViewer::setView(float azimuth, float elevation)
 void PanoramaViewer::setZoom(float zoom_level)
 {
 
-    // Clamp input zoom value
-    float zoom_clamped = clamp(zoom_level, this->zoom_min, this->zoom_max);
-
     // Convert zoom value to radians
-    this->current_zoom_rad = ( zoom_clamped * ( LG_PI / 180.0 ) );
+    this->position.old_aperture = this->position.aperture;
+    this->position.aperture = ( zoom_level * ( LG_PI / 180.0 ) );
 
     // Render scene
     this->render();
@@ -192,10 +319,13 @@ void PanoramaViewer::wheelEvent(QWheelEvent* event)
     int delta = (event->delta() / 120);
 
     // Update current zoom level
-    this->current_zoom -= (delta * 1.5);
+    float old_zoom = this->position.aperture_delta;
+    this->position.aperture_delta -= (delta * 1.5);
+    this->position.aperture_delta = clamp(this->position.aperture_delta, this->zoom_min, this->zoom_max);
 
     // Apply zoom level
-    this->setZoom(this->current_zoom);
+    if(this->position.aperture_delta != old_zoom)
+        this->setZoom(this->position.aperture_delta);
 }
 
 // Mouse buttons click handler
@@ -206,13 +336,8 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
     int MouseX = event->x();
     int MouseY = event->y();
 
-    normalization_struct norm_params;
-    norm_params.pano_width = this->scene->width();
-    norm_params.pano_height = this->scene->height();
-    norm_params.scale_factor = this->scale_factor;
-
     // Store normalized mouse coords
-    QPointF mouse_norm = util::normalize(QPointF(event->pos()), norm_params);
+    QPointF mouse_scene = this->mapToScene(event->pos());
 
     // Check presence of left click
     if(event->buttons() & Qt::LeftButton)
@@ -228,8 +353,8 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
         this->position.start_y = MouseY;
 
          // Store base directions (Used to determine offset to move in panorama later)
-        this->position.start_azimuth = this->position.azimuth;
-        this->position.start_elevation = this->position.elevation;
+        this->position.start_azimuth = this->position.azimuth / (LG_PI / 180.0);
+        this->position.start_elevation = this->position.elevation / (LG_PI / 180.0);
 
     }
     // Check presence of right click
@@ -247,11 +372,6 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
            // Convert object to ObjectRect
             this->selected_rect = qobject_cast<ObjectRect*>(widget_proxy->widget());
 
-            qDebug() << util::denormalize(this->selected_rect->point_1, norm_params);
-            qDebug() << util::denormalize(this->selected_rect->point_2, norm_params);
-            qDebug() << util::denormalize(this->selected_rect->point_3, norm_params);
-            qDebug() << util::denormalize(this->selected_rect->point_4, norm_params);
-
         }
 
         if(this->selected_rect)
@@ -264,8 +384,8 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
 
             // Determine mouse click pointer offset
             this->position.offset = QPointF(
-                            mouse_norm.x() - this->selected_rect->point_1.x(),
-                            mouse_norm.y() - this->selected_rect->point_1.y()
+                            mouse_scene.x() - this->selected_rect->point_1.x(),
+                            mouse_scene.y() - this->selected_rect->point_1.y()
                         );
 
             // Switch in creation mode
@@ -314,13 +434,8 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
     int MouseX = event->x();
     int MouseY = event->y();
 
-    normalization_struct norm_params;
-    norm_params.pano_width = this->scene->width();
-    norm_params.pano_height = this->scene->height();
-    norm_params.scale_factor = this->scale_factor;
-
     // Store normalized mouse coords
-    QPointF mouse_norm = util::normalize(QPointF(event->pos()), norm_params);
+    QPointF mouse_scene = this->mapToScene(event->pos());
 
     // Moving mouse section (move in panorama)
     if(this->mode == Mode::None)
@@ -335,12 +450,15 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
         int delta_y = (MouseY - this->position.start_y);
 
         // Apply delta to azimuth and elevation
-        float azimuth   = (this->position.start_azimuth   - ( (delta_x * this->current_zoom_rad) * 0.1 ) );
-        float elevation = (this->position.start_elevation + ( (delta_y * this->current_zoom_rad) * 0.1 ) );
+        float azimuth   = (this->position.start_azimuth   - ( (delta_x * this->position.aperture) * 0.1 ) );
+        float elevation = (this->position.start_elevation + ( (delta_y * this->position.aperture) * 0.1 ) );
+
+        this->position.old_azimuth = this->position.azimuth;
+        this->position.old_elevation = this->position.elevation;
 
         // Clamp azimuth and elevation
-        this->position.azimuth   = clampRad(azimuth, -360.0, 360.0);
-        this->position.elevation = clamp(elevation, -90.0, 90.0);
+        this->position.azimuth   = clampRad(azimuth, -360.0, 360.0) * (LG_PI / 180.0);
+        this->position.elevation = clampRad(elevation, -90.0, 90.0) * (LG_PI / 180.0);
 
         // Render scene
         this->render();
@@ -365,7 +483,7 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
             this->create_position.rect->id = this->rect_list.length();
 
             // Save projection parameters to it
-            this->create_position.rect->projection_parameters.aperture  = this->current_zoom_rad;
+            this->create_position.rect->projection_parameters.aperture  = this->position.aperture;
             this->create_position.rect->projection_parameters.azimuth   = this->position.azimuth;
             this->create_position.rect->projection_parameters.elevation = this->position.elevation;
             this->create_position.rect->projection_parameters.scale_factor = this->scale_factor;
@@ -381,9 +499,8 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
 
             // Move selection object to mouse coords
             this->create_position.rect->setPos(
-                            mouse_norm,
-                            mouse_norm,
-                            norm_params
+                            mouse_scene,
+                            mouse_scene
                         );
 
             // Refresh main window labels
@@ -393,8 +510,7 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
 
             this->create_position.rect->setPos(
                             this->create_position.rect->point_1,
-                            mouse_norm,
-                            norm_params,
+                            mouse_scene,
                             RectMoveType::Only_Point2
                         );
 
@@ -407,8 +523,10 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
         }
     } else if(this->mode == Mode::MoveCreate)
     {
-
-        this->selected_rect->moveRect(mouse_norm, norm_params, this->position.offset);
+        if(this->selected_rect->autoStatus == "None")
+        {
+            this->selected_rect->moveRect(mouse_scene, this->position.offset);
+        }
 
     }
 }
@@ -438,23 +556,52 @@ void PanoramaViewer::resizeEvent(QResizeEvent *)
 QImage PanoramaViewer::cropObject(ObjectRect* rect)
 {
 
-    // Build normalisation parameters structure
-    normalization_struct norm_params;
-    norm_params.pano_width = this->scene->width();
-    norm_params.pano_height = this->scene->height();
-    norm_params.scale_factor = this->scale_factor;
-
-    // Denormalize rect bounds
-    QPointF point1_denorm = util::denormalize(rect->point_1, norm_params);
-    QPointF point2_denorm = util::denormalize(rect->point_2, norm_params);
-
     // Convert points to a QRect and deduce borders sizes
     QRect rect_sel(
-                    QPoint(point1_denorm.x() + 4, point1_denorm.y() + 4),
-                    QPoint(point2_denorm.x() - 4, point2_denorm.y() - 4)
+                    QPoint(rect->point_1.x() + 4, rect->point_1.y() + 4),
+                    QPoint(rect->point_2.x() - 4, rect->point_2.y() - 4)
                 );
 
     // Crop and return image
     return this->dest_image.copy(rect_sel);
 
+}
+
+void PanoramaViewer::insertDetectedObject(DetectedObject obj)
+{
+    // Create selection object
+    ObjectRect* rect = new ObjectRect();
+
+    rect->setObjectType(ObjectType::Face);
+    rect->setRectType(RectType::Auto);
+    rect->setValidState(ObjectValidState::None);
+    rect->setAutomaticStatus("Ratio");
+    rect->setBlurred(false);
+
+    // Save projection parameters to it
+    rect->projection_parameters.aperture  = obj.params.aperture;
+    rect->projection_parameters.azimuth   = obj.params.azimuth;
+    rect->projection_parameters.elevation = obj.params.elevation;
+    rect->projection_parameters.scale_factor = 0.5;
+
+    rect->setPos(obj.area.p1, obj.area.p2, RectMoveType::All);
+
+    rect->id = this->rect_list.length();
+
+    // Add selection object to list
+    this->rect_list.append(rect);
+
+    QGraphicsProxyWidget *proxyWidget = new QGraphicsProxyWidget();
+    proxyWidget->setWidget(rect);
+
+    // Add selection object to scene
+    this->scene->addItem(proxyWidget);
+}
+
+void PanoramaViewer::TestSquare(int x, int y)
+{
+    QPainter painter(&this->dest_image_map);
+    painter.setPen(Qt::blue);
+    painter.setBrush(QBrush(Qt::black));
+    painter.drawRect(0, 0, 100, 100);
 }

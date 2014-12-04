@@ -95,11 +95,9 @@ void ObjectRect::setValidState(int state)
     }
 }
 
-void ObjectRect::setPosPoint1(QPointF point, normalization_struct norm_params)
+void ObjectRect::setPosPoint1(QPointF point)
 {
-    QPointF point_denormalized = util::denormalize(point, norm_params);
-
-    this->move(point_denormalized.x(), point_denormalized.y());
+    this->move(point.x(), point.y());
 
     this->point_1 = point;
 
@@ -107,23 +105,19 @@ void ObjectRect::setPosPoint1(QPointF point, normalization_struct norm_params)
     this->point_4 = (QPointF(this->point_1.x(), this->point_2.y()));
 }
 
-void ObjectRect::setPosPoint2(QPointF point, normalization_struct norm_params)
+void ObjectRect::setPosPoint2(QPointF point)
 {
-    QPointF point_denormalized = util::denormalize(point, norm_params);
-    QPointF point1_denormalized = util::denormalize(this->point_1, norm_params);
-
-    int calc_w = (point_denormalized.x() - point1_denormalized.x());
-    int calc_h = (point_denormalized.y() - point1_denormalized.y());
+    int calc_w = (point.x() - this->point_1.x());
+    int calc_h = (point.y() - this->point_1.y());
 
     this->resize(calc_w, calc_h);
 
     this->point_2 = point;
-
     this->point_3 = (QPointF(this->point_2.x(), this->point_1.y()));
     this->point_4 = (QPointF(this->point_1.x(), this->point_2.y()));
 }
 
-void ObjectRect::moveRect(QPointF point, normalization_struct norm_params, QPointF offset)
+void ObjectRect::moveRect(QPointF point, QPointF offset)
 {
 
     // Center point by clicking offset
@@ -133,44 +127,32 @@ void ObjectRect::moveRect(QPointF point, normalization_struct norm_params, QPoin
                 );
 
     // Move object point 1
-    this->setPosPoint1(centered_point, norm_params);
-
-    // Denormalize destination point 2
-    QPointF point1_denormalized = util::denormalize(this->point_1, norm_params, 1);
+    this->setPosPoint1(centered_point);
 
     // Compute destination point 2 location
     QPointF size(
-                point1_denormalized.x() + (this->width() / norm_params.scale_factor),
-                point1_denormalized.y() + (this->height() / norm_params.scale_factor)
+                this->point_1.x() + (this->width()),
+                this->point_1.y() + (this->height())
             );
 
-    // Re-normalize modified destination point 2
-    QPointF size_norm = util::normalize(size, norm_params);
-
     // Update position of point 2
-    this->point_2 = size_norm;
+    this->point_2 = size;
 
 }
 
-void ObjectRect::update(normalization_struct norm_params)
-{
-    this->setPosPoint1(this->point_1, norm_params);
-    this->setPosPoint2(this->point_2, norm_params);
-}
-
-void ObjectRect::setPos(QPointF p1, QPointF p2, normalization_struct norm_params, int mode)
+void ObjectRect::setPos(QPointF p1, QPointF p2, int mode)
 {
     switch(mode)
     {
         case RectMoveType::All:
-            this->setPosPoint1(p1, norm_params);
-            this->setPosPoint2(p2, norm_params);
+            this->setPosPoint1(p1);
+            this->setPosPoint2(p2);
             break;
         case RectMoveType::Only_Point1:
-            this->setPosPoint1(p1, norm_params);
+            this->setPosPoint1(p1);
             break;
         case RectMoveType::Only_Point2:
-            this->setPosPoint2(p2, norm_params);
+            this->setPosPoint2(p2);
             break;
     }
 }

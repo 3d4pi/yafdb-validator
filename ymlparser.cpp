@@ -75,6 +75,11 @@ QList<DetectedObject> YMLParser::loadYML(QString path)
         fs["gnomonic"]["aperture_x"] >> object.gnomonic.aperture_x;
         fs["gnomonic"]["aperture_y"] >> object.gnomonic.aperture_y;
 
+        // Parse projection parameters
+        fs["params"]["azimuth"] >> object.params.azimuth;
+        fs["params"]["elevation"] >> object.params.elevation;
+        fs["params"]["aperture"] >> object.params.aperture;
+
         // Parse source file name
         std::string source;
         fs["source"] >> source;
@@ -105,6 +110,13 @@ void YMLParser::writeItem(cv::FileStorage &fs, DetectedObject obj)
         fs << "system" << obj.area.system;
         fs << "p1" << cv::Point2d(obj.area.p1.x(), obj.area.p1.y());
         fs << "p2" << cv::Point2d(obj.area.p2.x(), obj.area.p2.y());
+    fs << "}";
+
+    // Write params
+    fs << "params" << "{";
+        fs << "azimuth" << obj.params.azimuth;
+        fs << "elevation" << obj.params.elevation;
+        fs << "aperture" << obj.params.aperture;
     fs << "}";
 
     // Write status tags
@@ -161,4 +173,37 @@ void YMLParser::writeYML(QList<DetectedObject> objects, QString path)
 
     // Close array
     fs << "]";
+}
+
+DetectedObject YMLParser::ObjectRectToDetectedObject(ObjectRect* obj)
+{
+    DetectedObject detected;
+
+    detected.area.p1 = obj->point_1;
+    detected.area.p2 = obj->point_2;
+
+    detected.manualStatus = obj->manualStatus;
+    detected.autoStatus = obj->autoStatus;
+
+    detected.params.azimuth = obj->projection_parameters.azimuth;
+    detected.params.elevation = obj->projection_parameters.elevation;
+    detected.params.aperture = obj->projection_parameters.aperture;
+
+    switch(obj->objecttype)
+    {
+        case ObjectType::Face:
+            detected.className = "Face";
+            break;
+
+        case ObjectType::NumberPlate:
+            detected.className = "NumberPlate";
+            break;
+
+        case ObjectType::ToBlur:
+            detected.className = "ToBlur";
+            break;
+
+    }
+
+    return detected;
 }

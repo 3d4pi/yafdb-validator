@@ -19,8 +19,8 @@ SOURCES += main.cpp \
     flowlayout.cpp \
     objectitem.cpp \
     objectrect.cpp \
-    util.cpp \
-    ymlparser.cpp
+    ymlparser.cpp \
+    g2g_point.cpp
 
 HEADERS  += mainwindow.h \
     panoramaviewer.h \
@@ -29,9 +29,9 @@ HEADERS  += mainwindow.h \
     flowlayout.h \
     objectitem.h \
     objectrect.h \
-    util.h \
     types.h \
-    ymlparser.h
+    ymlparser.h \
+    g2g_point.h
 
 FORMS    += mainwindow.ui \
     batchview.ui \

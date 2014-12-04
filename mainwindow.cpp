@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Configure panorama viewer
     this->pano->setup(
-        0.6,   // Image scale factor
+        0.5,   // Image scale factor
         20.0,  // Minimum zoom
         100.0, // Maximum zoom
         100.0, // Default zoom level
@@ -199,7 +199,7 @@ void MainWindow::on_pushButton_clicked()
 {
     srand (time(NULL));
 
-    for (int x = 0; x < 100; x++)
+   /* for (int x = 0; x < 100; x++)
     {
         // Create selection object
         ObjectRect* rect = new ObjectRect();
@@ -322,7 +322,64 @@ void MainWindow::on_pushButton_clicked()
 
         // Add selection object to scene
         this->pano->scene->addItem(proxyWidget);
-    }
+    }*/
 
     emit refreshLabels();
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    YMLParser parser;
+
+    /*
+    QList<DetectedObject> list;
+
+    foreach(ObjectRect* rect, this->pano->rect_list)
+    {
+        DetectedObject dobj = parser.ObjectRectToDetectedObject(rect);
+        list.append(dobj);
+    }
+
+    parser.writeYML(list, "/home/f0x/Bureau/out.yml");
+    */
+
+    QList<DetectedObject> list = parser.loadYML("/home/f0x/Bureau/out.yml");
+
+    foreach(DetectedObject obj, list)
+    {
+        this->pano->insertDetectedObject(obj);
+    }
+
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    this->pano->position.old_azimuth = this->pano->position.azimuth;
+
+    this->pano->position.azimuth += 1 * (LG_PI / 180);
+    this->pano->render();
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    this->pano->position.old_azimuth = this->pano->position.azimuth;
+
+    this->pano->position.azimuth -= 1 * (LG_PI / 180);
+    this->pano->render();
+}
+
+void MainWindow::on_pushButton_5_clicked()
+{
+    this->pano->position.old_elevation = this->pano->position.elevation;
+
+    this->pano->position.elevation += 1 * (LG_PI / 180);
+    this->pano->render();
+}
+
+void MainWindow::on_pushButton_6_clicked()
+{
+    this->pano->position.old_elevation = this->pano->position.elevation;
+
+    this->pano->position.elevation -= 1 * (LG_PI / 180);
+    this->pano->render();
 }

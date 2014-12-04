@@ -17,6 +17,12 @@ public:
       int aperture_y;
     } gnomonic;
 
+    struct params_struct {
+      float azimuth;
+      float elevation;
+      float aperture;
+    } params;
+
     QString source;
 
     QString className;

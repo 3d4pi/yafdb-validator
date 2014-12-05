@@ -53,6 +53,9 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     // Connect signal for labels refresh
     connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels()));
 
+    this->polytest = new ObjectRect2();
+    this->scene->addItem(this->polytest);
+
 }
 
 inline float clamp(float x, float a, float b)
@@ -236,11 +239,11 @@ void PanoramaViewer::render()
 
     foreach(ObjectRect* rect, this->rect_list)
     {
-        foreach(QGraphicsPolygonItem* item, this->poly_list)
+        /*foreach(QGraphicsPolygonItem* item, this->poly_list)
         {
             delete item;
             this->poly_list.removeOne(item);
-        }
+        }*/
 
         double p1_x = 0.0;
         double p1_y = 0.0;
@@ -315,22 +318,14 @@ void PanoramaViewer::render()
                   &p4_x,
                   &p4_y);
 
-        double rad = 1;
-        QPen pen;
-        pen.setColor(Qt::red);
-        pen.setWidth(1);
-
-
         if(state && state2 && state3 && state4)
         {
-            ObjectRect2* poly = new ObjectRect2();
-            poly->setPoints(QPointF( p1_x, p1_y ),
+            this->polytest->setPoints(QPointF( p1_x, p1_y ),
                             QPointF( p3_x, p3_y ),
                             QPointF( p2_x, p2_y ),
                             QPointF( p4_x, p4_y ));
 
-            this->poly_list.append(poly);
-            this->scene->addItem(poly);
+            //this->poly_list.append(poly);
         }
 
         rect->setPos(QPointF(p1_x, p1_y), QPointF(p2_x, p2_y), QPointF(p3_x, p3_y), QPointF(p4_x, p4_y), RectMoveType::All);

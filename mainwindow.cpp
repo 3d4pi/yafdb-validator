@@ -386,16 +386,6 @@ void MainWindow::on_pushButton_6_clicked()
 
 void MainWindow::on_pushButton_7_clicked()
 {
-    QGraphicsRectItem* item = new QGraphicsRectItem(50, 50, 60, 60);
-
-    QGraphicsPolygonItem *polygonItem = new QGraphicsPolygonItem( QPolygonF( QVector<QPointF>() << QPointF( 10, 10 ) << QPointF( 0, 90 ) << QPointF( 40, 70 ) << QPointF( 80, 110 )), 0);
-
-    QPen pen;
-    pen.setColor(Qt::red);
-    pen.setWidth(2);
-
-    polygonItem->setPen( pen );
-    polygonItem->setBrush( Qt::yellow );
-
-    this->pano->scene->addItem(polygonItem);
+    this->pano->polytest->setObjectRectType( ObjectRectType::Invalid );
+    this->pano->polytest->setObjectRectState( ObjectRectState::Invalid );
 }

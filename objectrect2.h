@@ -3,10 +3,13 @@
 
 #include <QGraphicsPolygonItem>
 #include <QPen>
+#include <QPaintEvent>
+#include <QDebug>
 #include "types.h"
 
 class ObjectRect2 : public QGraphicsPolygonItem
 {
+
 public:
     ObjectRect2();
 
@@ -27,6 +30,10 @@ public:
     // Size setters
     void setSize(QSizeF size);
 
+    // Object parameters
+    void setObjectRectType(int type);
+    void setObjectRectState(int state);
+
     // Size getters
     QSizeF getSize();
 
@@ -37,6 +44,16 @@ private:
 
     // Polygon container
     QPolygonF polygon;
+
+    // Pen container
+    QPen* pen;
+
+    // Brush container
+    QBrush* brush;
+
+    // Private functions
+    void render();
+
 };
 
 #endif // OBJECTRECT2_H

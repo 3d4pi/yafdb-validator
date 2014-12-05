@@ -9,10 +9,14 @@ ObjectRect2::ObjectRect2()
     this->points.append(QPointF(0.0, 0.0));
 
     // Default pen setup
-    QPen pen;
-    pen.setColor( Qt::red );
-    pen.setWidth( 2 );
-    this->setPen( pen );
+    this->pen = new QPen(QColor(0, 255, 255, 255), 4);
+    this->brush = new QBrush(QColor(0, 255, 0, 50), Qt::SolidPattern);
+
+    this->setPen( * this->pen );
+    this->setBrush( * this->brush );
+
+    // Cal rendering procedure
+    this->render();
 }
 
 void ObjectRect2::setPoint1(QPointF point)
@@ -20,6 +24,9 @@ void ObjectRect2::setPoint1(QPointF point)
     this->points[0] = point;
     this->polygon = QPolygonF( this->points );
     this->setPolygon( this->polygon );
+
+    // Cal rendering procedure
+    this->render();
 }
 
 void ObjectRect2::setPoint2(QPointF point)
@@ -27,6 +34,9 @@ void ObjectRect2::setPoint2(QPointF point)
     this->points[1] = point;
     this->polygon = QPolygonF( this->points );
     this->setPolygon( this->polygon );
+
+    // Cal rendering procedure
+    this->render();
 }
 
 void ObjectRect2::setPoint3(QPointF point)
@@ -34,6 +44,9 @@ void ObjectRect2::setPoint3(QPointF point)
     this->points[2] = point;
     this->polygon = QPolygonF( this->points );
     this->setPolygon( this->polygon );
+
+    // Cal rendering procedure
+    this->render();
 }
 
 void ObjectRect2::setPoint4(QPointF point)
@@ -41,6 +54,9 @@ void ObjectRect2::setPoint4(QPointF point)
     this->points[3] = point;
     this->polygon = QPolygonF( this->points );
     this->setPolygon( this->polygon );
+
+    // Cal rendering procedure
+    this->render();
 }
 
 QPointF ObjectRect2::getPoint1()
@@ -75,6 +91,9 @@ void ObjectRect2::setPoints(QPointF p1, QPointF p2, QPointF p3, QPointF p4)
     this->setPoint2( p2 );
     this->setPoint3( p3 );
     this->setPoint4( p4 );
+
+    // Cal rendering procedure
+    this->render();
 }
 
 void ObjectRect2::setSize(QSizeF size)
@@ -94,6 +113,9 @@ void ObjectRect2::setSize(QSizeF size)
 
     // Update positions
     this->setPoints( new_p1, new_p2, new_p3, new_p4 );
+
+    // Cal rendering procedure
+    this->render();
 }
 
 QSizeF ObjectRect2::getSize()
@@ -108,4 +130,44 @@ QSizeF ObjectRect2::getSize()
     size.setHeight( p4.y() -  p1.y());
 
     return size;
+}
+
+void ObjectRect2::setObjectRectType(int type)
+{
+    switch(type)
+    {
+        case ObjectRectType::Manual:
+            this->pen->setColor( QColor(0, 255, 255, 255) );
+            break;
+        case ObjectRectType::Valid:
+            this->pen->setColor( QColor(0, 255, 0, 255) );
+            break;
+        case ObjectRectType::Invalid:
+            this->pen->setColor( QColor(255, 0, 0, 255) );
+            break;
+    }
+
+    // Update pen
+    this->setPen( * this->pen );
+}
+
+void ObjectRect2::setObjectRectState(int state)
+{
+    switch(state)
+    {
+        case ObjectRectState::Valid:
+            this->brush->setColor( QColor(0, 255, 0, 50) );
+            break;
+        case ObjectRectState::Invalid:
+            this->brush->setColor( QColor(255, 0, 0, 50) );
+            break;
+    }
+
+    // Update brush
+    this->setBrush( * this->brush );
+}
+
+void ObjectRect2::render()
+{
+    qDebug() << "Render";
 }

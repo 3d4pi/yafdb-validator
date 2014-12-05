@@ -78,6 +78,8 @@ public:
     float zoom_min;
     float zoom_max;
 
+    ObjectRect2* polytest;
+
     QList<QGraphicsPolygonItem*> poly_list;
 
     QGraphicsPixmapItem* last_pixmap;

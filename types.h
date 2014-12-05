@@ -9,6 +9,22 @@ struct ObjectItemRectType
     };
 };
 
+struct ObjectRectType
+{
+    enum Type
+    {
+       Valid = 1, Invalid = 2, Manual = 3
+    };
+};
+
+struct ObjectRectState
+{
+    enum Type
+    {
+       Valid = 1, Invalid = 2
+    };
+};
+
 struct ObjectType
 {
     enum Type

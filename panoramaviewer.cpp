@@ -232,12 +232,24 @@ void PanoramaViewer::updateScene(float azimuth, float elevation, float zoom)
 */
 void PanoramaViewer::render()
 {
+
+
     foreach(ObjectRect* rect, this->rect_list)
     {
+        foreach(QGraphicsPolygonItem* item, this->poly_list)
+        {
+            delete item;
+            this->poly_list.removeOne(item);
+        }
+
         double p1_x = 0.0;
         double p1_y = 0.0;
         double p2_x = 0.0;
         double p2_y = 0.0;
+        double p3_x = 0.0;
+        double p3_y = 0.0;
+        double p4_x = 0.0;
+        double p4_y = 0.0;
 
         int state = g2g_point(this->dest_image_map.width(),
                   this->dest_image_map.height(),
@@ -271,14 +283,57 @@ void PanoramaViewer::render()
                   &p2_x,
                   &p2_y);
 
-        if(state || state2)
+        int state3 = g2g_point(this->dest_image_map.width(),
+                  this->dest_image_map.height(),
+                  this->position.old_azimuth,
+                  this->position.old_elevation,
+                  this->position.old_aperture,
+                  rect->point_3.x(),
+                  rect->point_3.y(),
+
+                  this->dest_image_map.width(),
+                  this->dest_image_map.height(),
+                  this->position.azimuth,
+                  this->position.elevation,
+                  this->position.aperture,
+                  &p3_x,
+                  &p3_y);
+
+        int state4 = g2g_point(this->dest_image_map.width(),
+                  this->dest_image_map.height(),
+                  this->position.old_azimuth,
+                  this->position.old_elevation,
+                  this->position.old_aperture,
+                  rect->point_4.x(),
+                  rect->point_4.y(),
+
+                  this->dest_image_map.width(),
+                  this->dest_image_map.height(),
+                  this->position.azimuth,
+                  this->position.elevation,
+                  this->position.aperture,
+                  &p4_x,
+                  &p4_y);
+
+        double rad = 1;
+        QPen pen;
+        pen.setColor(Qt::red);
+        pen.setWidth(1);
+
+
+        if(state && state2 && state3 && state4)
         {
-            rect->setVisible(true);
-        } else {
-            rect->setVisible(false);
+            ObjectRect2* poly = new ObjectRect2();
+            poly->setPoints(QPointF( p1_x, p1_y ),
+                            QPointF( p3_x, p3_y ),
+                            QPointF( p2_x, p2_y ),
+                            QPointF( p4_x, p4_y ));
+
+            this->poly_list.append(poly);
+            this->scene->addItem(poly);
         }
 
-        rect->setPos(QPointF(p1_x, p1_y), QPointF(p2_x, p2_y), RectMoveType::All);
+        rect->setPos(QPointF(p1_x, p1_y), QPointF(p2_x, p2_y), QPointF(p3_x, p3_y), QPointF(p4_x, p4_y), RectMoveType::All);
     }
 
     this->updateScene(
@@ -331,7 +386,6 @@ void PanoramaViewer::wheelEvent(QWheelEvent* event)
 // Mouse buttons click handler
 void PanoramaViewer::mousePressEvent(QMouseEvent* event)
 {
-
     // Store mouse coords
     int MouseX = event->x();
     int MouseY = event->y();

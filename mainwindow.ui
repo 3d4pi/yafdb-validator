@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>909</width>
+    <width>1185</width>
     <height>497</height>
    </rect>
   </property>
@@ -34,7 +34,34 @@
     </item>
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="12">
+      <item row="0" column="4">
+       <widget class="QPushButton" name="pushButton_5">
+        <property name="text">
+         <string>El+</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="6">
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="text">
+         <string>Az+</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="15">
+       <widget class="QLabel" name="facesLabel">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Faces 0/0</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="13">
        <widget class="QLabel" name="platesLabel">
         <property name="font">
          <font>
@@ -47,61 +74,15 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="3">
-       <widget class="QPushButton" name="pushButton_5">
-        <property name="text">
-         <string>El+</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
       <item row="0" column="7">
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="pushButton_2">
         <property name="text">
-         <string>Pop items</string>
+         <string>Write YML</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="13">
-       <widget class="QPushButton" name="platesButton">
-        <property name="maximumSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="resources.qrc">
-          <normaloff>:/resources/icons/Tiles.png</normaloff>:/resources/icons/Tiles.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>16</width>
-          <height>16</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="8">
-       <widget class="QLabel" name="preInvalidatedLabel">
+      <item row="0" column="11">
+       <widget class="QLabel" name="untypedLabel">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -109,34 +90,11 @@
          </font>
         </property>
         <property name="text">
-         <string>Pre-invalidated: 0/0</string>
+         <string>Untyped items: 0</string>
         </property>
        </widget>
       </item>
-      <item row="0" column="15">
-       <widget class="QPushButton" name="facesButton">
-        <property name="maximumSize">
-         <size>
-          <width>24</width>
-          <height>24</height>
-         </size>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="resources.qrc">
-          <normaloff>:/resources/icons/Tiles.png</normaloff>:/resources/icons/Tiles.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>16</width>
-          <height>16</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="9">
+      <item row="0" column="10">
        <widget class="QPushButton" name="preInvalidatedButton">
         <property name="maximumSize">
          <size>
@@ -159,7 +117,74 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="11">
+      <item row="0" column="16">
+       <widget class="QPushButton" name="facesButton">
+        <property name="maximumSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources.qrc">
+          <normaloff>:/resources/icons/Tiles.png</normaloff>:/resources/icons/Tiles.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="14">
+       <widget class="QPushButton" name="platesButton">
+        <property name="maximumSize">
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="resources.qrc">
+          <normaloff>:/resources/icons/Tiles.png</normaloff>:/resources/icons/Tiles.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>16</width>
+          <height>16</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5">
+       <widget class="QPushButton" name="pushButton_4">
+        <property name="text">
+         <string>Az-</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QPushButton" name="pushButton_6">
+        <property name="text">
+         <string>El-</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="8">
+       <widget class="QPushButton" name="pushButton">
+        <property name="text">
+         <string>Pop items</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="12">
        <widget class="QPushButton" name="untypedButton">
         <property name="maximumSize">
          <size>
@@ -182,8 +207,24 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="10">
-       <widget class="QLabel" name="untypedLabel">
+      <item row="0" column="1">
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="0" column="9">
+       <widget class="QLabel" name="preInvalidatedLabel">
         <property name="font">
          <font>
           <weight>75</weight>
@@ -191,48 +232,14 @@
          </font>
         </property>
         <property name="text">
-         <string>Untyped items: 0</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="14">
-       <widget class="QLabel" name="facesLabel">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Faces 0/0</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="6">
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="text">
-         <string>Write YML</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="5">
-       <widget class="QPushButton" name="pushButton_3">
-        <property name="text">
-         <string>Az+</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4">
-       <widget class="QPushButton" name="pushButton_4">
-        <property name="text">
-         <string>Az-</string>
+         <string>Pre-invalidated: 0/0</string>
         </property>
        </widget>
       </item>
       <item row="0" column="2">
-       <widget class="QPushButton" name="pushButton_6">
+       <widget class="QPushButton" name="pushButton_7">
         <property name="text">
-         <string>El-</string>
+         <string>QGraphicsRectItem</string>
         </property>
        </widget>
       </item>

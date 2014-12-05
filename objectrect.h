@@ -2,6 +2,9 @@
 #define OBJECTRECT_H
 
 #include <QWidget>
+#include <QSize>
+#include <QPainter>
+#include <QBitmap>
 
 #include "types.h"
 
@@ -34,6 +37,7 @@ public:
     void setValidState(int state);
 
     void setPos(QPointF p1, QPointF p2, int type = 1);
+    void setPos(QPointF p1, QPointF p2, QPointF p3, QPointF p4, int type = 1);
 
     void moveRect(QPointF point, QPointF offset);
 
@@ -68,6 +72,9 @@ private:
 
     void setPosPoint1(QPointF point);
     void setPosPoint2(QPointF point);
+
+protected:
+    void paintEvent(QPaintEvent *event);
 
 };
 

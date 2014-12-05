@@ -17,6 +17,7 @@
 #include <QRubberBand>
 
 #include "objectrect.h"
+#include "objectrect2.h"
 #include "detectedobject.h"
 
 struct position_container {
@@ -76,6 +77,8 @@ public:
     float scale_factor;
     float zoom_min;
     float zoom_max;
+
+    QList<QGraphicsPolygonItem*> poly_list;
 
     QGraphicsPixmapItem* last_pixmap;
     bool pixmap_initialized;

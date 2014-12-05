@@ -76,7 +76,11 @@ void ObjectRect::setManualStatus(QString value)
 
 void ObjectRect::setValidState(int state)
 {
+
     this->validstate = state;
+
+    return;
+
 
     switch(state)
     {
@@ -155,6 +159,71 @@ void ObjectRect::setPos(QPointF p1, QPointF p2, int mode)
             this->setPosPoint2(p2);
             break;
     }
+}
+
+void ObjectRect::setPos(QPointF p1, QPointF p2, QPointF p3, QPointF p4, int mode)
+{
+    switch(mode)
+    {
+        case RectMoveType::All:
+            this->setPosPoint1(p1);
+            this->setPosPoint2(p2);
+            break;
+        case RectMoveType::Only_Point1:
+            this->setPosPoint1(p1);
+            break;
+        case RectMoveType::Only_Point2:
+            this->setPosPoint2(p2);
+            break;
+    }
+
+    this->point_3 = p3;
+    this->point_4 = p4;
+}
+
+void ObjectRect::paintEvent(QPaintEvent *)
+{
+    /*
+    QRect widget_rect = this->rect();
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setPen(Qt::red);
+    painter.setOpacity(100);
+
+    QPainterPath rounded_rect;
+    rounded_rect.addRoundRect(1, 1, widget_rect.width() - 2, widget_rect.height() - 2, 12, 12);
+    painter.setClipPath(rounded_rect);
+    painter.fillPath(rounded_rect,QBrush(Qt::black));*/
+
+    /*
+    qreal opacity(0.675);
+    int roundness(12);
+    QRect widget_rect = this->rect();
+
+    QPainter painter(this);
+    painter.save();
+
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setPen(Qt::red);
+
+    // clip
+    QPainterPath rounded_rect;
+    rounded_rect.addRoundRect(1, 1, widget_rect.width() - 2, widget_rect.height() - 2, roundness, roundness);
+    painter.setClipPath(rounded_rect);
+
+    // get clipping region
+    QRegion maskregion = painter.clipRegion();
+
+    // mask the widget
+    setMask(maskregion);
+    painter.setOpacity(opacity);
+
+    // fill path with color
+    painter.fillPath(rounded_rect,QBrush(Qt::black));
+
+    // restore painter
+    painter.restore();*/
 }
 
 ObjectRect::~ObjectRect()

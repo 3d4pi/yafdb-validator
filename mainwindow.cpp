@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Configure panorama viewer
     this->pano->setup(
-        0.5,   // Image scale factor
+        0.6,   // Image scale factor
         20.0,  // Minimum zoom
         100.0, // Maximum zoom
         100.0, // Default zoom level
@@ -81,30 +81,30 @@ void MainWindow::refreshLabels()
     int preinvalidatedcount = 0;
     int preinvalidatedvalidated = 0;
 
-    /*
-    foreach(ObjectRect* rect, this->pano->rect_list)
+
+    foreach(ObjectRect2* rect, this->pano->rect_list_v2)
     {
-        switch(rect->objecttype)
+        switch(rect->getType())
         {
             case ObjectType::None:
                 untyped++;
                 break;
             case ObjectType::Face:
 
-                if(rect->autoStatus == "Valid" || rect->autoStatus == "None")
+                if(rect->getAutomaticStatus() == "Valid" || rect->getAutomaticStatus() == "None")
                     facecount++;
 
-                if( (rect->autoStatus == "Valid" || rect->autoStatus == "None")
-                        && rect->manualStatus != "None")
+                if( (rect->getAutomaticStatus() == "Valid" || rect->getAutomaticStatus() == "None")
+                        && rect->getManualStatus() != "None")
                 {
                     facesvalidated++;
                 }
 
-                if(rect->autoStatus != "None" && rect->autoStatus != "Valid")
+                if(rect->getAutomaticStatus() != "None" && rect->getAutomaticStatus() != "Valid")
                 {
                     preinvalidatedcount++;
                 }
-                if(rect->autoStatus != "None" && rect->autoStatus != "Valid" && rect->manualStatus != "None")
+                if(rect->getAutomaticStatus() != "None" && rect->getAutomaticStatus() != "Valid" && rect->getManualStatus() != "None")
                 {
                     preinvalidatedvalidated++;
                 }
@@ -114,7 +114,7 @@ void MainWindow::refreshLabels()
 
                 numberplatescount++;
 
-                if(rect->manualStatus != "None")
+                if(rect->getManualStatus() != "None")
                 {
                     numberplatesvalidated++;
                 }
@@ -164,7 +164,7 @@ void MainWindow::refreshLabels()
     this->ui->facesLabel->setText("Faces: " + QString::number(facesvalidated) + "/" + QString::number(facecount));
     this->ui->platesLabel->setText("Number plates: " + QString::number(numberplatesvalidated) + "/" + QString::number(numberplatescount));
     this->ui->preInvalidatedLabel->setText("Pre-invalidated: " + QString::number(preinvalidatedvalidated) + "/" + QString::number(preinvalidatedcount));
-    */
+
 }
 
 MainWindow::~MainWindow()
@@ -331,26 +331,7 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    YMLParser parser;
 
-    /*
-    QList<DetectedObject> list;
-
-    foreach(ObjectRect* rect, this->pano->rect_list)
-    {
-        DetectedObject dobj = parser.ObjectRectToDetectedObject(rect);
-        list.append(dobj);
-    }
-
-    parser.writeYML(list, "/home/f0x/Bureau/out.yml");
-    */
-
-    QList<DetectedObject> list = parser.loadYML("/home/f0x/Bureau/out.yml");
-
-    foreach(DetectedObject obj, list)
-    {
-        this->pano->insertDetectedObject(obj);
-    }
 
 }
 
@@ -364,7 +345,7 @@ void MainWindow::on_pushButton_3_clicked()
 
 void MainWindow::on_pushButton_4_clicked()
 {
-    this->pano->position.old_azimuth = this->pano->position.azimuth;
+    //this->pano->position.old_azimuth = this->pano->position.azimuth;
 
     this->pano->position.azimuth -= 1 * (LG_PI / 180);
     this->pano->render();
@@ -372,22 +353,26 @@ void MainWindow::on_pushButton_4_clicked()
 
 void MainWindow::on_pushButton_5_clicked()
 {
+    this->pano->position.old_azimuth = this->pano->position.azimuth;
     this->pano->position.old_elevation = this->pano->position.elevation;
+    this->pano->position.old_aperture = this->pano->position.aperture;
 
-    this->pano->position.elevation += 1.0 * (LG_PI / 180);
+    //this->pano->position.old_elevation = this->pano->position.elevation;
+
+    //this->pano->position.elevation += 1.0 * (LG_PI / 180);
     this->pano->render();
 }
 
 void MainWindow::on_pushButton_6_clicked()
 {
+    this->pano->position.old_azimuth = this->pano->position.azimuth;
     this->pano->position.old_elevation = this->pano->position.elevation;
+    this->pano->position.old_aperture = this->pano->position.aperture;
 
-    this->pano->position.elevation -= 1.0 * (LG_PI / 180);
+    //this->pano->position.elevation -= 1.0 * (LG_PI / 180);
     this->pano->render();
 }
 
 void MainWindow::on_pushButton_7_clicked()
 {
-    this->pano->polytest->setObjectRectType( ObjectRectType::Invalid );
-    this->pano->polytest->setObjectRectState( ObjectRectState::Invalid );
 }

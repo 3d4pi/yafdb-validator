@@ -46,6 +46,32 @@ int g2g_point(
 
 ) {
 
+    /*qDebug() << "r_width" << r_width;
+    qDebug() << "r_height" << r_height;
+    qDebug() << "r_azim" << r_azim;
+    qDebug() << "r_elev" << r_elev;
+    qDebug() << "r_appe" << r_appe;
+    qDebug() << "c_width" << c_width;
+    qDebug() << "c_height" << c_height;
+    qDebug() << "c_azim" << c_azim;
+    qDebug() << "c_elev" << c_elev;
+    qDebug() << "c_appe" << c_appe;*/
+
+    /*if( r_width != c_width )
+        qDebug() << "r_width(" << r_width << ") != c_width(" << c_width << ")";
+
+    if( r_height != c_height )
+        qDebug() << "r_height(" << r_height << ") != c_height(" << c_height << ")";
+
+    if( r_azim != c_azim )
+        qDebug() << "r_azim(" << r_azim << ") != c_azim(" << c_azim << ")";
+
+    if( r_elev != c_elev )
+        qDebug() << "r_elev(" << r_elev << ") != c_elev(" << c_elev << ")";
+
+    if( r_appe != c_appe )
+        qDebug() << "r_appe(" << r_appe << ") != c_appe(" << c_appe << ")";*/
+
     /* Matrix array */
     static double m[3][3] = { { 0.0 } };
 
@@ -85,6 +111,10 @@ int g2g_point(
     /* Compute coordinates in secondary rectilinear frame */
     * c_x = + ( ( pi[1] / pi[0] ) / c_pixel ) + ( c_width  / 2.0 );
     * c_y = + ( ( pi[2] / pi[0] ) / c_pixel ) + ( c_height / 2.0 );
+
+    /*qDebug() << "c_x" << * c_y;
+    qDebug() << "c_y" << * c_x;
+    qDebug() << "";*/
 
     /* Compute frist order visibility condition */
     if ( pi[0] > 0 ) return( 1 ); else return( 0 );

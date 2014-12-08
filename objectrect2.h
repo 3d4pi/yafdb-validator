@@ -60,6 +60,20 @@ public:
     float proj_elevation();
     float proj_aperture();
 
+    // Informations get/set
+    int getType();
+    void setType(int value);
+
+    bool isBlurred();
+    bool isValidated();
+    void setBlurred(bool value);
+    void setValidated(bool value);
+
+    QString getManualStatus();
+    QString getAutomaticStatus();
+    void setManualStatus(QString value);
+    void setAutomaticStatus(QString value);
+
 private:
 
     // Points container
@@ -86,6 +100,15 @@ private:
         float elevation;
         float aperture;
     } projection_parameters;
+
+    // Projection parameters structure
+    struct {
+        int type;
+        bool blurred;
+        bool validated;
+        QString manual_status;
+        QString automatic_status;
+    } info;
 
 };
 

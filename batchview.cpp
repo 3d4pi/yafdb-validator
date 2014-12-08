@@ -54,8 +54,8 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano, int batchmode, int b
 
 void BatchView::populate(int batchviewmode)
 {
-    /*
-    foreach(ObjectRect* rect, pano->rect_list )
+
+    foreach(ObjectRect2* rect, pano->rect_list_v2 )
     {
         switch(batchviewmode)
         {
@@ -63,67 +63,67 @@ void BatchView::populate(int batchviewmode)
                 this->insertItem(rect);
                 break;
             case BatchViewMode::OnlyUntyped:
-                if(rect->objecttype == ObjectType::None)
+                if(rect->getType() == ObjectType::None)
                 {
                     this->insertItem(rect);
                 }
                 break;
             case BatchViewMode::OnlyFaces:
-                if(rect->objecttype == ObjectType::Face &&
-                        (rect->autoStatus == "Valid" || rect->autoStatus == "None"))
+                if(rect->getType() == ObjectType::Face &&
+                        (rect->getAutomaticStatus() == "Valid" || rect->getAutomaticStatus() == "None"))
                 {
                     this->insertItem(rect);
                 }
                 break;
             case BatchViewMode::OnlyUnapprovedFaces:
-                if(rect->objecttype == ObjectType::Face
-                        && rect->manualStatus == "None"
-                        && rect->autoStatus == "Valid")
+                if(rect->getType() == ObjectType::Face
+                        && rect->getManualStatus() == "None"
+                        && rect->getAutomaticStatus() == "Valid")
                 {
                     this->insertItem(rect);
                 }
                 break;
             case BatchViewMode::OnlyNumberPlates:
-                if(rect->objecttype == ObjectType::NumberPlate)
+                if(rect->getType() == ObjectType::NumberPlate)
                 {
                     this->insertItem(rect);
                 }
                 break;
             case BatchViewMode::OnlyUnapprovedNumberPlates:
-                if(rect->objecttype == ObjectType::NumberPlate
-                        && rect->manualStatus == "None"
-                        && rect->autoStatus == "Valid")
+                if(rect->getType() == ObjectType::NumberPlate
+                        && rect->getManualStatus() == "None"
+                        && rect->getAutomaticStatus() == "Valid")
                 {
                     this->insertItem(rect);
                 }
                 break;
             case BatchViewMode::OnlyPreInvalidated:
-                if(rect->objecttype != ObjectType::None
-                        && rect->autoStatus != "Valid"
-                        && rect->autoStatus != "None")
+                if(rect->getType() != ObjectType::None
+                        && rect->getAutomaticStatus() != "Valid"
+                        && rect->getAutomaticStatus() != "None")
                 {
                     this->insertItem(rect);
                 }
                 break;
         }
     }
-    */
+
 }
 
-void BatchView::insertItem(ObjectRect *rect)
+void BatchView::insertItem(ObjectRect2 *rect)
 {
     ObjectItem* object = new ObjectItem();
-    object->setId(rect->id);
+    object->setId(rect->getId());
     object->setImage(pano->cropObject(rect));
-    object->setType(rect->objecttype);
-    object->setBlurred(rect->blurred);
-    object->setValidState(rect->validstate);
-    object->setManualStatus(rect->manualStatus);
-    object->setAutomaticStatus(rect->autoStatus);
+    object->setType(rect->getType());
+    object->setBlurred(rect->isBlurred());
+    object->setValidState(rect->isValidated());
+    object->setManualStatus(rect->getManualStatus());
+    object->setAutomaticStatus(rect->getAutomaticStatus());
 
-    if(rect->autoStatus != "None")
+    if(rect->getAutomaticStatus() != "None")
     {
-        if(rect->autoStatus == "Valid")
+        if(rect->getAutomaticStatus() == "Valid")
         {
             object->setRectType(ObjectItemRectType::Valid);
         } else {
@@ -257,20 +257,19 @@ void BatchView::on_setType_clicked()
 
 void BatchView::mergeResults()
 {
-    /*
     foreach(ObjectItem* item, this->elements )
     {
-        foreach (ObjectRect* rect, this->pano->rect_list) {
-            if(rect->id == item->id)
+        foreach (ObjectRect2* rect, this->pano->rect_list_v2) {
+            if(rect->getId() == item->id)
             {
 
-                rect->setValidState(item->validstate);
+                rect->setValidated(item->validstate);
                 rect->setBlurred(item->blurred);
-                rect->setObjectType(item->type);
+                rect->setType(item->type);
                 rect->setManualStatus(item->manualStatus);
             }
         }
-    }*/
+    }
 }
 
 void BatchView::on_ApplyButton_clicked()

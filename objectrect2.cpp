@@ -7,6 +7,11 @@ ObjectRect2::ObjectRect2()
     this->points.append(QPointF(0.0, 0.0));
     this->points.append(QPointF(0.0, 0.0));
     this->points.append(QPointF(0.0, 0.0));
+    this->polygon = QPolygonF( this->points );
+    this->setPolygon( this->polygon );
+
+    // Default id
+    this->id = 0;
 
     // Default pen setup
     this->pen = new QPen(QColor(0, 255, 255, 255), 2);
@@ -17,8 +22,12 @@ ObjectRect2::ObjectRect2()
     this->projection_parameters.elevation = 0.0;
     this->projection_parameters.aperture = 0.0;
 
-    // Cal rendering procedure
-    this->render();
+    // Default informations
+    this->info.automatic_status = "None";
+    this->info.manual_status = "None";
+    this->info.blurred = false;
+    this->info.validated = false;
+    this->info.type = ObjectType::None;
 }
 
 void ObjectRect2::setPoint1(QPointF point)
@@ -255,4 +264,54 @@ float ObjectRect2::proj_elevation()
 float ObjectRect2::proj_aperture()
 {
     return this->projection_parameters.aperture;
+}
+
+int ObjectRect2::getType()
+{
+    return this->info.type;
+}
+
+void ObjectRect2::setType(int value)
+{
+    this->info.type = value;
+}
+
+bool ObjectRect2::isBlurred()
+{
+    return this->info.blurred;
+}
+
+bool ObjectRect2::isValidated()
+{
+    return this->info.validated;
+}
+
+void ObjectRect2::setBlurred(bool value)
+{
+    this->info.blurred = value;
+}
+
+void ObjectRect2::setValidated(bool value)
+{
+    this->info.validated = value;
+}
+
+QString ObjectRect2::getManualStatus()
+{
+    return this->info.manual_status;
+}
+
+QString ObjectRect2::getAutomaticStatus()
+{
+    return this->info.automatic_status;
+}
+
+void ObjectRect2::setManualStatus(QString value)
+{
+    this->info.manual_status = value;
+}
+
+void ObjectRect2::setAutomaticStatus(QString value)
+{
+    this->info.automatic_status = value;
 }

@@ -25,9 +25,18 @@ struct Mode
 {
     enum Type
     {
-        None = 0, Move = 1, Create = 2, MoveCreate = 3
+        None = 0, Move = 1, Create = 2, MoveCreate = 3, MoveResize = 4
     };
 };
+
+struct Point
+{
+    enum Type
+    {
+        None = 0, Point1 = 1, Point2 = 2, Point3 = 3, Point4 = 4
+    };
+};
+
 
 class PanoramaViewer : public QGraphicsView
 {
@@ -121,6 +130,7 @@ private:
     float zoom_max;
 
     int mode;
+    int resizePoint;
 
 
 signals:

@@ -17,6 +17,8 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->horizontalScrollBar()->blockSignals(true);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
+    this->resizePoint = Point::None;
+
     // Initialize position container
     this->position.start_x = 0;
     this->position.start_y = 0;
@@ -357,8 +359,21 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
                             mouse_scene.y() - this->selected_rect->getPoint4().y()
                         );
 
-            // Switch in creation mode
-            this->mode = Mode::MoveCreate;
+            if( (this->position.offset_2.x() < 10) && (this->position.offset_2.y() < 10) )
+            {
+                qDebug() << "RES2";
+                this->resizePoint = Point::Point2;
+                this->mode = Mode::MoveResize;
+            }
+            else if( (this->position.offset_3.x() > -10) && (this->position.offset_3.y() > -10) )
+            {
+                qDebug() << "RES3";
+                this->resizePoint = Point::Point3;
+                this->mode = Mode::MoveResize;
+            } else {
+                // Switch in creation mode
+                this->mode = Mode::MoveCreate;
+            }
 
             // Enable mouse tracking
             this->setMouseTracking(true);
@@ -473,14 +488,17 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
 
         } else  {
 
+            float mouse_x = clamp(mouse_scene.x(), this->increation_rect.rect->getPoint1().x() + 4.0, this->width());
+            float mouse_y = clamp(mouse_scene.y(), this->increation_rect.rect->getPoint1().y() + 4.0, this->height());
+
             // Move selection object to mouse coords
             this->increation_rect.rect->setPoint3_Rigid(
-                            mouse_scene
+                            QPointF(mouse_x, mouse_y)
                         );
 
             QToolTip::showText(event->globalPos(),
-                               QString::number( this->increation_rect.rect->getSize().width() ) + "x" +
-                               QString::number( this->increation_rect.rect->getSize().height() ),
+                               QString::number( (int) this->increation_rect.rect->getSize().width() ) + "x" +
+                               QString::number( (int) this->increation_rect.rect->getSize().height() ),
                                this, rect() );
 
         }
@@ -493,6 +511,32 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
                                         this->position.offset_2,
                                         this->position.offset_3,
                                         this->position.offset_4);
+
+        this->selected_rect->setProjectionParametters(this->position.azimuth,
+                                                             this->position.elevation,
+                                                             this->position.aperture,
+                                                             this->dest_image.width(),
+                                                             this->dest_image.height());
+
+        this->selected_rect->setProjectionPoints();
+    } else if(this->mode == Mode::MoveResize)
+    {
+        float mouse_x = clamp(mouse_scene.x(), this->selected_rect->getPoint1().x() + 4.0, this->width());
+        float mouse_y = clamp(mouse_scene.y(), this->selected_rect->getPoint1().y() + 4.0, this->height());
+
+        // Move selection object to mouse coords
+        switch(this->resizePoint)
+        {
+            case Point::Point3:
+                this->selected_rect->setPoint3_Rigid(
+                                QPointF(mouse_x, mouse_y),
+                                this->position.offset_3
+                            );
+                break;
+
+        }
+
+        this->selected_rect->setProjectionPoints();
     }
 }
 

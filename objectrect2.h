@@ -18,6 +18,7 @@ public:
     void setPoint2(QPointF point);
     void setPoint3(QPointF point);
     void setPoint3_Rigid(QPointF point);
+    void setPoint3_Rigid(QPointF point, QPointF offset);
     void setPoint4(QPointF point);
     void setPoints(QPointF point1, QPointF point2, QPointF point3, QPointF point4);
 

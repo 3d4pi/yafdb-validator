@@ -79,6 +79,17 @@ void ObjectRect2::setPoint3_Rigid(QPointF point)
     this->render();
 }
 
+void ObjectRect2::setPoint3_Rigid(QPointF point, QPointF offset)
+{
+
+    QPointF centered (
+                    point.x() - offset.x(),
+                    point.y() - offset.y()
+                );
+
+    this->setPoint3_Rigid(centered);
+}
+
 void ObjectRect2::setPoint4(QPointF point)
 {
     this->points[3] = point;

@@ -118,5 +118,4 @@ int g2g_point(
 
     /* Compute frist order visibility condition */
     if ( pi[0] > 0 ) return( 1 ); else return( 0 );
-
 }

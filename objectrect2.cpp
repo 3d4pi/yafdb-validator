@@ -9,11 +9,13 @@ ObjectRect2::ObjectRect2()
     this->points.append(QPointF(0.0, 0.0));
 
     // Default pen setup
-    this->pen = new QPen(QColor(0, 255, 255, 255), 4);
+    this->pen = new QPen(QColor(0, 255, 255, 255), 2);
     this->brush = new QBrush(QColor(0, 255, 0, 50), Qt::SolidPattern);
 
-    this->setPen( * this->pen );
-    this->setBrush( * this->brush );
+    // Default projection parameters
+    this->projection_parameters.azimuth = 0.0;
+    this->projection_parameters.elevation = 0.0;
+    this->projection_parameters.aperture = 0.0;
 
     // Cal rendering procedure
     this->render();
@@ -22,8 +24,6 @@ ObjectRect2::ObjectRect2()
 void ObjectRect2::setPoint1(QPointF point)
 {
     this->points[0] = point;
-    this->polygon = QPolygonF( this->points );
-    this->setPolygon( this->polygon );
 
     // Cal rendering procedure
     this->render();
@@ -32,8 +32,6 @@ void ObjectRect2::setPoint1(QPointF point)
 void ObjectRect2::setPoint2(QPointF point)
 {
     this->points[1] = point;
-    this->polygon = QPolygonF( this->points );
-    this->setPolygon( this->polygon );
 
     // Cal rendering procedure
     this->render();
@@ -42,8 +40,23 @@ void ObjectRect2::setPoint2(QPointF point)
 void ObjectRect2::setPoint3(QPointF point)
 {
     this->points[2] = point;
-    this->polygon = QPolygonF( this->points );
-    this->setPolygon( this->polygon );
+
+    // Cal rendering procedure
+    this->render();
+}
+
+void ObjectRect2::setPoint3_Rigid(QPointF point)
+{
+    QPointF new_p1 = this->points[0];
+    QPointF new_p2 = this->points[1];
+    QPointF new_p3 = point;
+    QPointF new_p4 = this->points[3];
+
+    new_p2.setY( new_p3.y() );
+    new_p4.setX( new_p3.x() );
+
+    // Update positions
+    this->setPoints( new_p1, new_p2, new_p3, new_p4 );
 
     // Cal rendering procedure
     this->render();
@@ -52,10 +65,56 @@ void ObjectRect2::setPoint3(QPointF point)
 void ObjectRect2::setPoint4(QPointF point)
 {
     this->points[3] = point;
-    this->polygon = QPolygonF( this->points );
-    this->setPolygon( this->polygon );
 
     // Cal rendering procedure
+    this->render();
+}
+
+void ObjectRect2::setPoints(QPointF p1, QPointF p2, QPointF p3, QPointF p4)
+{
+    this->setPoint1( p1 );
+    this->setPoint2( p2 );
+    this->setPoint3( p3 );
+    this->setPoint4( p4 );
+
+    // Cal rendering procedure
+    this->render();
+}
+
+void ObjectRect2::moveObject(QPointF pos,
+                             QPointF offset_1,
+                             QPointF offset_2,
+                             QPointF offset_3,
+                             QPointF offset_4)
+{
+
+    // Center point by clicking offset
+    QPointF centered_point_1 (
+                    pos.x() - offset_1.x(),
+                    pos.y() - offset_1.y()
+                );
+
+    QPointF centered_point_2 (
+                    pos.x() - offset_2.x(),
+                    pos.y() - offset_2.y()
+                );
+
+    QPointF centered_point_3 (
+                    pos.x() - offset_3.x(),
+                    pos.y() - offset_3.y()
+                );
+
+    QPointF centered_point_4 (
+                    pos.x() - offset_4.x(),
+                    pos.y() - offset_4.y()
+                );
+
+    // Move object point 1
+    this->setPoint1(centered_point_1);
+    this->setPoint2(centered_point_2);
+    this->setPoint3(centered_point_3);
+    this->setPoint4(centered_point_4);
+
     this->render();
 }
 
@@ -82,18 +141,6 @@ QPointF ObjectRect2::getPoint4()
 QVector<QPointF> ObjectRect2::getPoints()
 {
     return this->points;
-}
-
-
-void ObjectRect2::setPoints(QPointF p1, QPointF p2, QPointF p3, QPointF p4)
-{
-    this->setPoint1( p1 );
-    this->setPoint2( p2 );
-    this->setPoint3( p3 );
-    this->setPoint4( p4 );
-
-    // Cal rendering procedure
-    this->render();
 }
 
 void ObjectRect2::setSize(QSizeF size)
@@ -126,10 +173,20 @@ QSizeF ObjectRect2::getSize()
 
     QSizeF size;
 
-    size.setWidth( p2.x() -  p1.x());
-    size.setHeight( p4.y() -  p1.y());
+    size.setWidth( p4.x() -  p1.x());
+    size.setHeight( p2.y() -  p1.y());
 
     return size;
+}
+
+void ObjectRect2::setId(int id)
+{
+    this->id = id;
+}
+
+int ObjectRect2::getId()
+{
+    return this->id;
 }
 
 void ObjectRect2::setObjectRectType(int type)
@@ -147,8 +204,8 @@ void ObjectRect2::setObjectRectType(int type)
             break;
     }
 
-    // Update pen
-    this->setPen( * this->pen );
+    // Cal rendering procedure
+    this->render();
 }
 
 void ObjectRect2::setObjectRectState(int state)
@@ -163,11 +220,39 @@ void ObjectRect2::setObjectRectState(int state)
             break;
     }
 
-    // Update brush
-    this->setBrush( * this->brush );
+    // Cal rendering procedure
+    this->render();
 }
 
 void ObjectRect2::render()
 {
-    qDebug() << "Render";
+    this->polygon = QPolygonF( this->points );
+
+    this->setPen( * this->pen );
+    this->setBrush( * this->brush );
+    this->setPolygon( this->polygon );
+}
+
+void ObjectRect2::setProjectionParametters(float azimuth,
+                                           float elevation,
+                                           float aperture)
+{
+    this->projection_parameters.azimuth = azimuth;
+    this->projection_parameters.elevation = elevation;
+    this->projection_parameters.aperture = aperture;
+}
+
+float ObjectRect2::proj_azimuth()
+{
+    return this->projection_parameters.azimuth;
+}
+
+float ObjectRect2::proj_elevation()
+{
+    return this->projection_parameters.elevation;
+}
+
+float ObjectRect2::proj_aperture()
+{
+    return this->projection_parameters.aperture;
 }

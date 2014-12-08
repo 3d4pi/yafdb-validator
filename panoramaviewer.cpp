@@ -103,11 +103,11 @@ void PanoramaViewer::updateScene(float azimuth, float elevation, float zoom)
     int WIDTH = this->width();
     int HEIGHT = this->height();
 
-    int DEST_WIDTH = WIDTH* scale_factor;
+    int DEST_WIDTH = WIDTH * scale_factor;
     int DEST_HEIGHT = HEIGHT * scale_factor;
 
-    float AZIMUTH = azimuth;
-    float ELEVATION = elevation;
+    float AZIMUTH = clampRad(azimuth, -360.0, 360.0);
+    float ELEVATION = clamp(elevation, -90.0, 90.0);
 
     this->dest_image = QImage (DEST_WIDTH, DEST_HEIGHT, QImage::Format_RGB32);
 
@@ -148,103 +148,18 @@ void PanoramaViewer::updateScene(float azimuth, float elevation, float zoom)
 
 }
 
-/*
- * void PanoramaViewer::render()
-{
-    int before_w = this->dest_image_map.width();
-    int before_h = this->dest_image_map.width();
-    float before_az = this->position.old_azimuth;
-    float before_el = this->position.old_elevation;
-    float before_ap = this->position.old_aperture;
-
-    this->updateScene(
-        this->position.azimuth,
-        this->position.elevation,
-        this->position.aperture
-    );
-
-    normalization_struct norm_params;
-    norm_params.pano_width = this->scene->width();
-    norm_params.pano_height = this->scene->height();
-    norm_params.scale_factor = this->scale_factor;
-
-    int after_w = this->dest_image_map.width();
-    int after_h = this->dest_image_map.width();
-    float after_az = this->position.azimuth;
-    float after_el = this->position.elevation;
-    float after_ap = this->position.aperture;
-
-    foreach(ObjectRect* rect, this->rect_list)
-    {
-        QPointF denorm_p1 = util::denormalize(rect->point_1, norm_params);
-        QPointF denorm_p2 = util::denormalize(rect->point_2, norm_params);
-
-        double p1_x = 0;
-        double p1_y = 0;
-        double p2_x = 0;
-        double p2_y = 0;
-
-        g2g_point(before_w,
-                  before_h,
-                  before_az,
-                  before_el,
-                  before_ap,
-                  denorm_p1.x(),
-                  denorm_p1.y(),
-
-                  after_w,
-                  after_h,
-                  after_az,
-                  after_el,
-                  after_ap,
-                  &p1_x,
-                  &p1_y);
-
-        g2g_point(before_w,
-                  before_h,
-                  before_az,
-                  before_el,
-                  before_ap,
-                  denorm_p2.x(),
-                  denorm_p2.y(),
-
-                  after_w,
-                  after_h,
-                  after_az,
-                  after_el,
-                  after_ap,
-                  &p2_x,
-                  &p2_y);
-
-        QPointF renorm_p1 = util::normalize(denorm_p1, norm_params);
-        QPointF renorm_p2 = util::normalize(denorm_p2, norm_params);
-
-        rect->setPos(renorm_p1, renorm_p2, norm_params, RectMoveType::All);
-
-        qDebug() << denorm_p1;
-        qDebug() << renorm_p1;
-    }
-
-
-    foreach(ObjectRect* rect, this->rect_list)
-    {
-        rect->update(norm_params);
-    }
-}
-
-*/
 void PanoramaViewer::render()
 {
+    qDebug() << "this->position.old_azimuth: " << this->position.old_azimuth;
+    qDebug() << "this->position.old_elevation: " << this->position.old_elevation;
+    qDebug() << "this->position.old_aperture: " << this->position.old_aperture;
+    qDebug() << "this->position.azimuth: " << this->position.azimuth;
+    qDebug() << "this->position.elevation: " << this->position.elevation;
+    qDebug() << "this->position.aperture: " << this->position.aperture;
+    qDebug() << "";
 
-
-    foreach(ObjectRect* rect, this->rect_list)
+    foreach(ObjectRect2* rect, this->rect_list_v2)
     {
-        /*foreach(QGraphicsPolygonItem* item, this->poly_list)
-        {
-            delete item;
-            this->poly_list.removeOne(item);
-        }*/
-
         double p1_x = 0.0;
         double p1_y = 0.0;
         double p2_x = 0.0;
@@ -259,8 +174,8 @@ void PanoramaViewer::render()
                   this->position.old_azimuth,
                   this->position.old_elevation,
                   this->position.old_aperture,
-                  rect->point_1.x(),
-                  rect->point_1.y(),
+                  rect->getPoint1().x(),
+                  rect->getPoint1().y(),
 
                   this->dest_image_map.width(),
                   this->dest_image_map.height(),
@@ -275,8 +190,8 @@ void PanoramaViewer::render()
                   this->position.old_azimuth,
                   this->position.old_elevation,
                   this->position.old_aperture,
-                  rect->point_2.x(),
-                  rect->point_2.y(),
+                  rect->getPoint2().x(),
+                  rect->getPoint2().y(),
 
                   this->dest_image_map.width(),
                   this->dest_image_map.height(),
@@ -291,8 +206,8 @@ void PanoramaViewer::render()
                   this->position.old_azimuth,
                   this->position.old_elevation,
                   this->position.old_aperture,
-                  rect->point_3.x(),
-                  rect->point_3.y(),
+                  rect->getPoint3().x(),
+                  rect->getPoint3().y(),
 
                   this->dest_image_map.width(),
                   this->dest_image_map.height(),
@@ -307,8 +222,8 @@ void PanoramaViewer::render()
                   this->position.old_azimuth,
                   this->position.old_elevation,
                   this->position.old_aperture,
-                  rect->point_4.x(),
-                  rect->point_4.y(),
+                  rect->getPoint4().x(),
+                  rect->getPoint4().y(),
 
                   this->dest_image_map.width(),
                   this->dest_image_map.height(),
@@ -318,17 +233,17 @@ void PanoramaViewer::render()
                   &p4_x,
                   &p4_y);
 
-        if(state && state2 && state3 && state4)
+        if(state == 1 && state2 == 1 && state3 == 1 && state4 == 1)
         {
-            this->polytest->setPoints(QPointF( p1_x, p1_y ),
-                            QPointF( p3_x, p3_y ),
+            rect->setVisible( true );
+
+            rect->setPoints(QPointF( p1_x, p1_y ),
                             QPointF( p2_x, p2_y ),
+                            QPointF( p3_x, p3_y ),
                             QPointF( p4_x, p4_y ));
-
-            //this->poly_list.append(poly);
+        } else {
+            rect->setVisible( false );
         }
-
-        rect->setPos(QPointF(p1_x, p1_y), QPointF(p2_x, p2_y), QPointF(p3_x, p3_y), QPointF(p4_x, p4_y), RectMoveType::All);
     }
 
     this->updateScene(
@@ -412,15 +327,13 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
         // Get clicked object
         qDebug() << "1";
 
-        QGraphicsProxyWidget* widget_proxy = qgraphicsitem_cast<QGraphicsProxyWidget*>(this->itemAt(MouseX, MouseY));
+        ObjectRect2* clicked_rect = qgraphicsitem_cast<ObjectRect2*>(this->itemAt(MouseX, MouseY));
 
         // Verify that clicked object is a widget and is not null
-        if (widget_proxy != NULL)
+        if (clicked_rect != NULL)
         {
-
-           // Convert object to ObjectRect
-            this->selected_rect = qobject_cast<ObjectRect*>(widget_proxy->widget());
-
+            // Convert object to ObjectRect
+            this->selected_rect = clicked_rect;
         }
 
         if(this->selected_rect)
@@ -432,9 +345,27 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
             this->position.start_y = MouseY;
 
             // Determine mouse click pointer offset
-            this->position.offset = QPointF(
-                            mouse_scene.x() - this->selected_rect->point_1.x(),
-                            mouse_scene.y() - this->selected_rect->point_1.y()
+            this->position.offset_1 = QPointF(
+                            mouse_scene.x() - this->selected_rect->getPoint1().x(),
+                            mouse_scene.y() - this->selected_rect->getPoint1().y()
+                        );
+
+            // Determine mouse click pointer offset
+            this->position.offset_2 = QPointF(
+                            mouse_scene.x() - this->selected_rect->getPoint2().x(),
+                            mouse_scene.y() - this->selected_rect->getPoint2().y()
+                        );
+
+            // Determine mouse click pointer offset
+            this->position.offset_3 = QPointF(
+                            mouse_scene.x() - this->selected_rect->getPoint3().x(),
+                            mouse_scene.y() - this->selected_rect->getPoint3().y()
+                        );
+
+            // Determine mouse click pointer offset
+            this->position.offset_4 = QPointF(
+                            mouse_scene.x() - this->selected_rect->getPoint4().x(),
+                            mouse_scene.y() - this->selected_rect->getPoint4().y()
                         );
 
             // Switch in creation mode
@@ -507,7 +438,7 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
 
         // Clamp azimuth and elevation
         this->position.azimuth   = clampRad(azimuth, -360.0, 360.0) * (LG_PI / 180.0);
-        this->position.elevation = clampRad(elevation, -90.0, 90.0) * (LG_PI / 180.0);
+        this->position.elevation = clamp(elevation, -90.0, 90.0) * (LG_PI / 180.0);
 
         // Render scene
         this->render();
@@ -521,33 +452,22 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
         if(this->create_position.rect == NULL)
         {
 
-            // Create selection object
-            this->create_position.rect = new ObjectRect();
+            this->create_position.rect = new ObjectRect2();
+            this->create_position.rect->setObjectRectType(ObjectRectType::Manual);
+            this->create_position.rect->setObjectRectState(ObjectRectState::Valid);
+            this->create_position.rect->setId( this->rect_list_v2.length() );
 
-            this->create_position.rect->setRectType(RectType::Manual);
-            this->create_position.rect->setValidState(ObjectValidState::Valid);
-            this->create_position.rect->setManualStatus("Valid");
-            this->create_position.rect->setBlurred(true);
+            this->rect_list_v2.append( this->create_position.rect );
+            this->scene->addItem( this->create_position.rect );
 
-            this->create_position.rect->id = this->rect_list.length();
-
-            // Save projection parameters to it
-            this->create_position.rect->projection_parameters.aperture  = this->position.aperture;
-            this->create_position.rect->projection_parameters.azimuth   = this->position.azimuth;
-            this->create_position.rect->projection_parameters.elevation = this->position.elevation;
-            this->create_position.rect->projection_parameters.scale_factor = this->scale_factor;
-
-            // Add selection object to list
-            this->rect_list.append(this->create_position.rect);
-
-            QGraphicsProxyWidget *proxyWidget = new QGraphicsProxyWidget;
-            proxyWidget->setWidget(this->create_position.rect);
-
-            // Add selection object to scene
-            this->scene->addItem(proxyWidget);
+            this->create_position.rect->setProjectionParametters(this->position.azimuth,
+                                                                 this->position.elevation,
+                                                                 this->position.aperture);
 
             // Move selection object to mouse coords
-            this->create_position.rect->setPos(
+            this->create_position.rect->setPoints(
+                            mouse_scene,
+                            mouse_scene,
                             mouse_scene,
                             mouse_scene
                         );
@@ -557,26 +477,24 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
 
         } else  {
 
-            this->create_position.rect->setPos(
-                            this->create_position.rect->point_1,
-                            mouse_scene,
-                            RectMoveType::Only_Point2
+            // Move selection object to mouse coords
+            this->create_position.rect->setPoint3_Rigid(
+                            mouse_scene
                         );
 
             QToolTip::showText(event->globalPos(),
-                               QString::number( this->create_position.rect->width() ) + "x" +
-                               QString::number( this->create_position.rect->height() ),
+                               QString::number( this->create_position.rect->getSize().width() ) + "x" +
+                               QString::number( this->create_position.rect->getSize().height() ),
                                this, rect() );
-
 
         }
     } else if(this->mode == Mode::MoveCreate)
     {
-        if(this->selected_rect->autoStatus == "None")
-        {
-            this->selected_rect->moveRect(mouse_scene, this->position.offset);
-        }
-
+        this->selected_rect->moveObject(mouse_scene,
+                                        this->position.offset_1,
+                                        this->position.offset_2,
+                                        this->position.offset_3,
+                                        this->position.offset_4);
     }
 }
 
@@ -635,10 +553,10 @@ void PanoramaViewer::insertDetectedObject(DetectedObject obj)
 
     rect->setPos(obj.area.p1, obj.area.p2, RectMoveType::All);
 
-    rect->id = this->rect_list.length();
+    //rect->id = this->rect_list.length();
 
     // Add selection object to list
-    this->rect_list.append(rect);
+    //this->rect_list.append(rect);
 
     QGraphicsProxyWidget *proxyWidget = new QGraphicsProxyWidget();
     proxyWidget->setWidget(rect);

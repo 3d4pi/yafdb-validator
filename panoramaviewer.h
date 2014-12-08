@@ -24,7 +24,10 @@ struct position_container {
     int start_x;
     int start_y;
 
-    QPointF offset;
+    QPointF offset_1;
+    QPointF offset_2;
+    QPointF offset_3;
+    QPointF offset_4;
 
     int x;
     int y;
@@ -45,7 +48,7 @@ struct position_container {
 struct create_container {
     int start_x;
     int start_y;
-    ObjectRect * rect;
+    ObjectRect2 * rect;
 };
 
 struct Mode
@@ -87,9 +90,10 @@ public:
 
     position_container position;
     create_container   create_position;
-    QList<ObjectRect*> rect_list;
+    //QList<ObjectRect*> rect_list;
+    QList<ObjectRect2*> rect_list_v2;
     QList<DetectedObject*> def_rect_list;
-    ObjectRect * selected_rect;
+    ObjectRect2 * selected_rect;
 
     void setup(float scale_factor, float zoom_min, float zoom_max, float zoom_def, int threads);
     void loadImage(QString path);

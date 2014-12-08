@@ -17,8 +17,16 @@ public:
     void setPoint1(QPointF point);
     void setPoint2(QPointF point);
     void setPoint3(QPointF point);
+    void setPoint3_Rigid(QPointF point);
     void setPoint4(QPointF point);
     void setPoints(QPointF point1, QPointF point2, QPointF point3, QPointF point4);
+
+    // Functions
+    void moveObject(QPointF pos,
+                    QPointF offset_1,
+                    QPointF offset_2,
+                    QPointF offset_3,
+                    QPointF offset_4);
 
     // Points getters
     QPointF getPoint1();
@@ -37,6 +45,21 @@ public:
     // Size getters
     QSizeF getSize();
 
+    // Id setter
+    void setId(int id);
+
+    // Id getter
+    int getId();
+
+    // Projection paramaters get/set
+    void setProjectionParametters(float azimuth,
+                             float elevation,
+                             float aperture);
+
+    float proj_azimuth();
+    float proj_elevation();
+    float proj_aperture();
+
 private:
 
     // Points container
@@ -53,6 +76,16 @@ private:
 
     // Private functions
     void render();
+
+    // Id container
+    int id;
+
+    // Projection parameters structure
+    struct {
+        float azimuth;
+        float elevation;
+        float aperture;
+    } projection_parameters;
 
 };
 

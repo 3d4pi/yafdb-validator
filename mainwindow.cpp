@@ -81,6 +81,7 @@ void MainWindow::refreshLabels()
     int preinvalidatedcount = 0;
     int preinvalidatedvalidated = 0;
 
+    /*
     foreach(ObjectRect* rect, this->pano->rect_list)
     {
         switch(rect->objecttype)
@@ -163,6 +164,7 @@ void MainWindow::refreshLabels()
     this->ui->facesLabel->setText("Faces: " + QString::number(facesvalidated) + "/" + QString::number(facecount));
     this->ui->platesLabel->setText("Number plates: " + QString::number(numberplatesvalidated) + "/" + QString::number(numberplatescount));
     this->ui->preInvalidatedLabel->setText("Pre-invalidated: " + QString::number(preinvalidatedvalidated) + "/" + QString::number(preinvalidatedcount));
+    */
 }
 
 MainWindow::~MainWindow()
@@ -372,7 +374,7 @@ void MainWindow::on_pushButton_5_clicked()
 {
     this->pano->position.old_elevation = this->pano->position.elevation;
 
-    this->pano->position.elevation += 1 * (LG_PI / 180);
+    this->pano->position.elevation += 1.0 * (LG_PI / 180);
     this->pano->render();
 }
 
@@ -380,7 +382,7 @@ void MainWindow::on_pushButton_6_clicked()
 {
     this->pano->position.old_elevation = this->pano->position.elevation;
 
-    this->pano->position.elevation -= 1 * (LG_PI / 180);
+    this->pano->position.elevation -= 1.0 * (LG_PI / 180);
     this->pano->render();
 }
 

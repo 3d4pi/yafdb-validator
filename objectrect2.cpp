@@ -22,6 +22,14 @@ ObjectRect2::ObjectRect2()
     this->projection_parameters.elevation = 0.0;
     this->projection_parameters.aperture = 0.0;
 
+    this->projection_parameters.points.append(QPointF(0.0, 0.0));
+    this->projection_parameters.points.append(QPointF(0.0, 0.0));
+    this->projection_parameters.points.append(QPointF(0.0, 0.0));
+    this->projection_parameters.points.append(QPointF(0.0, 0.0));
+
+    this->projection_parameters.width = 0.0;
+    this->projection_parameters.height = 0.0;
+
     // Default informations
     this->info.automatic_status = "None";
     this->info.manual_status = "None";
@@ -244,11 +252,20 @@ void ObjectRect2::render()
 
 void ObjectRect2::setProjectionParametters(float azimuth,
                                            float elevation,
-                                           float aperture)
+                                           float aperture,
+                                           float width,
+                                           float height)
 {
     this->projection_parameters.azimuth = azimuth;
     this->projection_parameters.elevation = elevation;
     this->projection_parameters.aperture = aperture;
+    this->projection_parameters.width = width;
+    this->projection_parameters.height = height;
+}
+
+void ObjectRect2::setProjectionPoints()
+{
+    this->projection_parameters.points = this->points;
 }
 
 float ObjectRect2::proj_azimuth()
@@ -264,6 +281,36 @@ float ObjectRect2::proj_elevation()
 float ObjectRect2::proj_aperture()
 {
     return this->projection_parameters.aperture;
+}
+
+QPointF ObjectRect2::proj_point_1()
+{
+    return this->projection_parameters.points[0];
+}
+
+QPointF ObjectRect2::proj_point_2()
+{
+    return this->projection_parameters.points[1];
+}
+
+QPointF ObjectRect2::proj_point_3()
+{
+    return this->projection_parameters.points[2];
+}
+
+QPointF ObjectRect2::proj_point_4()
+{
+    return this->projection_parameters.points[3];
+}
+
+float ObjectRect2::proj_width()
+{
+    return this->projection_parameters.width;
+}
+
+float ObjectRect2::proj_height()
+{
+    return this->projection_parameters.height;
 }
 
 int ObjectRect2::getType()

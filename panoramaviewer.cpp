@@ -11,8 +11,6 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     QGraphicsView(parent)
 {
 
-    //this->centralWidget()->layout()->setContentsMargins(50,50,50,50);
-
     // Remove side bars on the panorama viewer
     this->verticalScrollBar()->blockSignals(true);
     this->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -30,6 +28,8 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->position.elevation = 0.0;
     this->position.old_azimuth = 0.0;
     this->position.old_elevation = 0.0;
+    this->position.old_width = 0;
+    this->position.old_height = 0;
 
     // Initialize default mode
     this->mode = Mode::None;
@@ -75,7 +75,7 @@ float clampRad(float x, float a, float b)
     }
 }
 
-void PanoramaViewer::setup(float scale_factor, float zoom_min, float zoom_max, float zoom_def, int threads)
+void PanoramaViewer::setup(int width, int height, float scale_factor, float zoom_min, float zoom_max, float zoom_def, int threads)
 {
     this->scale_factor = scale_factor;
     this->zoom_min = zoom_min;
@@ -83,6 +83,7 @@ void PanoramaViewer::setup(float scale_factor, float zoom_min, float zoom_max, f
     this->position.aperture_delta = zoom_def;
     this->position.aperture = (zoom_def * (LG_PI / 180.0) );
     this->threads_count = threads;
+    this->resize( width, height );
 }
 
 void PanoramaViewer::loadImage(QString path)
@@ -106,6 +107,9 @@ void PanoramaViewer::updateScene(float azimuth, float elevation, float zoom)
 
     float AZIMUTH = clampRad(azimuth, -360.0, 360.0);
     float ELEVATION = clamp(elevation, -90.0, 90.0);
+
+    this->position.old_width = this->dest_image.width();
+    this->position.old_height = this->dest_image.height();
 
     this->dest_image = QImage (DEST_WIDTH, DEST_HEIGHT, QImage::Format_RGB32);
 
@@ -143,14 +147,19 @@ void PanoramaViewer::updateScene(float azimuth, float elevation, float zoom)
 
     this->scene->setSceneRect(this->dest_image_map.rect());
     this->fitInView(this->dest_image_map.rect());
-
 }
 
 void PanoramaViewer::render()
 {
+    this->updateScene(
+        this->position.azimuth,
+        this->position.elevation,
+        this->position.aperture
+    );
 
     foreach(ObjectRect2* rect, this->rect_list_v2)
     {
+
         double p1_x = 0.0;
         double p1_y = 0.0;
         double p2_x = 0.0;
@@ -160,8 +169,8 @@ void PanoramaViewer::render()
         double p4_x = 0.0;
         double p4_y = 0.0;
 
-        int state = g2g_point(this->dest_image_map.width(),
-                  this->dest_image_map.height(),
+        int state = g2g_point(this->position.old_width,
+                  this->position.old_height,
                   this->position.old_azimuth,
                   this->position.old_elevation,
                   this->position.old_aperture,
@@ -176,8 +185,8 @@ void PanoramaViewer::render()
                   &p1_x,
                   &p1_y);
 
-        int state2 = g2g_point(this->dest_image_map.width(),
-                  this->dest_image_map.height(),
+        int state2 = g2g_point(this->position.old_width,
+                  this->position.old_height,
                   this->position.old_azimuth,
                   this->position.old_elevation,
                   this->position.old_aperture,
@@ -192,8 +201,8 @@ void PanoramaViewer::render()
                   &p2_x,
                   &p2_y);
 
-        int state3 = g2g_point(this->dest_image_map.width(),
-                  this->dest_image_map.height(),
+        int state3 = g2g_point(this->position.old_width,
+                  this->position.old_height,
                   this->position.old_azimuth,
                   this->position.old_elevation,
                   this->position.old_aperture,
@@ -208,8 +217,8 @@ void PanoramaViewer::render()
                   &p3_x,
                   &p3_y);
 
-        int state4 = g2g_point(this->dest_image_map.width(),
-                  this->dest_image_map.height(),
+        int state4 = g2g_point(this->position.old_width,
+                  this->position.old_height,
                   this->position.old_azimuth,
                   this->position.old_elevation,
                   this->position.old_aperture,
@@ -237,12 +246,6 @@ void PanoramaViewer::render()
         }
     }
 
-    this->updateScene(
-        this->position.azimuth,
-        this->position.elevation,
-        this->position.aperture
-    );
-
 }
 
 // Function to update view of current scene
@@ -261,9 +264,7 @@ void PanoramaViewer::setZoom(float zoom_level)
 {
 
     // Convert zoom value to radians
-    this->position.old_azimuth = this->position.azimuth;
-    this->position.old_elevation = this->position.elevation;
-    this->position.old_aperture = this->position.aperture;
+    this->backupPosition();
 
     this->position.aperture = ( zoom_level * ( LG_PI / 180.0 ) );
 
@@ -387,7 +388,11 @@ void PanoramaViewer::mouseReleaseEvent(QMouseEvent *)
     this->mode = Mode::None;
 
     // Reset temporary object
-    this->increation_rect.rect = NULL;
+    if( this->increation_rect.rect )
+    {
+        this->increation_rect.rect->setProjectionPoints();
+        this->increation_rect.rect = NULL;
+    }
     this->selected_rect = NULL;
 
     // Disable mouse tracking
@@ -420,9 +425,7 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
         float azimuth   = (this->position.start_azimuth   - ( (delta_x * this->position.aperture) * 0.1 ) );
         float elevation = (this->position.start_elevation + ( (delta_y * this->position.aperture) * 0.1 ) );
 
-        this->position.old_azimuth = this->position.azimuth;
-        this->position.old_elevation = this->position.elevation;
-        this->position.old_aperture = this->position.aperture;
+        this->backupPosition();
 
         // Clamp azimuth and elevation
         this->position.azimuth   = clampRad(azimuth, -360.0, 360.0) * (LG_PI / 180.0);
@@ -453,7 +456,9 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
 
             this->increation_rect.rect->setProjectionParametters(this->position.azimuth,
                                                                  this->position.elevation,
-                                                                 this->position.aperture);
+                                                                 this->position.aperture,
+                                                                 this->dest_image.width(),
+                                                                 this->dest_image.height());
 
             // Move selection object to mouse coords
             this->increation_rect.rect->setPoints(
@@ -510,6 +515,7 @@ void PanoramaViewer::resizeEvent(QResizeEvent *)
         // Render scene
         this->render();
     }
+
 }
 
 // Function to crop a selection object
@@ -518,11 +524,38 @@ QImage PanoramaViewer::cropObject(ObjectRect2* rect)
 
     // Convert points to a QRect and deduce borders sizes
     QRect rect_sel(
-                    QPoint(rect->getPoint1().x() + 2, rect->getPoint1().y() + 2),
-                    QPoint(rect->getPoint3().x() - 2, rect->getPoint3().y() - 2)
+                    QPoint(rect->proj_point_1().x() + 2, rect->proj_point_1().y() + 2),
+                    QPoint(rect->proj_point_3().x() - 2, rect->proj_point_3().y() - 2)
                 );
 
-    // Crop and return image
-    return this->dest_image.copy(rect_sel);
+    QImage temp_dest(rect->proj_width(), rect->proj_height(), QImage::Format_RGB32);
 
+    lg_etg_apperturep(
+
+        ( inter_C8_t * ) this->src_image.bits(),
+        this->src_image.width(),
+        this->src_image.height(),
+        CHANNELS_COUNT,
+        ( inter_C8_t * ) temp_dest.bits(),
+        rect->proj_width(),
+        rect->proj_height(),
+        CHANNELS_COUNT,
+        rect->proj_azimuth(),
+        rect->proj_elevation(),
+        0.0,
+        rect->proj_aperture(),
+        li_bilinearf,
+        this->threads_count
+    );
+
+    // Crop and return image
+    return temp_dest.copy(rect_sel);
+
+}
+
+void PanoramaViewer::backupPosition()
+{
+    this->position.old_azimuth = this->position.azimuth;
+    this->position.old_elevation = this->position.elevation;
+    this->position.old_aperture = this->position.aperture;
 }

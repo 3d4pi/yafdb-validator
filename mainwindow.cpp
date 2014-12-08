@@ -51,6 +51,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Configure panorama viewer
     this->pano->setup(
+        this->size().width(), // Default width
+        this->size().height(), // Default height
         0.6,   // Image scale factor
         20.0,  // Minimum zoom
         100.0, // Maximum zoom
@@ -375,4 +377,14 @@ void MainWindow::on_pushButton_6_clicked()
 
 void MainWindow::on_pushButton_7_clicked()
 {
+    qDebug() << this->size();
+    qDebug() << this->pano->size();
+    qDebug() << this->pano->dest_image_map.size();
+}
+
+void MainWindow::on_horizontalSlider_sliderMoved(int position)
+{
+    this->pano->backupPosition();
+    this->pano->scale_factor = (position / 100.0);
+    this->pano->render();
 }

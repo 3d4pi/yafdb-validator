@@ -54,11 +54,23 @@ public:
     // Projection paramaters get/set
     void setProjectionParametters(float azimuth,
                              float elevation,
-                             float aperture);
+                             float aperture,
+                             float width,
+                             float height);
+
+    void setProjectionPoints();
 
     float proj_azimuth();
     float proj_elevation();
     float proj_aperture();
+
+    QPointF proj_point_1();
+    QPointF proj_point_2();
+    QPointF proj_point_3();
+    QPointF proj_point_4();
+
+    float proj_width();
+    float proj_height();
 
     // Informations get/set
     int getType();
@@ -99,6 +111,9 @@ private:
         float azimuth;
         float elevation;
         float aperture;
+        float width;
+        float height;
+        QVector<QPointF> points;
     } projection_parameters;
 
     // Projection parameters structure

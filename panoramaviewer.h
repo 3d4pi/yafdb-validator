@@ -15,6 +15,7 @@
 #include <QList>
 #include <QGraphicsPixmapItem>
 #include <QRubberBand>
+#include <QLabel>
 
 #include "objectrect.h"
 #include "objectrect2.h"
@@ -39,7 +40,7 @@ public:
     QImage dest_image;
     QPixmap dest_image_map;
 
-    void setup(float scale_factor, float zoom_min, float zoom_max, float zoom_def, int threads);
+    void setup(int width, int height, float scale_factor, float zoom_min, float zoom_max, float zoom_def, int threads);
 
     void loadImage(QString path);
 
@@ -53,6 +54,8 @@ public:
     QImage cropObject(ObjectRect2* rect);
 
     void updateLabels();
+
+    void backupPosition();
 
     struct {
         int start_x;
@@ -77,6 +80,9 @@ public:
         float old_aperture;
         float old_azimuth;
         float old_elevation;
+
+        float old_width;
+        float old_height;
     } position;
 
     struct {
@@ -86,6 +92,7 @@ public:
     } increation_rect;
 
     QList<ObjectRect2*> rect_list_v2;
+    float scale_factor;
 
 public slots:
 
@@ -110,7 +117,6 @@ private:
 
     int threads_count;
 
-    float scale_factor;
     float zoom_min;
     float zoom_max;
 

@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     objectitem.cpp \
     objectrect.cpp \
     ymlparser.cpp \
-    g2g_point.cpp
+    g2g_point.cpp \
+    objectrect2.cpp
 
 HEADERS  += mainwindow.h \
     panoramaviewer.h \
@@ -31,7 +32,8 @@ HEADERS  += mainwindow.h \
     objectrect.h \
     types.h \
     ymlparser.h \
-    g2g_point.h
+    g2g_point.h \
+    objectrect2.h
 
 FORMS    += mainwindow.ui \
     batchview.ui \

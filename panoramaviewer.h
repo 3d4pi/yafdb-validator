@@ -15,45 +15,28 @@
 #include <QList>
 #include <QGraphicsPixmapItem>
 #include <QRubberBand>
+#include <QLabel>
 
 #include "objectrect.h"
+#include "objectrect2.h"
 #include "detectedobject.h"
-
-struct position_container {
-    int start_x;
-    int start_y;
-
-    QPointF offset;
-
-    int x;
-    int y;
-
-    float start_azimuth;
-    float start_elevation;
-
-    float azimuth;
-    float elevation;
-    float aperture;
-    float aperture_delta;
-
-    float old_aperture;
-    float old_azimuth;
-    float old_elevation;
-};
-
-struct create_container {
-    int start_x;
-    int start_y;
-    ObjectRect * rect;
-};
 
 struct Mode
 {
     enum Type
     {
-        None = 0, Move = 1, Create = 2, MoveCreate = 3
+        None = 0, Move = 1, Create = 2, MoveCreate = 3, MoveResize = 4
     };
 };
+
+struct Point
+{
+    enum Type
+    {
+        None = 0, Point1 = 1, Point2 = 2, Point3 = 3, Point4 = 4
+    };
+};
+
 
 class PanoramaViewer : public QGraphicsView
 {
@@ -63,44 +46,62 @@ public:
 
     QGraphicsScene* scene;
 
-    QImage src_image;
-    QPixmap src_image_map;
-
     QImage dest_image;
     QPixmap dest_image_map;
 
-    int mode;
+    void setup(int width, int height, float scale_factor, float zoom_min, float zoom_max, float zoom_def, int threads);
 
-    int   threads_count;
-
-    float scale_factor;
-    float zoom_min;
-    float zoom_max;
-
-    QGraphicsPixmapItem* last_pixmap;
-    bool pixmap_initialized;
-
-    position_container position;
-    create_container   create_position;
-    QList<ObjectRect*> rect_list;
-    QList<DetectedObject*> def_rect_list;
-    ObjectRect * selected_rect;
-
-    void setup(float scale_factor, float zoom_min, float zoom_max, float zoom_def, int threads);
     void loadImage(QString path);
+
     void updateScene(float azimuth, float elevation, float zoom);
+
     void render();
 
     void setZoom(float zoom);
     void setView(float azimuth, float elevation);
 
-    QImage cropObject(ObjectRect* rect);
+    QImage cropObject(ObjectRect2* rect);
 
     void updateLabels();
 
-    void insertDetectedObject(DetectedObject obj);
+    void backupPosition();
 
-    void TestSquare(int x, int y);
+    struct {
+        int start_x;
+        int start_y;
+
+        QPointF offset_1;
+        QPointF offset_2;
+        QPointF offset_3;
+        QPointF offset_4;
+
+        int x;
+        int y;
+
+        float start_azimuth;
+        float start_elevation;
+
+        float azimuth;
+        float elevation;
+        float aperture;
+        float aperture_delta;
+
+        float old_aperture;
+        float old_azimuth;
+        float old_elevation;
+
+        float old_width;
+        float old_height;
+    } position;
+
+    struct {
+        int start_x;
+        int start_y;
+        ObjectRect2 * rect;
+    } increation_rect;
+
+    QList<ObjectRect2*> rect_list_v2;
+    float scale_factor;
 
 public slots:
 
@@ -112,8 +113,29 @@ private:
     void mouseReleaseEvent(QMouseEvent *releaseEvent);
     void resizeEvent(QResizeEvent *);
 
+    bool isObjectVisible(ObjectRect2* rect);
+
     int previous_height;
     int previous_width;
+
+    QImage src_image;
+    QPixmap src_image_map;
+
+    ObjectRect2 * selected_rect;
+
+    QGraphicsEllipseItem* sight;
+
+    QGraphicsPixmapItem* last_pixmap;
+    bool pixmap_initialized;
+
+    int threads_count;
+
+    float zoom_min;
+    float zoom_max;
+
+    int mode;
+    int resizePoint;
+
 
 signals:
     void refreshLabels();

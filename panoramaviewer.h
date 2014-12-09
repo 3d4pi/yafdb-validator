@@ -113,6 +113,8 @@ private:
     void mouseReleaseEvent(QMouseEvent *releaseEvent);
     void resizeEvent(QResizeEvent *);
 
+    bool isObjectVisible(ObjectRect2* rect);
+
     int previous_height;
     int previous_width;
 

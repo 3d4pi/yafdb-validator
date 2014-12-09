@@ -247,7 +247,7 @@ void PanoramaViewer::render()
                         QPointF( p3_x, p3_y ),
                         QPointF( p4_x, p4_y ));
 
-        if(state == 1 && state2 == 1 && state3 == 1 && state4 == 1)
+        if( this->isObjectVisible( rect ) )
         {
             rect->setVisible( true );
         } else {
@@ -609,4 +609,86 @@ void PanoramaViewer::backupPosition()
     this->position.old_azimuth = this->position.azimuth;
     this->position.old_elevation = this->position.elevation;
     this->position.old_aperture = this->position.aperture;
+}
+
+bool PanoramaViewer::isObjectVisible(ObjectRect2 *rect)
+{
+    double p1_x = 0.0;
+    double p1_y = 0.0;
+    double p2_x = 0.0;
+    double p2_y = 0.0;
+    double p3_x = 0.0;
+    double p3_y = 0.0;
+    double p4_x = 0.0;
+    double p4_y = 0.0;
+
+    int state = g2g_point(rect->proj_width(),
+              rect->proj_height(),
+              rect->proj_azimuth(),
+              rect->proj_elevation(),
+              rect->proj_aperture(),
+              rect->proj_point_1().x(),
+              rect->proj_point_1().y(),
+
+              this->dest_image_map.width(),
+              this->dest_image_map.height(),
+              this->position.azimuth,
+              this->position.elevation,
+              this->position.aperture,
+              &p1_x,
+              &p1_y);
+
+    int state2 = g2g_point(rect->proj_width(),
+              rect->proj_height(),
+              rect->proj_azimuth(),
+              rect->proj_elevation(),
+              rect->proj_aperture(),
+              rect->proj_point_2().x(),
+              rect->proj_point_2().y(),
+
+              this->dest_image_map.width(),
+              this->dest_image_map.height(),
+              this->position.azimuth,
+              this->position.elevation,
+              this->position.aperture,
+              &p2_x,
+              &p2_y);
+
+    int state3 = g2g_point(rect->proj_width(),
+              rect->proj_height(),
+              rect->proj_azimuth(),
+              rect->proj_elevation(),
+              rect->proj_aperture(),
+              rect->proj_point_3().x(),
+              rect->proj_point_3().y(),
+
+              this->dest_image_map.width(),
+              this->dest_image_map.height(),
+              this->position.azimuth,
+              this->position.elevation,
+              this->position.aperture,
+              &p3_x,
+              &p3_y);
+
+    int state4 = g2g_point(rect->proj_width(),
+              rect->proj_height(),
+              rect->proj_azimuth(),
+              rect->proj_elevation(),
+              rect->proj_aperture(),
+              rect->proj_point_4().x(),
+              rect->proj_point_4().y(),
+
+              this->dest_image_map.width(),
+              this->dest_image_map.height(),
+              this->position.azimuth,
+              this->position.elevation,
+              this->position.aperture,
+              &p4_x,
+              &p4_y);
+
+    if( state != 1 || state2 != 1 || state3 != 1 || state4 != 1){
+        return false;
+    } else {
+        return true;
+    }
 }

@@ -121,6 +121,8 @@ private:
 
     ObjectRect2 * selected_rect;
 
+    QGraphicsEllipseItem* sight;
+
     QGraphicsPixmapItem* last_pixmap;
     bool pixmap_initialized;
 

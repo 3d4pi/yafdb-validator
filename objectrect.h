@@ -42,6 +42,9 @@ public:
     // Object parameters
     void setObjectRectType(int type);
     void setObjectRectState(int state);
+    int getObjectRectType();
+    int getObjectRectState();
+
 
     // Size getters
     QSizeF getSize();
@@ -106,6 +109,12 @@ private:
 
     // Id container
     int id;
+
+    // Type container
+    int rect_type;
+
+    // State container
+    int rect_state;
 
     // Projection parameters structure
     struct {

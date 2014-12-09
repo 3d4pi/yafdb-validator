@@ -220,6 +220,8 @@ int ObjectRect::getId()
 
 void ObjectRect::setObjectRectType(int type)
 {
+    this->rect_type = type;
+
     switch(type)
     {
         case ObjectRectType::Manual:
@@ -237,8 +239,15 @@ void ObjectRect::setObjectRectType(int type)
     this->render();
 }
 
+int ObjectRect::getObjectRectType()
+{
+    return this->rect_type;
+}
+
 void ObjectRect::setObjectRectState(int state)
 {
+    this->rect_state = state;
+
     switch(state)
     {
         case ObjectRectState::Valid:
@@ -251,6 +260,11 @@ void ObjectRect::setObjectRectState(int state)
 
     // Cal rendering procedure
     this->render();
+}
+
+int ObjectRect::getObjectRectState()
+{
+    return this->rect_state;
 }
 
 void ObjectRect::render()

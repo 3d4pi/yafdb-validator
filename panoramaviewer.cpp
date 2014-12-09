@@ -1,9 +1,11 @@
-#include "panoramaviewer.h"
 #include <QDebug>
 #include <QApplication>
 #include <QGraphicsProxyWidget>
 #include <QToolTip>
 #include <QPushButton>
+
+#include "panoramaviewer.h"
+#include "editview.h"
 
 #define CHANNELS_COUNT 4
 
@@ -47,6 +49,8 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->increation_rect.rect = NULL;
 
     this->selected_rect = NULL;
+
+    this->moveEnabled = true;
 
     // Create default scene
     this->scene = new QGraphicsScene();
@@ -92,12 +96,20 @@ void PanoramaViewer::setup(int width, int height, float scale_factor, float zoom
 
 void PanoramaViewer::loadImage(QString path)
 {
-
+    this->image_path = path;
     this->src_image.load(path);
     this->src_image_map = QPixmap::fromImage(this->src_image);
 
     this->render();
 
+}
+
+void PanoramaViewer::loadImage(QImage image)
+{
+    this->src_image = image;
+    this->src_image_map = QPixmap::fromImage(this->src_image);
+
+    this->render();
 }
 
 void PanoramaViewer::updateScene(float azimuth, float elevation, float zoom)
@@ -262,8 +274,16 @@ void PanoramaViewer::setZoom(float zoom_level)
 
     // Convert zoom value to radians
     this->position.aperture = ( zoom_level * ( LG_PI / 180.0 ) );
+    this->position.aperture_delta = zoom_level;
 
     // Render scene
+    this->render();
+}
+
+void PanoramaViewer::setView(float azimuth, float elevation)
+{
+    this->position.azimuth = azimuth;
+    this->position.elevation = elevation;
     this->render();
 }
 
@@ -292,6 +312,10 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
     // Check presence of left click
     if(event->buttons() & Qt::LeftButton)
     {
+        // Exif function if move is disabled
+        if(!this->moveEnabled)
+            return;
+
         // Enable mouse tracking
         this->setMouseTracking(true);
 
@@ -386,6 +410,18 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
             this->increation_rect.start_y = mouse_scene.y();
 
         }
+    }
+}
+
+void PanoramaViewer::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    ObjectRect* clicked_rect = qgraphicsitem_cast<ObjectRect*>(this->itemAt(event->x(), event->y()));
+
+    // Verify that clicked object is a widget and is not null
+    if (clicked_rect != NULL)
+    {
+        EditView* w = new EditView(this, clicked_rect);
+        w->show();
     }
 }
 
@@ -677,4 +713,14 @@ bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
     } else {
         return true;
     }
+}
+
+void PanoramaViewer::setMoveEnabled(bool value)
+{
+    this->moveEnabled = value;
+}
+
+void PanoramaViewer::refreshLabels_slot()
+{
+    emit refreshLabels();
 }

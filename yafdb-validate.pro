@@ -20,7 +20,8 @@ SOURCES += main.cpp \
     objectitem.cpp \
 #    ymlparser.cpp \
     g2g_point.cpp \
-    objectrect.cpp
+    objectrect.cpp \
+    editview.cpp
 
 HEADERS  += mainwindow.h \
     panoramaviewer.h \
@@ -31,12 +32,14 @@ HEADERS  += mainwindow.h \
     types.h \
 #    ymlparser.h \
     g2g_point.h \
-    objectrect.h
+    objectrect.h \
+    editview.h
 
 FORMS    += mainwindow.ui \
     batchview.ui \
     objectitem.ui \
-    objectrect.ui
+    objectrect.ui \
+    editview.ui
 
 LIBS += $$PWD/libs/libgnomonic/lib/libinter/bin/libinter.a \
     $$PWD/libs/libgnomonic/bin/libgnomonic.a \

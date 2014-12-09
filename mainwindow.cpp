@@ -331,57 +331,6 @@ void MainWindow::on_pushButton_clicked()
     emit refreshLabels();
 }
 
-void MainWindow::on_pushButton_2_clicked()
-{
-
-
-}
-
-void MainWindow::on_pushButton_3_clicked()
-{
-    this->pano->position.old_azimuth = this->pano->position.azimuth;
-
-    this->pano->position.azimuth += 1 * (LG_PI / 180);
-    this->pano->render();
-}
-
-void MainWindow::on_pushButton_4_clicked()
-{
-    //this->pano->position.old_azimuth = this->pano->position.azimuth;
-
-    this->pano->position.azimuth -= 1 * (LG_PI / 180);
-    this->pano->render();
-}
-
-void MainWindow::on_pushButton_5_clicked()
-{
-    this->pano->position.old_azimuth = this->pano->position.azimuth;
-    this->pano->position.old_elevation = this->pano->position.elevation;
-    this->pano->position.old_aperture = this->pano->position.aperture;
-
-    //this->pano->position.old_elevation = this->pano->position.elevation;
-
-    //this->pano->position.elevation += 1.0 * (LG_PI / 180);
-    this->pano->render();
-}
-
-void MainWindow::on_pushButton_6_clicked()
-{
-    this->pano->position.old_azimuth = this->pano->position.azimuth;
-    this->pano->position.old_elevation = this->pano->position.elevation;
-    this->pano->position.old_aperture = this->pano->position.aperture;
-
-    //this->pano->position.elevation -= 1.0 * (LG_PI / 180);
-    this->pano->render();
-}
-
-void MainWindow::on_pushButton_7_clicked()
-{
-    qDebug() << this->size();
-    qDebug() << this->pano->size();
-    qDebug() << this->pano->dest_image_map.size();
-}
-
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
     this->pano->backupPosition();

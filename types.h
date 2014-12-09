@@ -41,22 +41,6 @@ struct ObjectValidState
     };
 };
 
-struct RectType
-{
-    enum Type
-    {
-       Manual = 1, Auto = 2
-    };
-};
-
-struct RectMoveType
-{
-    enum Type
-    {
-        All = 1, Only_Point1 = 2, Only_Point2 = 3
-    };
-};
-
 struct BatchMode
 {
     enum Type

@@ -38,21 +38,7 @@
     </item>
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="1" column="5">
-       <widget class="QPushButton" name="pushButton_5">
-        <property name="text">
-         <string>El+</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="7">
-       <widget class="QPushButton" name="pushButton_3">
-        <property name="text">
-         <string>Az+</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="16">
+      <item row="1" column="10">
        <widget class="QLabel" name="facesLabel">
         <property name="font">
          <font>
@@ -65,7 +51,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="14">
+      <item row="1" column="8">
        <widget class="QLabel" name="platesLabel">
         <property name="font">
          <font>
@@ -78,14 +64,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="8">
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="text">
-         <string>Write YML</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="12">
+      <item row="1" column="6">
        <widget class="QLabel" name="untypedLabel">
         <property name="font">
          <font>
@@ -98,7 +77,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="11">
+      <item row="1" column="5">
        <widget class="QPushButton" name="preInvalidatedButton">
         <property name="maximumSize">
          <size>
@@ -121,7 +100,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="17">
+      <item row="1" column="11">
        <widget class="QPushButton" name="facesButton">
         <property name="maximumSize">
          <size>
@@ -144,7 +123,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="15">
+      <item row="1" column="9">
        <widget class="QPushButton" name="platesButton">
         <property name="maximumSize">
          <size>
@@ -167,35 +146,14 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="6">
-       <widget class="QPushButton" name="pushButton_4">
-        <property name="text">
-         <string>Az-</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="4">
-       <widget class="QPushButton" name="pushButton_6">
-        <property name="text">
-         <string>El-</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="3">
-       <widget class="QPushButton" name="pushButton_7">
-        <property name="text">
-         <string>QGraphicsRectItem</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="9">
        <widget class="QPushButton" name="pushButton">
         <property name="text">
          <string>Pop items</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="13">
+      <item row="1" column="7">
        <widget class="QPushButton" name="untypedButton">
         <property name="maximumSize">
          <size>
@@ -234,7 +192,7 @@
         </property>
        </spacer>
       </item>
-      <item row="1" column="10">
+      <item row="1" column="4">
        <widget class="QLabel" name="preInvalidatedLabel">
         <property name="font">
          <font>

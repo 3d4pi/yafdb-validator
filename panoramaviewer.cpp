@@ -22,8 +22,6 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     // Initialize position container
     this->position.start_x = 0;
     this->position.start_y = 0;
-    this->position.x = 0;
-    this->position.y = 0;
     this->position.start_azimuth = 0.0;
     this->position.start_elevation = 0.0;
     this->position.azimuth = 0.0;
@@ -257,24 +255,12 @@ void PanoramaViewer::render()
 
 }
 
-// Function to update view of current scene
-void PanoramaViewer::setView(float azimuth, float elevation)
-{
-    // Update view
-    this->position.azimuth = azimuth;
-    this->position.elevation = elevation;
-
-    // Render scene
-    this->render();
-}
-
 // Function to update zoom of current scene
 void PanoramaViewer::setZoom(float zoom_level)
 {
-
-    // Convert zoom value to radians
     this->backupPosition();
 
+    // Convert zoom value to radians
     this->position.aperture = ( zoom_level * ( LG_PI / 180.0 ) );
 
     // Render scene

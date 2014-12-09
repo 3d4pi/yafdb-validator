@@ -166,7 +166,7 @@ void PanoramaViewer::render()
         this->position.aperture
     );
 
-    foreach(ObjectRect2* rect, this->rect_list_v2)
+    foreach(ObjectRect* rect, this->rect_list)
     {
 
         double p1_x = 0.0;
@@ -178,7 +178,7 @@ void PanoramaViewer::render()
         double p4_x = 0.0;
         double p4_y = 0.0;
 
-        int state = g2g_point(this->position.old_width,
+        g2g_point(this->position.old_width,
                   this->position.old_height,
                   this->position.old_azimuth,
                   this->position.old_elevation,
@@ -194,7 +194,7 @@ void PanoramaViewer::render()
                   &p1_x,
                   &p1_y);
 
-        int state2 = g2g_point(this->position.old_width,
+        g2g_point(this->position.old_width,
                   this->position.old_height,
                   this->position.old_azimuth,
                   this->position.old_elevation,
@@ -210,7 +210,7 @@ void PanoramaViewer::render()
                   &p2_x,
                   &p2_y);
 
-        int state3 = g2g_point(this->position.old_width,
+        g2g_point(this->position.old_width,
                   this->position.old_height,
                   this->position.old_azimuth,
                   this->position.old_elevation,
@@ -226,7 +226,7 @@ void PanoramaViewer::render()
                   &p3_x,
                   &p3_y);
 
-        int state4 = g2g_point(this->position.old_width,
+        g2g_point(this->position.old_width,
                   this->position.old_height,
                   this->position.old_azimuth,
                   this->position.old_elevation,
@@ -325,7 +325,7 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
     else if (event->buttons() & Qt::RightButton)
     {
 
-        ObjectRect2* clicked_rect = qgraphicsitem_cast<ObjectRect2*>(this->itemAt(event->x(), event->y()));
+        ObjectRect* clicked_rect = qgraphicsitem_cast<ObjectRect*>(this->itemAt(event->x(), event->y()));
 
         // Verify that clicked object is a widget and is not null
         if (clicked_rect != NULL)
@@ -465,15 +465,15 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
         if(this->increation_rect.rect == NULL)
         {
 
-            this->increation_rect.rect = new ObjectRect2();
+            this->increation_rect.rect = new ObjectRect();
             this->increation_rect.rect->setObjectRectType(ObjectRectType::Manual);
             this->increation_rect.rect->setObjectRectState(ObjectRectState::Valid);
             this->increation_rect.rect->setManualStatus("Valid");
             this->increation_rect.rect->setBlurred(true);
 
-            this->increation_rect.rect->setId( this->rect_list_v2.length() );
+            this->increation_rect.rect->setId( this->rect_list.length() );
 
-            this->rect_list_v2.append( this->increation_rect.rect );
+            this->rect_list.append( this->increation_rect.rect );
             this->scene->addItem( this->increation_rect.rect );
 
             this->increation_rect.rect->setProjectionParametters(this->position.azimuth,
@@ -570,7 +570,7 @@ void PanoramaViewer::resizeEvent(QResizeEvent *)
 }
 
 // Function to crop a selection object
-QImage PanoramaViewer::cropObject(ObjectRect2* rect)
+QImage PanoramaViewer::cropObject(ObjectRect* rect)
 {
 
     // Convert points to a QRect and deduce borders sizes
@@ -611,7 +611,7 @@ void PanoramaViewer::backupPosition()
     this->position.old_aperture = this->position.aperture;
 }
 
-bool PanoramaViewer::isObjectVisible(ObjectRect2 *rect)
+bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
 {
     double p1_x = 0.0;
     double p1_y = 0.0;

@@ -7,7 +7,7 @@
 #include <QMessageBox>
 #include <flowlayout.h>
 #include "panoramaviewer.h"
-#include "objectrect2.h"
+#include "objectrect.h"
 #include "objectitem.h"
 
 namespace Ui {
@@ -26,7 +26,7 @@ public:
     QList<ObjectItem*> elements;
 
     void setMode(int mode);
-    void insertItem(ObjectRect2* rect);
+    void insertItem(ObjectRect* rect);
 
 
 private slots:

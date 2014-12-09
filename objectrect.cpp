@@ -1,232 +1,376 @@
 #include "objectrect.h"
-#include "ui_objectrect.h"
 
-#include <QDebug>
-
-ObjectRect::ObjectRect(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::ObjectRect)
+ObjectRect::ObjectRect()
 {
-    ui->setupUi(this);
+    // Append default points
+    this->points.append(QPointF(0.0, 0.0));
+    this->points.append(QPointF(0.0, 0.0));
+    this->points.append(QPointF(0.0, 0.0));
+    this->points.append(QPointF(0.0, 0.0));
+    this->polygon = QPolygonF( this->points );
 
-    this->setRectType(RectType::Manual);
-    this->setObjectType(ObjectType::None);
-    this->setValidState(ObjectValidState::None);
+    // Default id
+    this->id = 0;
 
-    this->autoStatus = "None";
-    this->manualStatus = "None";
+    // Default pen setup
+    this->pen = new QPen(QColor(0, 255, 255, 255), 2);
+    this->brush = new QBrush(QColor(0, 255, 0, 50), Qt::SolidPattern);
+
+    // Default projection parameters
+    this->projection_parameters.azimuth = 0.0;
+    this->projection_parameters.elevation = 0.0;
+    this->projection_parameters.aperture = 0.0;
+
+    this->projection_parameters.points.append(QPointF(0.0, 0.0));
+    this->projection_parameters.points.append(QPointF(0.0, 0.0));
+    this->projection_parameters.points.append(QPointF(0.0, 0.0));
+    this->projection_parameters.points.append(QPointF(0.0, 0.0));
+
+    this->projection_parameters.width = 0.0;
+    this->projection_parameters.height = 0.0;
+
+    // Default informations
+    this->info.automatic_status = "None";
+    this->info.manual_status = "None";
+    this->info.blurred = false;
+    this->info.validated = false;
+    this->info.type = ObjectType::None;
+
+    this->render();
 }
 
-void ObjectRect::setRectType(int type)
+void ObjectRect::setPoint1(QPointF point)
 {
-    this->recttype = type;
+    this->points[0] = point;
 
-    switch(type)
-    {
-        case RectType::Manual:
-            this->setStyleSheet(
-                "QWidget#ObjectRect{"
-                "background-color: rgba(0, 0, 0, 0);}"
-
-                "QWidget#frame{"
-                "border: 2px solid rgb(255, 255, 0);"
-                "}"
-
-                "QWidget#frame_2{"
-                "border: 2px solid rgb(0, 255, 255);"
-                "}"
-            );
-            break;
-        case RectType::Auto:
-            this->setStyleSheet(
-                "QWidget#ObjectRect{"
-                "background-color: rgba(0, 0, 0, 0);}"
-
-                "QWidget#frame{"
-                "border: 2px solid rgb(255, 255, 0);"
-                "}"
-
-                "QWidget#frame_2{"
-                "border: 2px solid rgb(0, 255, 0);"
-                "}"
-            );
-            break;
-    }
+    // Cal rendering procedure
+    this->render();
 }
 
-void ObjectRect::setObjectType(int type)
+void ObjectRect::setPoint2(QPointF point)
 {
-    this->objecttype = type;
+    this->points[1] = point;
+
+    // Cal rendering procedure
+    this->render();
 }
 
-void ObjectRect::setBlurred(bool blur)
+void ObjectRect::setPoint3(QPointF point)
 {
-    this->blurred = blur;
+    this->points[2] = point;
+
+    // Cal rendering procedure
+    this->render();
 }
 
-void ObjectRect::setAutomaticStatus(QString value)
+void ObjectRect::setPoint3_Rigid(QPointF point)
 {
-    this->autoStatus = value;
+    QPointF new_p1 = this->points[0];
+    QPointF new_p2 = this->points[1];
+    QPointF new_p3 = point;
+    QPointF new_p4 = this->points[3];
+
+    new_p2.setY( new_p3.y() );
+    new_p4.setX( new_p3.x() );
+
+    // Update positions
+    this->setPoints( new_p1, new_p2, new_p3, new_p4 );
+
+    // Cal rendering procedure
+    this->render();
 }
 
-void ObjectRect::setManualStatus(QString value)
-{
-    this->manualStatus = value;
-}
-
-void ObjectRect::setValidState(int state)
+void ObjectRect::setPoint3_Rigid(QPointF point, QPointF offset)
 {
 
-    this->validstate = state;
-
-    return;
-
-
-    switch(state)
-    {
-        case ObjectValidState::Valid:
-           this->ui->frame_2->setStyleSheet("QFrame#frame_2 {background-color :  rgba(0, 255, 0, 50);}");
-            this->valid = true;
-            break;
-        case ObjectValidState::Invalid:
-            this->ui->frame_2->setStyleSheet("QFrame#frame_2 {background-color :  rgba(255, 0, 0, 50);}");
-            this->valid = false;
-            break;
-        case ObjectValidState::None:
-            this->ui->frame_2->setStyleSheet("QFrame#frame_2 {background-color :  rgba(0, 0, 0, 0);}");
-            this->valid = false;
-            break;
-    }
-}
-
-void ObjectRect::setPosPoint1(QPointF point)
-{
-    this->move(point.x(), point.y());
-
-    this->point_1 = point;
-
-    this->point_3 = (QPointF(this->point_2.x(), this->point_1.y()));
-    this->point_4 = (QPointF(this->point_1.x(), this->point_2.y()));
-}
-
-void ObjectRect::setPosPoint2(QPointF point)
-{
-    int calc_w = (point.x() - this->point_1.x());
-    int calc_h = (point.y() - this->point_1.y());
-
-    this->resize(calc_w, calc_h);
-
-    this->point_2 = point;
-    this->point_3 = (QPointF(this->point_2.x(), this->point_1.y()));
-    this->point_4 = (QPointF(this->point_1.x(), this->point_2.y()));
-}
-
-void ObjectRect::moveRect(QPointF point, QPointF offset)
-{
-
-    // Center point by clicking offset
-    QPointF centered_point(
+    QPointF centered (
                     point.x() - offset.x(),
                     point.y() - offset.y()
                 );
 
+    this->setPoint3_Rigid(centered);
+}
+
+void ObjectRect::setPoint4(QPointF point)
+{
+    this->points[3] = point;
+
+    // Cal rendering procedure
+    this->render();
+}
+
+void ObjectRect::setPoints(QPointF p1, QPointF p2, QPointF p3, QPointF p4)
+{
+    this->setPoint1( p1 );
+    this->setPoint2( p2 );
+    this->setPoint3( p3 );
+    this->setPoint4( p4 );
+
+    // Cal rendering procedure
+    this->render();
+}
+
+void ObjectRect::moveObject(QPointF pos,
+                             QPointF offset_1,
+                             QPointF offset_2,
+                             QPointF offset_3,
+                             QPointF offset_4)
+{
+
+    // Center point by clicking offset
+    QPointF centered_point_1 (
+                    pos.x() - offset_1.x(),
+                    pos.y() - offset_1.y()
+                );
+
+    QPointF centered_point_2 (
+                    pos.x() - offset_2.x(),
+                    pos.y() - offset_2.y()
+                );
+
+    QPointF centered_point_3 (
+                    pos.x() - offset_3.x(),
+                    pos.y() - offset_3.y()
+                );
+
+    QPointF centered_point_4 (
+                    pos.x() - offset_4.x(),
+                    pos.y() - offset_4.y()
+                );
+
     // Move object point 1
-    this->setPosPoint1(centered_point);
+    this->setPoint1(centered_point_1);
+    this->setPoint2(centered_point_2);
+    this->setPoint3(centered_point_3);
+    this->setPoint4(centered_point_4);
 
-    // Compute destination point 2 location
-    QPointF size(
-                this->point_1.x() + (this->width()),
-                this->point_1.y() + (this->height())
-            );
-
-    // Update position of point 2
-    this->point_2 = size;
-
+    this->render();
 }
 
-void ObjectRect::setPos(QPointF p1, QPointF p2, int mode)
+QPointF ObjectRect::getPoint1()
 {
-    switch(mode)
+    return this->points[0];
+}
+
+QPointF ObjectRect::getPoint2()
+{
+    return this->points[1];
+}
+
+QPointF ObjectRect::getPoint3()
+{
+    return this->points[2];
+}
+
+QPointF ObjectRect::getPoint4()
+{
+    return this->points[3];
+}
+
+QVector<QPointF> ObjectRect::getPoints()
+{
+    return this->points;
+}
+
+void ObjectRect::setSize(QSizeF size)
+{
+    QPointF new_p1 = this->points[0];
+    QPointF new_p2 = this->points[1];
+    QPointF new_p3 = this->points[2];
+    QPointF new_p4 = this->points[3];
+
+    // Width
+    new_p2.setX( new_p1.x() + size.width() );
+    new_p3.setX( new_p1.x() + size.width() );
+
+    // Height
+    new_p4.setY( new_p1.y() + size.height() );
+    new_p3.setY( new_p1.y() + size.height() );
+
+    // Update positions
+    this->setPoints( new_p1, new_p2, new_p3, new_p4 );
+
+    // Cal rendering procedure
+    this->render();
+}
+
+QSizeF ObjectRect::getSize()
+{
+    QPointF p1 = this->points[0];
+    QPointF p2 = this->points[1];
+    QPointF p4 = this->points[3];
+
+    QSizeF size;
+
+    size.setWidth( p4.x() -  p1.x());
+    size.setHeight( p2.y() -  p1.y());
+
+    return size;
+}
+
+void ObjectRect::setId(int id)
+{
+    this->id = id;
+}
+
+int ObjectRect::getId()
+{
+    return this->id;
+}
+
+void ObjectRect::setObjectRectType(int type)
+{
+    switch(type)
     {
-        case RectMoveType::All:
-            this->setPosPoint1(p1);
-            this->setPosPoint2(p2);
+        case ObjectRectType::Manual:
+            this->pen->setColor( QColor(0, 255, 255, 255) );
             break;
-        case RectMoveType::Only_Point1:
-            this->setPosPoint1(p1);
+        case ObjectRectType::Valid:
+            this->pen->setColor( QColor(0, 255, 0, 255) );
             break;
-        case RectMoveType::Only_Point2:
-            this->setPosPoint2(p2);
+        case ObjectRectType::Invalid:
+            this->pen->setColor( QColor(255, 0, 0, 255) );
             break;
     }
+
+    // Cal rendering procedure
+    this->render();
 }
 
-void ObjectRect::setPos(QPointF p1, QPointF p2, QPointF p3, QPointF p4, int mode)
+void ObjectRect::setObjectRectState(int state)
 {
-    switch(mode)
+    switch(state)
     {
-        case RectMoveType::All:
-            this->setPosPoint1(p1);
-            this->setPosPoint2(p2);
+        case ObjectRectState::Valid:
+            this->brush->setColor( QColor(0, 255, 0, 50) );
             break;
-        case RectMoveType::Only_Point1:
-            this->setPosPoint1(p1);
-            break;
-        case RectMoveType::Only_Point2:
-            this->setPosPoint2(p2);
+        case ObjectRectState::Invalid:
+            this->brush->setColor( QColor(255, 0, 0, 50) );
             break;
     }
 
-    this->point_3 = p3;
-    this->point_4 = p4;
+    // Cal rendering procedure
+    this->render();
 }
 
-void ObjectRect::paintEvent(QPaintEvent *)
+void ObjectRect::render()
 {
-    /*
-    QRect widget_rect = this->rect();
+    this->polygon = QPolygonF( this->points );
 
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(Qt::red);
-    painter.setOpacity(100);
-
-    QPainterPath rounded_rect;
-    rounded_rect.addRoundRect(1, 1, widget_rect.width() - 2, widget_rect.height() - 2, 12, 12);
-    painter.setClipPath(rounded_rect);
-    painter.fillPath(rounded_rect,QBrush(Qt::black));*/
-
-    /*
-    qreal opacity(0.675);
-    int roundness(12);
-    QRect widget_rect = this->rect();
-
-    QPainter painter(this);
-    painter.save();
-
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(Qt::red);
-
-    // clip
-    QPainterPath rounded_rect;
-    rounded_rect.addRoundRect(1, 1, widget_rect.width() - 2, widget_rect.height() - 2, roundness, roundness);
-    painter.setClipPath(rounded_rect);
-
-    // get clipping region
-    QRegion maskregion = painter.clipRegion();
-
-    // mask the widget
-    setMask(maskregion);
-    painter.setOpacity(opacity);
-
-    // fill path with color
-    painter.fillPath(rounded_rect,QBrush(Qt::black));
-
-    // restore painter
-    painter.restore();*/
+    this->setPen( * this->pen );
+    this->setBrush( * this->brush );
+    this->setPolygon( this->polygon );
 }
 
-ObjectRect::~ObjectRect()
+void ObjectRect::setProjectionParametters(float azimuth,
+                                           float elevation,
+                                           float aperture,
+                                           float width,
+                                           float height)
 {
-    delete ui;
+    this->projection_parameters.azimuth = azimuth;
+    this->projection_parameters.elevation = elevation;
+    this->projection_parameters.aperture = aperture;
+    this->projection_parameters.width = width;
+    this->projection_parameters.height = height;
+}
+
+void ObjectRect::setProjectionPoints()
+{
+    this->projection_parameters.points = this->points;
+}
+
+float ObjectRect::proj_azimuth()
+{
+    return this->projection_parameters.azimuth;
+}
+
+float ObjectRect::proj_elevation()
+{
+    return this->projection_parameters.elevation;
+}
+
+float ObjectRect::proj_aperture()
+{
+    return this->projection_parameters.aperture;
+}
+
+QPointF ObjectRect::proj_point_1()
+{
+    return this->projection_parameters.points[0];
+}
+
+QPointF ObjectRect::proj_point_2()
+{
+    return this->projection_parameters.points[1];
+}
+
+QPointF ObjectRect::proj_point_3()
+{
+    return this->projection_parameters.points[2];
+}
+
+QPointF ObjectRect::proj_point_4()
+{
+    return this->projection_parameters.points[3];
+}
+
+float ObjectRect::proj_width()
+{
+    return this->projection_parameters.width;
+}
+
+float ObjectRect::proj_height()
+{
+    return this->projection_parameters.height;
+}
+
+int ObjectRect::getType()
+{
+    return this->info.type;
+}
+
+void ObjectRect::setType(int value)
+{
+    this->info.type = value;
+}
+
+bool ObjectRect::isBlurred()
+{
+    return this->info.blurred;
+}
+
+bool ObjectRect::isValidated()
+{
+    return this->info.validated;
+}
+
+void ObjectRect::setBlurred(bool value)
+{
+    this->info.blurred = value;
+}
+
+void ObjectRect::setValidated(bool value)
+{
+    this->info.validated = value;
+}
+
+QString ObjectRect::getManualStatus()
+{
+    return this->info.manual_status;
+}
+
+QString ObjectRect::getAutomaticStatus()
+{
+    return this->info.automatic_status;
+}
+
+void ObjectRect::setManualStatus(QString value)
+{
+    this->info.manual_status = value;
+}
+
+void ObjectRect::setAutomaticStatus(QString value)
+{
+    this->info.automatic_status = value;
 }

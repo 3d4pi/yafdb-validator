@@ -18,7 +18,6 @@
 #include <QLabel>
 
 #include "objectrect.h"
-#include "objectrect2.h"
 #include "detectedobject.h"
 
 struct Mode
@@ -36,7 +35,6 @@ struct Point
         None = 0, Point1 = 1, Point2 = 2, Point3 = 3, Point4 = 4
     };
 };
-
 
 class PanoramaViewer : public QGraphicsView
 {
@@ -60,7 +58,7 @@ public:
     void setZoom(float zoom);
     void setView(float azimuth, float elevation);
 
-    QImage cropObject(ObjectRect2* rect);
+    QImage cropObject(ObjectRect* rect);
 
     void updateLabels();
 
@@ -97,10 +95,10 @@ public:
     struct {
         int start_x;
         int start_y;
-        ObjectRect2 * rect;
+        ObjectRect * rect;
     } increation_rect;
 
-    QList<ObjectRect2*> rect_list_v2;
+    QList<ObjectRect*> rect_list;
     float scale_factor;
 
 public slots:
@@ -113,29 +111,25 @@ private:
     void mouseReleaseEvent(QMouseEvent *releaseEvent);
     void resizeEvent(QResizeEvent *);
 
-    bool isObjectVisible(ObjectRect2* rect);
-
-    int previous_height;
-    int previous_width;
-
-    QImage src_image;
-    QPixmap src_image_map;
-
-    ObjectRect2 * selected_rect;
-
-    QGraphicsEllipseItem* sight;
-
-    QGraphicsPixmapItem* last_pixmap;
-    bool pixmap_initialized;
+    bool isObjectVisible(ObjectRect* rect);
 
     int threads_count;
+    int mode;
+    int resizePoint;
 
     float zoom_min;
     float zoom_max;
 
-    int mode;
-    int resizePoint;
+    int previous_height;
+    int previous_width;
+    bool pixmap_initialized;
 
+    QImage src_image;
+    QPixmap src_image_map;
+
+    QGraphicsPixmapItem* last_pixmap;
+    ObjectRect * selected_rect;
+    QGraphicsEllipseItem* sight;
 
 signals:
     void refreshLabels();

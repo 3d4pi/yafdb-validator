@@ -55,7 +55,7 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano, int batchmode, int b
 void BatchView::populate(int batchviewmode)
 {
 
-    foreach(ObjectRect2* rect, pano->rect_list_v2 )
+    foreach(ObjectRect* rect, pano->rect_list )
     {
         switch(batchviewmode)
         {
@@ -110,7 +110,7 @@ void BatchView::populate(int batchviewmode)
 
 }
 
-void BatchView::insertItem(ObjectRect2 *rect)
+void BatchView::insertItem(ObjectRect *rect)
 {
     ObjectItem* object = new ObjectItem();
     object->setId(rect->getId());
@@ -259,7 +259,7 @@ void BatchView::mergeResults()
 {
     foreach(ObjectItem* item, this->elements )
     {
-        foreach (ObjectRect2* rect, this->pano->rect_list_v2) {
+        foreach (ObjectRect* rect, this->pano->rect_list) {
             if(rect->getId() == item->id)
             {
 

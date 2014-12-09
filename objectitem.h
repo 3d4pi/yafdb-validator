@@ -4,7 +4,6 @@
 #include <QWidget>
 #include <QImage>
 #include <QPixmap>
-#include "objectrect.h"
 #include "types.h"
 
 namespace Ui {

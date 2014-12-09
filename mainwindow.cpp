@@ -84,7 +84,7 @@ void MainWindow::refreshLabels()
     int preinvalidatedvalidated = 0;
 
 
-    foreach(ObjectRect2* rect, this->pano->rect_list_v2)
+    foreach(ObjectRect* rect, this->pano->rect_list)
     {
         switch(rect->getType())
         {

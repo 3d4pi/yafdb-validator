@@ -374,17 +374,12 @@ bool ObjectRect::isBlurred()
 
 bool ObjectRect::isValidated()
 {
-    return this->info.validated;
+    return (this->rect_state == ObjectRectState::Valid);
 }
 
 void ObjectRect::setBlurred(bool value)
 {
     this->info.blurred = value;
-}
-
-void ObjectRect::setValidated(bool value)
-{
-    this->info.validated = value;
 }
 
 QString ObjectRect::getManualStatus()

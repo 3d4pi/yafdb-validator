@@ -101,7 +101,6 @@ public:
     bool isBlurred();
     bool isValidated();
     void setBlurred(bool value);
-    void setValidated(bool value);
 
     QString getManualStatus();
     QString getAutomaticStatus();

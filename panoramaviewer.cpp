@@ -61,8 +61,9 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->scene = new QGraphicsScene();
     this->setScene(this->scene);
 
-    QPen elipse_pen;
+    QPen elipse_pen( Qt::DotLine );
     elipse_pen.setColor( Qt::red );
+
     this->sight = this->scene->addEllipse(0, 0, 500, 500, elipse_pen);
 
     // Connect signal for labels refresh
@@ -400,8 +401,8 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
         int delta_y = (MouseY - this->position.start_y);
 
         // Apply delta to azimuth and elevation
-        float azimuth   = (this->position.start_azimuth   - ( (delta_x * this->position.aperture) * 0.1 ) );
-        float elevation = (this->position.start_elevation + ( (delta_y * this->position.aperture) * 0.1 ) );
+        float azimuth   = (this->position.start_azimuth   - ( (delta_x * this->position.aperture) * 0.1 ) / (this->scale_factor * 2.0) );
+        float elevation = (this->position.start_elevation + ( (delta_y * this->position.aperture) * 0.1 ) / (this->scale_factor * 2.0) );
 
         this->backupPosition();
 
@@ -425,6 +426,7 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
 
             this->increation_rect.rect = new ObjectRect();
             this->increation_rect.rect->setObjectRectType(ObjectRectType::Manual);
+            this->increation_rect.rect->setType(ObjectType::None);
             this->increation_rect.rect->setObjectRectState(ObjectRectState::Valid);
             this->increation_rect.rect->setManualStatus("Valid");
             this->increation_rect.rect->setBlurred(true);

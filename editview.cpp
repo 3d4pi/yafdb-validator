@@ -90,6 +90,26 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
     this->ui->heightLabel->setText("Height: " + QString::number( (int) this->ref_rect->getSize().height() ));
     this->ui->preFiltersLabel->setText("Pre-filter status: " + this->ref_rect->getAutomaticStatus());
 
+    this->ui->validCheckBox->setChecked( this->ref_rect->isValidated() );
+    this->ui->blurCheckBox->setChecked( this->ref_rect->isBlurred() );
+
+    switch(this->ref_rect->getType())
+    {
+
+        case ObjectType::None:
+            this->ui->typeList->setCurrentIndex( 0 );
+            break;
+        case ObjectType::Face:
+            this->ui->typeList->setCurrentIndex( 1 );
+            break;
+        case ObjectType::NumberPlate:
+            this->ui->typeList->setCurrentIndex( 2 );
+            break;
+        case ObjectType::ToBlur:
+            this->ui->typeList->setCurrentIndex( 3 );
+            break;
+    }
+
     this->rect_copy = this->ref_rect->copy();
 
     this->rect_copy->mapTo(this->pano->dest_image_map.width(),
@@ -139,10 +159,33 @@ void EditView::on_confirmButton_clicked()
                                       this->rect_copy->getPoint2(),
                                       this->rect_copy->getPoint3(),
                                       this->rect_copy->getPoint4());
+
+            switch(this->ui->typeList->currentIndex())
+            {
+                case 1:
+                    rect->setType( ObjectType::Face );
+                    break;
+                case 2:
+                    rect->setType( ObjectType::NumberPlate );
+                    break;
+                case 3:
+                    rect->setType( ObjectType::ToBlur );
+                    break;
+            }
+
+            rect->setObjectRectState( this->ui->validCheckBox->checkState() ? ObjectRectState::Valid : ObjectRectState::Invalid );
+            rect->setBlurred( this->ui->blurCheckBox->checkState() );
+
+            break;
         }
     }
 
     this->pano_parent->render();
 
     this->close();
+}
+
+void EditView::on_validCheckBox_clicked()
+{
+    this->rect_copy->setObjectRectState( this->ui->validCheckBox->checkState() ? ObjectRectState::Valid : ObjectRectState::Invalid );
 }

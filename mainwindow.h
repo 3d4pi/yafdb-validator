@@ -6,6 +6,7 @@
 #include <QThread>
 #include <QLabel>
 #include <QPalette>
+#include <QElapsedTimer>
 
 #include "panoramaviewer.h"
 #include "batchview.h"
@@ -44,6 +45,8 @@ private:
 
     QString good_color;
     QString warn_color;
+
+    QElapsedTimer* timer;
 };
 
 #endif // MAINWINDOW_H

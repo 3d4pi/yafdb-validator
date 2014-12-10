@@ -32,6 +32,8 @@ private slots:
 
     void on_confirmButton_clicked();
 
+    void on_validCheckBox_clicked();
+
 private:
     Ui::EditView *ui;
 

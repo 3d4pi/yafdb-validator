@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QGraphicsProxyWidget>
+
 #include "ymlparser.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -11,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    this->timer = new QElapsedTimer();
+    this->timer->start();
 
     // Determine good labels colors based on system theme
     QString good_color_string = "rgb(%1, %2, %3)";
@@ -205,9 +209,9 @@ void MainWindow::on_preInvalidatedButton_clicked()
 
 void MainWindow::on_pushButton_clicked()
 {
-    srand (time(NULL));
+    srand( this->timer->nsecsElapsed() );
 
-    for (int x = 0; x < 100; x++)
+    for (int x = 0; x < 20; x++)
     {
         qDebug() << "ADD";
 
@@ -222,7 +226,15 @@ void MainWindow::on_pushButton_clicked()
 
         rect->setId(this->pano->rect_list_index++);
 
-        rect->setPoints(QPointF(0.0, 0.0), QPointF( 100.0, 100.0), QPointF( 100.0, 200.0), QPointF(0.0, 0.0));
+        float rect_size = 64.0;
+        float pos_x = ((float) (rand() % this->pano->dest_image_map.width() - rect_size));
+        float pos_y = ((float) (rand() % this->pano->dest_image_map.height() - rect_size));
+
+        rect->setPoints(QPointF(pos_x, pos_y),
+                        QPointF(pos_x, pos_y + rect_size),
+                        QPointF(pos_x + rect_size, pos_y + rect_size),
+                        QPointF(pos_x + rect_size, pos_y));
+
         rect->setProjectionPoints();
 
         rect->setProjectionParametters(this->pano->position.azimuth,

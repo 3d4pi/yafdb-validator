@@ -36,6 +36,8 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     // Initialize default mode
     this->mode = Mode::None;
 
+    this->rect_list_index = 0;
+
     // Configure default settings
     this->scale_factor = 1.0;
     this->zoom_min = 20.0;
@@ -51,6 +53,7 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->selected_rect = NULL;
 
     this->moveEnabled = true;
+    this->zoomEnabled = true;
 
     // Create default scene
     this->scene = new QGraphicsScene();
@@ -179,83 +182,11 @@ void PanoramaViewer::render()
     foreach(ObjectRect* rect, this->rect_list)
     {
 
-        double p1_x = 0.0;
-        double p1_y = 0.0;
-        double p2_x = 0.0;
-        double p2_y = 0.0;
-        double p3_x = 0.0;
-        double p3_y = 0.0;
-        double p4_x = 0.0;
-        double p4_y = 0.0;
-
-        g2g_point(this->position.old_width,
-                  this->position.old_height,
-                  this->position.old_azimuth,
-                  this->position.old_elevation,
-                  this->position.old_aperture,
-                  rect->getPoint1().x(),
-                  rect->getPoint1().y(),
-
-                  this->dest_image_map.width(),
-                  this->dest_image_map.height(),
-                  this->position.azimuth,
-                  this->position.elevation,
-                  this->position.aperture,
-                  &p1_x,
-                  &p1_y);
-
-        g2g_point(this->position.old_width,
-                  this->position.old_height,
-                  this->position.old_azimuth,
-                  this->position.old_elevation,
-                  this->position.old_aperture,
-                  rect->getPoint2().x(),
-                  rect->getPoint2().y(),
-
-                  this->dest_image_map.width(),
-                  this->dest_image_map.height(),
-                  this->position.azimuth,
-                  this->position.elevation,
-                  this->position.aperture,
-                  &p2_x,
-                  &p2_y);
-
-        g2g_point(this->position.old_width,
-                  this->position.old_height,
-                  this->position.old_azimuth,
-                  this->position.old_elevation,
-                  this->position.old_aperture,
-                  rect->getPoint3().x(),
-                  rect->getPoint3().y(),
-
-                  this->dest_image_map.width(),
-                  this->dest_image_map.height(),
-                  this->position.azimuth,
-                  this->position.elevation,
-                  this->position.aperture,
-                  &p3_x,
-                  &p3_y);
-
-        g2g_point(this->position.old_width,
-                  this->position.old_height,
-                  this->position.old_azimuth,
-                  this->position.old_elevation,
-                  this->position.old_aperture,
-                  rect->getPoint4().x(),
-                  rect->getPoint4().y(),
-
-                  this->dest_image_map.width(),
-                  this->dest_image_map.height(),
-                  this->position.azimuth,
-                  this->position.elevation,
-                  this->position.aperture,
-                  &p4_x,
-                  &p4_y);
-
-        rect->setPoints(QPointF( p1_x, p1_y ),
-                        QPointF( p2_x, p2_y ),
-                        QPointF( p3_x, p3_y ),
-                        QPointF( p4_x, p4_y ));
+        rect->mapTo(this->dest_image_map.width(),
+                         this->dest_image_map.height(),
+                         this->position.azimuth,
+                         this->position.elevation,
+                         this->position.aperture);
 
         if( this->isObjectVisible( rect ) )
         {
@@ -290,6 +221,10 @@ void PanoramaViewer::setView(float azimuth, float elevation)
 // Mouse wheel handler
 void PanoramaViewer::wheelEvent(QWheelEvent* event)
 {
+    // Check if zoom is enabled
+    if(!this->zoomEnabled)
+        return;
+
     // Determine delta
     int delta = (event->delta() / 120);
 
@@ -493,7 +428,7 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
             this->increation_rect.rect->setManualStatus("Valid");
             this->increation_rect.rect->setBlurred(true);
 
-            this->increation_rect.rect->setId( this->rect_list.length() );
+            this->increation_rect.rect->setId( this->rect_list_index++ );
 
             this->rect_list.append( this->increation_rect.rect );
             this->scene->addItem( this->increation_rect.rect );
@@ -718,6 +653,11 @@ bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
 void PanoramaViewer::setMoveEnabled(bool value)
 {
     this->moveEnabled = value;
+}
+
+void PanoramaViewer::setZoomEnabled(bool value)
+{
+    this->zoomEnabled = value;
 }
 
 void PanoramaViewer::refreshLabels_slot()

@@ -41,6 +41,7 @@ public:
     void backupPosition();
 
     void setMoveEnabled(bool value);
+    void setZoomEnabled(bool value);
 
     QList<ObjectRect*> rect_list;
 
@@ -105,8 +106,10 @@ private:
     bool isObjectVisible(ObjectRect* rect);
 
     int mode;
+    int rect_list_index;
     int resizePoint;
     bool moveEnabled;
+    bool zoomEnabled;
 
     int previous_height;
     int previous_width;

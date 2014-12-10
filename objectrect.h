@@ -5,7 +5,9 @@
 #include <QPen>
 #include <QPaintEvent>
 #include <QDebug>
+
 #include "types.h"
+#include "g2g_point.h"
 
 class ObjectRect : public QGraphicsPolygonItem
 {
@@ -56,13 +58,23 @@ public:
     int getId();
 
     // Projection paramaters get/set
-    void setProjectionParametters(float azimuth,
-                             float elevation,
-                             float aperture,
-                             float width,
-                             float height);
+    void setProjectionParametters(float width,
+                                  float height,
+                                  float azimuth,
+                                  float elevation,
+                                  float aperture);
 
     void setProjectionPoints();
+
+    // Copy function
+    ObjectRect* copy();
+
+    // Point map function
+    void mapTo(float azimuth,
+               float elevation,
+               float aperture,
+               float width,
+               float height);
 
     float proj_azimuth();
     float proj_elevation();

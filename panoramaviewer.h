@@ -119,6 +119,8 @@ private:
     int previous_width;
     bool pixmap_initialized;
 
+    int sight_width;
+
     QPixmap src_image_map;
 
     QGraphicsPixmapItem* last_pixmap;

@@ -61,10 +61,11 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->scene = new QGraphicsScene();
     this->setScene(this->scene);
 
-    QPen elipse_pen( Qt::DotLine );
+    QPen elipse_pen;
     elipse_pen.setColor( Qt::red );
 
-    this->sight = this->scene->addEllipse(0, 0, 500, 500, elipse_pen);
+    this->sight_width = 800;
+    this->sight = this->scene->addEllipse(0, 0, this->sight_width, this->sight_width, elipse_pen);
 
     // Connect signal for labels refresh
     connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels()));
@@ -170,8 +171,10 @@ void PanoramaViewer::updateScene(float azimuth, float elevation, float zoom)
     this->scene->setSceneRect(this->dest_image_map.rect());
     this->fitInView(this->dest_image_map.rect());
 
-    this->sight->setPos( QPointF( (DEST_WIDTH / 2) - (250 * this->scale_factor), (DEST_HEIGHT / 2) - (250 * this->scale_factor) ) );
-    this->sight->setScale( this->scale_factor );
+    this->sight->setPos( QPointF( (DEST_WIDTH / 2) - ((this->sight_width / 2) * (this->scale_factor / this->position.aperture)),
+                                  (DEST_HEIGHT / 2) - ((this->sight_width / 2) * (this->scale_factor / this->position.aperture)) ) );
+
+    this->sight->setScale( this->scale_factor / this->position.aperture );
 }
 
 void PanoramaViewer::render()

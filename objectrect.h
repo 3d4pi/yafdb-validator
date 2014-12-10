@@ -44,8 +44,10 @@ public:
     // Object parameters
     void setObjectRectType(int type);
     void setObjectRectState(int state);
+    void setObjectType(int type);
     int getObjectRectType();
     int getObjectRectState();
+    int getObjectType();
 
 
     // Size getters
@@ -126,8 +128,9 @@ private:
     // Id container
     int id;
 
-    // Type container
+    // Type containers
     int rect_type;
+    int type;
 
     // State container
     int rect_state;

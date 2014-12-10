@@ -262,6 +262,16 @@ void ObjectRect::setObjectRectState(int state)
     this->render();
 }
 
+void ObjectRect::setObjectType(int type)
+{
+    this->type = type;
+}
+
+int ObjectRect::getObjectType()
+{
+    return this->type;
+}
+
 int ObjectRect::getObjectRectState()
 {
     return this->rect_state;

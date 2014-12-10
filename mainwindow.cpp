@@ -207,48 +207,35 @@ void MainWindow::on_pushButton_clicked()
 {
     srand (time(NULL));
 
-   /* for (int x = 0; x < 100; x++)
+    for (int x = 0; x < 100; x++)
     {
+        qDebug() << "ADD";
+
         // Create selection object
         ObjectRect* rect = new ObjectRect();
 
-        rect->setObjectType(ObjectType::Face);
-        rect->setRectType(RectType::Auto);
-        rect->setValidState(ObjectValidState::None);
+        rect->setType(ObjectType::Face);
+        rect->setObjectRectType(ObjectRectType::Valid);
+        rect->setObjectRectState(ObjectRectState::Valid);
         rect->setAutomaticStatus("Valid");
         rect->setBlurred(true);
 
-        rect->id = this->pano->rect_list.length();
+        rect->setId(this->pano->rect_list_index++);
 
-        normalization_struct norm_params;
-        norm_params.pano_height = this->pano->height();
-        norm_params.pano_width = this->pano->width();
-        norm_params.scale_factor = this->pano->scale_factor;
+        rect->setPoints(QPointF(0.0, 0.0), QPointF( 100.0, 100.0), QPointF( 100.0, 200.0), QPointF(0.0, 0.0));
+        rect->setProjectionPoints();
 
-        int rw = (rand() % (int)(this->pano->scene->width() - 1)) + 1;
-        int rh = (rand() % (int)(this->pano->scene->height() - 1)) + 1;
-
-        float norm_w = util::normalize(rw, norm_params);
-        float norm_h = util::normalize(rh, norm_params);
-
-        rect->setPos(QPointF(0.0, 0.0), QPointF(norm_w, norm_h), norm_params, RectMoveType::All);
-
-        // Save projection parameters to it
-        rect->projection_parameters.aperture  = this->pano->current_zoom_rad;
-        rect->projection_parameters.azimuth   = this->pano->position.azimuth;
-        rect->projection_parameters.elevation = this->pano->position.elevation;
-        rect->projection_parameters.scale_factor = this->pano->scale_factor;
-
-        // Add selection object to list
-        this->pano->rect_list.append(rect);
-
-        QGraphicsProxyWidget *proxyWidget = new QGraphicsProxyWidget();
-        proxyWidget->setWidget(rect);
+        rect->setProjectionParametters(this->pano->position.azimuth,
+                                                             this->pano->position.elevation,
+                                                             this->pano->position.aperture,
+                                                             this->pano->dest_image.width(),
+                                                             this->pano->dest_image.height());
 
         // Add selection object to scene
-        this->pano->scene->addItem(proxyWidget);
+        this->pano->rect_list.append( rect );
+        this->pano->scene->addItem(rect);
     }
-
+    /*
     for (int x = 0; x < 100; x++)
     {
         // Create selection object

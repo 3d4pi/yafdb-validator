@@ -22,6 +22,7 @@ public:
     explicit PanoramaViewer(QWidget *parent = 0);
 
     float scale_factor;
+    int rect_list_index;
 
     QGraphicsScene* scene;
 
@@ -108,7 +109,6 @@ private:
     bool isObjectVisible(ObjectRect* rect);
 
     int mode;
-    int rect_list_index;
     int resizePoint;
     bool moveEnabled;
     bool zoomEnabled;

@@ -189,6 +189,16 @@ void PanoramaViewer::render()
     foreach(ObjectRect* rect, this->rect_list)
     {
 
+        // Check that scene has not moved
+        if( rect->proj_azimuth() != this->position.azimuth ||
+            rect->proj_elevation() != this->position.elevation ||
+            rect->proj_aperture() != this->position.aperture)
+        {
+            rect->setResizeEnabled( false );
+        } else {
+            rect->setResizeEnabled( true );
+        }
+
         rect->mapTo(this->dest_image_map.width(),
                          this->dest_image_map.height(),
                          this->position.azimuth,
@@ -276,7 +286,6 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
     // Check presence of right click
     else if (event->buttons() & Qt::RightButton)
     {
-
         QGraphicsPolygonItem* clicked_poly = qgraphicsitem_cast<QGraphicsPolygonItem*>(this->itemAt(event->x(), event->y()));
 
         if (clicked_poly != NULL)
@@ -323,7 +332,7 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
                             mouse_scene.y() - this->selected_rect->getPoint4().y()
                         );
 
-            if( (this->position.offset_3.x() > -10) && (this->position.offset_3.y() > -10) )
+            if( (this->position.offset_3.x() > 0) && (this->position.offset_3.y() > 0) )
             {
                 this->resizePoint = Point::Point3;
                 this->mode = Mode::MoveResize;

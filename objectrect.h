@@ -49,7 +49,6 @@ public:
     int getObjectRectState();
     int getObjectType();
 
-
     // Size getters
     QSizeF getSize();
 
@@ -107,20 +106,25 @@ public:
     void setManualStatus(QString value);
     void setAutomaticStatus(QString value);
 
+    void setResizeEnabled(bool value);
+
 private:
 
     // Contour object
     QGraphicsPolygonItem* contour;
+
+    // Resize rect object
+    QGraphicsPolygonItem* resize_rect;
 
     // Points container
     QVector<QPointF> points;
 
     // Polygon container
     QPolygonF polygon;
+    QPolygonF resize_rect_polygon;
 
     // Pen container
     QPen* pen;
-    QPen* contour_pen;
 
     // Brush container
     QBrush* brush;

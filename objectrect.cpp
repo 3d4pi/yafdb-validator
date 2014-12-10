@@ -16,9 +16,6 @@ ObjectRect::ObjectRect()
     this->pen = new QPen(QColor(0, 255, 255, 255), 2);
     this->brush = new QBrush(QColor(0, 255, 0, 50), Qt::SolidPattern);
 
-    // Default contour setup
-    this->contour_pen = new QPen(QColor(160, 32, 240, 255), 2);
-
     // Default projection parameters
     this->projection_parameters.azimuth = 0.0;
     this->projection_parameters.elevation = 0.0;
@@ -39,9 +36,16 @@ ObjectRect::ObjectRect()
     this->info.validated = false;
     this->info.type = ObjectType::None;
 
+    // Default contour setup
+    QPen contour_pen(QColor(160, 32, 240, 255), 2);
     this->contour = new QGraphicsPolygonItem( this );
-    this->contour->setPen( *this->contour_pen );
+    this->contour->setPen( contour_pen );
     this->contour->setBrush( Qt::NoBrush );
+
+    // Default resize rect setup
+    this->resize_rect = new QGraphicsPolygonItem( this );
+    this->resize_rect->setPen( *this->pen );
+    this->resize_rect->setBrush( Qt::NoBrush );
 
     this->render();
 }
@@ -242,8 +246,8 @@ void ObjectRect::setObjectRectType(int type)
             break;
     }
 
-    // Cal rendering procedure
-    this->render();
+    // Refresh pen
+    this->setPen( * this->pen );
 }
 
 int ObjectRect::getObjectRectType()
@@ -265,8 +269,8 @@ void ObjectRect::setObjectRectState(int state)
             break;
     }
 
-    // Cal rendering procedure
-    this->render();
+    // Render brush
+    this->setBrush( * this->brush );
 }
 
 void ObjectRect::setObjectType(int type)
@@ -288,17 +292,24 @@ void ObjectRect::render()
 {
     this->polygon = QPolygonF( this->points );
 
+    // Draw contour
     QVector<QPointF> contour_points;
     contour_points.append( QPointF(this->points[0].x() - 2, this->points[0].y() - 2) );
     contour_points.append( QPointF(this->points[1].x() - 2, this->points[1].y() + 2) );
     contour_points.append( QPointF(this->points[2].x() + 2, this->points[2].y() + 2) );
     contour_points.append( QPointF(this->points[3].x() + 2, this->points[3].y() - 2) );
-
     QPolygonF contour_polygon( contour_points );
     this->contour->setPolygon( contour_polygon );
 
-    this->setPen( * this->pen );
-    this->setBrush( * this->brush );
+    // Draw resize rect
+    QVector<QPointF> resize_rect_points;
+    resize_rect_points.append( QPointF(this->points[2].x() + 10, this->points[2].y() + 10) );
+    resize_rect_points.append( QPointF(this->points[2].x() + 10, this->points[2].y()) );
+    resize_rect_points.append( QPointF(this->points[2].x(),  this->points[2].y()) );
+    resize_rect_points.append( QPointF(this->points[2].x(),  this->points[2].y() + 10) );
+    this->resize_rect_polygon = QPolygonF( resize_rect_points );
+    this->resize_rect->setPolygon( this->resize_rect_polygon );
+
     this->setPolygon( this->polygon );
 
 
@@ -525,4 +536,9 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
                       QPointF( p3_x, p3_y ),
                       QPointF( p4_x, p4_y ));
 
+}
+
+void ObjectRect::setResizeEnabled(bool value)
+{
+    this->resize_rect->setVisible( value );
 }

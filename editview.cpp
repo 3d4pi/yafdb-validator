@@ -11,6 +11,13 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
 
     this->pano_parent = qobject_cast<PanoramaViewer *>(parent);
 
+    QStandardItemModel* model =
+            qobject_cast<QStandardItemModel*>(this->ui->typeList->model());
+    QModelIndex firstIndex = model->index(0, this->ui->typeList->modelColumn(),
+            this->ui->typeList->rootModelIndex());
+    QStandardItem* firstItem = model->itemFromIndex(firstIndex);
+    firstItem->setSelectable(false);
+
     // Connect signal for labels refresh
     connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels_slot()));
 

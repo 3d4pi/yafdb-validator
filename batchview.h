@@ -5,6 +5,7 @@
 #include <QDesktopWidget>
 #include <QShortcut>
 #include <QMessageBox>
+#include <QLayoutItem>
 
 #include "flowlayout.h"
 #include "panoramaviewer.h"

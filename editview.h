@@ -5,6 +5,7 @@
 #include <QDesktopWidget>
 #include <QThread>
 #include <QDebug>
+#include <QStandardItemModel>
 
 #include "g2g_point.h"
 #include "objectrect.h"

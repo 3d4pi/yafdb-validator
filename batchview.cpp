@@ -2,7 +2,6 @@
 #include "ui_batchview.h"
 
 #include "objectitem.h"
-#include <QLayoutItem>
 
 BatchView::BatchView(QWidget *parent, PanoramaViewer* pano, int batchmode, int batchviewmode) :
     QMainWindow(parent),

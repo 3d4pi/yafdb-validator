@@ -38,7 +38,6 @@ HEADERS  += mainwindow.h \
 FORMS    += mainwindow.ui \
     batchview.ui \
     objectitem.ui \
-    objectrect.ui \
     editview.ui
 
 LIBS += $$PWD/libs/libgnomonic/lib/libinter/bin/libinter.a \

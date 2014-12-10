@@ -294,6 +294,14 @@ void ObjectRect::setProjectionPoints()
     this->projection_parameters.points = this->points;
 }
 
+void ObjectRect::setProjectionPoints(QPointF p1, QPointF p2, QPointF p3, QPointF p4)
+{
+    this->projection_parameters.points[0] = p1;
+    this->projection_parameters.points[1] = p2;
+    this->projection_parameters.points[2] = p3;
+    this->projection_parameters.points[3] = p4;
+}
+
 float ObjectRect::proj_azimuth()
 {
     return this->projection_parameters.azimuth;
@@ -438,8 +446,8 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
               azimuth,
               elevation,
               aperture,
-                &p1_x,
-                &p1_y);
+              &p1_x,
+              &p1_y);
 
       g2g_point(this->proj_width(),
                 this->proj_height(),

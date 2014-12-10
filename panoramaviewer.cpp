@@ -54,6 +54,8 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
 
     this->moveEnabled = true;
     this->zoomEnabled = true;
+    this->createEnabled = true;
+    this->editEnabled = true;
 
     // Create default scene
     this->scene = new QGraphicsScene();
@@ -311,15 +313,8 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
                             mouse_scene.y() - this->selected_rect->getPoint4().y()
                         );
 
-            if( (this->position.offset_2.x() < 10) && (this->position.offset_2.y() < 10) )
+            if( (this->position.offset_3.x() > -10) && (this->position.offset_3.y() > -10) )
             {
-                qDebug() << "RES2";
-                this->resizePoint = Point::Point2;
-                this->mode = Mode::MoveResize;
-            }
-            else if( (this->position.offset_3.x() > -10) && (this->position.offset_3.y() > -10) )
-            {
-                qDebug() << "RES3";
                 this->resizePoint = Point::Point3;
                 this->mode = Mode::MoveResize;
             } else {
@@ -350,6 +345,9 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
 
 void PanoramaViewer::mouseDoubleClickEvent(QMouseEvent *event)
 {
+    if(!this->editEnabled)
+        return;
+
     ObjectRect* clicked_rect = qgraphicsitem_cast<ObjectRect*>(this->itemAt(event->x(), event->y()));
 
     // Verify that clicked object is a widget and is not null
@@ -418,6 +416,8 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
     // Section creation section (create a new object)
     else if (this->mode == Mode::Create)
     {
+        if(!this->createEnabled)
+            return;
 
         // Check if temporary object is created
         if(this->increation_rect.rect == NULL)
@@ -471,6 +471,14 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
     {
         qDebug() << "Mode::MoveCreate";
 
+        // Check that scene has not moved
+        if( this->selected_rect->proj_azimuth() != this->position.azimuth ||
+            this->selected_rect->proj_elevation() != this->position.elevation ||
+            this->selected_rect->proj_aperture() != this->position.aperture)
+        {
+            return;
+        }
+
         this->selected_rect->moveObject(mouse_scene,
                                         this->position.offset_1,
                                         this->position.offset_2,
@@ -478,14 +486,22 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
                                         this->position.offset_4);
 
         this->selected_rect->setProjectionParametters(this->position.azimuth,
-                                                             this->position.elevation,
-                                                             this->position.aperture,
-                                                             this->dest_image.width(),
-                                                             this->dest_image.height());
+                                                      this->position.elevation,
+                                                      this->position.aperture,
+                                                      this->dest_image.width(),
+                                                      this->dest_image.height());
 
         this->selected_rect->setProjectionPoints();
     } else if(this->mode == Mode::MoveResize)
     {
+        // Check that scene has not moved
+        if( this->selected_rect->proj_azimuth() != this->position.azimuth ||
+            this->selected_rect->proj_elevation() != this->position.elevation ||
+            this->selected_rect->proj_aperture() != this->position.aperture)
+        {
+            return;
+        }
+
         float mouse_x = clamp(mouse_scene.x(), this->selected_rect->getPoint1().x() + 4.0, this->width());
         float mouse_y = clamp(mouse_scene.y(), this->selected_rect->getPoint1().y() + 4.0, this->height());
 
@@ -500,6 +516,12 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
                 break;
 
         }
+
+        this->selected_rect->setProjectionParametters(this->position.azimuth,
+                                                      this->position.elevation,
+                                                      this->position.aperture,
+                                                      this->dest_image.width(),
+                                                      this->dest_image.height());
 
         this->selected_rect->setProjectionPoints();
     }
@@ -659,6 +681,16 @@ void PanoramaViewer::setMoveEnabled(bool value)
 void PanoramaViewer::setZoomEnabled(bool value)
 {
     this->zoomEnabled = value;
+}
+
+void PanoramaViewer::setCreateEnabled(bool value)
+{
+    this->createEnabled = value;
+}
+
+void PanoramaViewer::setEditEnabled(bool value)
+{
+    this->editEnabled = value;
 }
 
 void PanoramaViewer::refreshLabels_slot()

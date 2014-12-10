@@ -49,8 +49,11 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
 
     this->pano->setView( rect->proj_azimuth(), rect->proj_elevation() );
     this->pano->setZoom( rect->proj_aperture() / (LG_PI / 180.0) );
+
     this->pano->setMoveEnabled( false );
     this->pano->setZoomEnabled( false );
+    this->pano->setCreateEnabled( false );
+    this->pano->setEditEnabled( false );
 
     // Load input image
     this->pano->loadImage( pano_parent->src_image );
@@ -80,30 +83,22 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
     this->ui->heightLabel->setText("Height: " + QString::number( (int) this->ref_rect->getSize().height() ));
     this->ui->preFiltersLabel->setText("Pre-filter status: " + this->ref_rect->getAutomaticStatus());
 
-    ObjectRect* rect_copy = this->ref_rect->copy();
+    this->rect_copy = this->ref_rect->copy();
 
-    rect_copy->mapTo(this->pano->dest_image_map.width(),
+    this->rect_copy->mapTo(this->pano->dest_image_map.width(),
                      this->pano->dest_image_map.height(),
-                     rect_copy->proj_azimuth(),
-                     rect_copy->proj_elevation(),
-                     rect_copy->proj_aperture());
+                     this->rect_copy->proj_azimuth(),
+                     this->rect_copy->proj_elevation(),
+                     this->rect_copy->proj_aperture());
 
-    this->pano->rect_list.append( rect_copy );
-    this->pano->scene->addItem( rect_copy );
+    this->pano->rect_list.append( this->rect_copy );
+    this->pano->scene->addItem( this->rect_copy );
 
 }
 
 EditView::~EditView()
 {
     delete ui;
-}
-
-void EditView::on_pushButton_clicked()
-{
-    foreach(ObjectRect* rect, this->pano->rect_list)
-    {
-        qDebug() << rect->getPoints();
-    }
 }
 
 void EditView::on_cancelButton_clicked()
@@ -116,5 +111,31 @@ void EditView::on_deleteButton_clicked()
     pano_parent->rect_list.removeOne( this->ref_rect );
     delete this->ref_rect;
     emit refreshLabels();
+    this->close();
+}
+
+void EditView::on_confirmButton_clicked()
+{
+
+    foreach(ObjectRect* rect, this->pano_parent->rect_list)
+    {
+        if(rect->getId() == this->rect_copy->getId())
+        {
+            this->rect_copy->mapTo(rect->proj_width(),
+                                   rect->proj_height(),
+                                   rect->proj_azimuth(),
+                                   rect->proj_elevation(),
+                                   rect->proj_aperture()
+                                   );
+
+            rect->setProjectionPoints(this->rect_copy->getPoint1(),
+                                      this->rect_copy->getPoint2(),
+                                      this->rect_copy->getPoint3(),
+                                      this->rect_copy->getPoint4());
+        }
+    }
+
+    this->pano_parent->render();
+
     this->close();
 }

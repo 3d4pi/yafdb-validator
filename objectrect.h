@@ -65,16 +65,20 @@ public:
                                   float aperture);
 
     void setProjectionPoints();
+    void setProjectionPoints(QPointF p1,
+                             QPointF p2,
+                             QPointF p3,
+                             QPointF p4);
 
     // Copy function
     ObjectRect* copy();
 
     // Point map function
-    void mapTo(float azimuth,
+    void mapTo(float width,
+               float height,
+               float azimuth,
                float elevation,
-               float aperture,
-               float width,
-               float height);
+               float aperture);
 
     float proj_azimuth();
     float proj_elevation();

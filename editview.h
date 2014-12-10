@@ -24,11 +24,12 @@ public:
     ~EditView();
 
 private slots:
-    void on_pushButton_clicked();
 
     void on_cancelButton_clicked();
 
     void on_deleteButton_clicked();
+
+    void on_confirmButton_clicked();
 
 private:
     Ui::EditView *ui;
@@ -36,6 +37,7 @@ private:
     PanoramaViewer* pano;
     ObjectRect* ref_rect;
     PanoramaViewer* pano_parent;
+    ObjectRect* rect_copy;
 
 signals:
     void refreshLabels();

@@ -42,6 +42,8 @@ public:
 
     void setMoveEnabled(bool value);
     void setZoomEnabled(bool value);
+    void setCreateEnabled(bool value);
+    void setEditEnabled(bool value);
 
     QList<ObjectRect*> rect_list;
 
@@ -110,6 +112,8 @@ private:
     int resizePoint;
     bool moveEnabled;
     bool zoomEnabled;
+    bool createEnabled;
+    bool editEnabled;
 
     int previous_height;
     int previous_width;

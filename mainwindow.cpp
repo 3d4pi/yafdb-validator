@@ -213,15 +213,19 @@ void MainWindow::on_pushButton_clicked()
 
     for (int x = 0; x < 20; x++)
     {
-        qDebug() << "ADD";
 
         // Create selection object
         ObjectRect* rect = new ObjectRect();
 
-        rect->setType(ObjectType::Face);
-        rect->setObjectRectType(ObjectRectType::Valid);
-        rect->setObjectRectState(ObjectRectState::Valid);
-        rect->setAutomaticStatus("Valid");
+        int randtype = (rand() % 4) + 1;
+        rect->setType( randtype );
+
+        rect->setObjectRectState(ObjectRectState::None);
+
+        int randstate = (rand() % 2);
+        rect->setObjectRectType( randstate > 0 ? ObjectItemRectType::Valid : ObjectItemRectType::Invalid );
+        rect->setAutomaticStatus( randstate > 0 ? "Valid" : "Ratio");
+
         rect->setBlurred(true);
 
         rect->setId(this->pano->rect_list_index++);

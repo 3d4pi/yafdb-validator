@@ -261,6 +261,9 @@ void ObjectRect::setObjectRectState(int state)
 
     switch(state)
     {
+        case ObjectRectState::None:
+            this->brush->setColor( QColor(0, 0, 0, 0) );
+            break;
         case ObjectRectState::Valid:
             this->brush->setColor( QColor(0, 255, 0, 50) );
             break;

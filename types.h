@@ -21,7 +21,7 @@ struct ObjectRectState
 {
     enum Type
     {
-       Valid = 1, Invalid = 2
+       None = 0, Valid = 1, Invalid = 2
     };
 };
 

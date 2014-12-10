@@ -132,6 +132,8 @@ void BatchView::insertItem(ObjectRect *rect)
         object->setRectType(ObjectItemRectType::Manual);
     }
 
+    object->setSize( QSize(this->ui->horizontalSlider->value(), this->ui->horizontalSlider->value()) );
+
     this->MainLayout->addWidget(object);
     this->elements.append(object);
 }

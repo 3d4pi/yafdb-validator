@@ -125,7 +125,7 @@ private:
 
     QGraphicsPixmapItem* last_pixmap;
     ObjectRect * selected_rect;
-    QGraphicsEllipseItem* sight;
+    QGraphicsRectItem* sight;
 
     struct {
         int start_x;

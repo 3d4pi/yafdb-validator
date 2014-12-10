@@ -61,12 +61,12 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->scene = new QGraphicsScene();
     this->setScene(this->scene);
 
-    QPen elipse_pen;
-    elipse_pen.setColor( Qt::red );
-    elipse_pen.setWidth( 2 );
+    QPen sight_pen;
+    sight_pen.setColor( Qt::red );
+    sight_pen.setWidth( 2 );
 
     this->sight_width = 800;
-    this->sight = this->scene->addEllipse(0, 0, this->sight_width, this->sight_width, elipse_pen);
+    this->sight = this->scene->addRect( this->dest_image_map.width() / 2, this->dest_image_map.height() / 2, this->sight_width, this->sight_width , sight_pen);
 
     // Connect signal for labels refresh
     connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels()));

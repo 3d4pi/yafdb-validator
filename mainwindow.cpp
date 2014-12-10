@@ -4,6 +4,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QGraphicsProxyWidget>
+
 #include "ymlparser.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -11,6 +12,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    this->timer = new QElapsedTimer();
+    this->timer->start();
 
     // Determine good labels colors based on system theme
     QString good_color_string = "rgb(%1, %2, %3)";
@@ -178,73 +182,72 @@ MainWindow::~MainWindow()
 void MainWindow::on_untypedButton_clicked()
 {
     BatchView* w = new BatchView(this, this->pano, BatchMode::Manual, BatchViewMode::OnlyUntyped);
+    w->setAttribute( Qt::WA_DeleteOnClose );
     w->show();
 }
 
 void MainWindow::on_facesButton_clicked()
 {
     BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyFaces);
+    w->setAttribute( Qt::WA_DeleteOnClose );
     w->show();
 }
 
 void MainWindow::on_platesButton_clicked()
 {
     BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyNumberPlates);
+    w->setAttribute( Qt::WA_DeleteOnClose );
     w->show();
 }
 
 void MainWindow::on_preInvalidatedButton_clicked()
 {
     BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyPreInvalidated);
+    w->setAttribute( Qt::WA_DeleteOnClose );
     w->show();
 }
 
 void MainWindow::on_pushButton_clicked()
 {
-    srand (time(NULL));
+    srand( this->timer->nsecsElapsed() );
 
-   /* for (int x = 0; x < 100; x++)
+    for (int x = 0; x < 20; x++)
     {
+        qDebug() << "ADD";
+
         // Create selection object
         ObjectRect* rect = new ObjectRect();
 
-        rect->setObjectType(ObjectType::Face);
-        rect->setRectType(RectType::Auto);
-        rect->setValidState(ObjectValidState::None);
+        rect->setType(ObjectType::Face);
+        rect->setObjectRectType(ObjectRectType::Valid);
+        rect->setObjectRectState(ObjectRectState::Valid);
         rect->setAutomaticStatus("Valid");
         rect->setBlurred(true);
 
-        rect->id = this->pano->rect_list.length();
+        rect->setId(this->pano->rect_list_index++);
 
-        normalization_struct norm_params;
-        norm_params.pano_height = this->pano->height();
-        norm_params.pano_width = this->pano->width();
-        norm_params.scale_factor = this->pano->scale_factor;
+        float rect_size = 64.0;
+        float pos_x = ((float) (rand() % this->pano->dest_image_map.width() - rect_size));
+        float pos_y = ((float) (rand() % this->pano->dest_image_map.height() - rect_size));
 
-        int rw = (rand() % (int)(this->pano->scene->width() - 1)) + 1;
-        int rh = (rand() % (int)(this->pano->scene->height() - 1)) + 1;
+        rect->setPoints(QPointF(pos_x, pos_y),
+                        QPointF(pos_x, pos_y + rect_size),
+                        QPointF(pos_x + rect_size, pos_y + rect_size),
+                        QPointF(pos_x + rect_size, pos_y));
 
-        float norm_w = util::normalize(rw, norm_params);
-        float norm_h = util::normalize(rh, norm_params);
+        rect->setProjectionPoints();
 
-        rect->setPos(QPointF(0.0, 0.0), QPointF(norm_w, norm_h), norm_params, RectMoveType::All);
-
-        // Save projection parameters to it
-        rect->projection_parameters.aperture  = this->pano->current_zoom_rad;
-        rect->projection_parameters.azimuth   = this->pano->position.azimuth;
-        rect->projection_parameters.elevation = this->pano->position.elevation;
-        rect->projection_parameters.scale_factor = this->pano->scale_factor;
-
-        // Add selection object to list
-        this->pano->rect_list.append(rect);
-
-        QGraphicsProxyWidget *proxyWidget = new QGraphicsProxyWidget();
-        proxyWidget->setWidget(rect);
+        rect->setProjectionParametters(this->pano->position.azimuth,
+                                                             this->pano->position.elevation,
+                                                             this->pano->position.aperture,
+                                                             this->pano->dest_image.width(),
+                                                             this->pano->dest_image.height());
 
         // Add selection object to scene
-        this->pano->scene->addItem(proxyWidget);
+        this->pano->rect_list.append( rect );
+        this->pano->scene->addItem(rect);
     }
-
+    /*
     for (int x = 0; x < 100; x++)
     {
         // Create selection object

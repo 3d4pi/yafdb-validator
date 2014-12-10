@@ -5,7 +5,9 @@
 #include <QPen>
 #include <QPaintEvent>
 #include <QDebug>
+
 #include "types.h"
+#include "g2g_point.h"
 
 class ObjectRect : public QGraphicsPolygonItem
 {
@@ -42,6 +44,11 @@ public:
     // Object parameters
     void setObjectRectType(int type);
     void setObjectRectState(int state);
+    void setObjectType(int type);
+    int getObjectRectType();
+    int getObjectRectState();
+    int getObjectType();
+
 
     // Size getters
     QSizeF getSize();
@@ -53,13 +60,27 @@ public:
     int getId();
 
     // Projection paramaters get/set
-    void setProjectionParametters(float azimuth,
-                             float elevation,
-                             float aperture,
-                             float width,
-                             float height);
+    void setProjectionParametters(float width,
+                                  float height,
+                                  float azimuth,
+                                  float elevation,
+                                  float aperture);
 
     void setProjectionPoints();
+    void setProjectionPoints(QPointF p1,
+                             QPointF p2,
+                             QPointF p3,
+                             QPointF p4);
+
+    // Copy function
+    ObjectRect* copy();
+
+    // Point map function
+    void mapTo(float width,
+               float height,
+               float azimuth,
+               float elevation,
+               float aperture);
 
     float proj_azimuth();
     float proj_elevation();
@@ -80,7 +101,6 @@ public:
     bool isBlurred();
     bool isValidated();
     void setBlurred(bool value);
-    void setValidated(bool value);
 
     QString getManualStatus();
     QString getAutomaticStatus();
@@ -106,6 +126,13 @@ private:
 
     // Id container
     int id;
+
+    // Type containers
+    int rect_type;
+    int type;
+
+    // State container
+    int rect_state;
 
     // Projection parameters structure
     struct {

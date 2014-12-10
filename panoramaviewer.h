@@ -22,6 +22,7 @@ public:
     explicit PanoramaViewer(QWidget *parent = 0);
 
     float scale_factor;
+    int rect_list_index;
 
     QGraphicsScene* scene;
 
@@ -30,17 +31,55 @@ public:
 
     void setup(int width, int height, float scale_factor, float zoom_min, float zoom_max, float zoom_def, int threads);
     void loadImage(QString path);
+    void loadImage(QImage image);
     void updateScene(float azimuth, float elevation, float zoom);
     void render();
     void setZoom(float zoom);
+    void setView(float azimuth, float elevation);
     QImage cropObject(ObjectRect* rect);
 
     void updateLabels();
     void backupPosition();
 
+    void setMoveEnabled(bool value);
+    void setZoomEnabled(bool value);
+    void setCreateEnabled(bool value);
+    void setEditEnabled(bool value);
+
     QList<ObjectRect*> rect_list;
 
+    QImage src_image;
+    QString image_path;
+
+    int threads_count;
+    float zoom_min;
+    float zoom_max;
+
+    struct {
+        int start_x;
+        int start_y;
+
+        QPointF offset_1;
+        QPointF offset_2;
+        QPointF offset_3;
+        QPointF offset_4;
+
+        float start_azimuth;
+        float start_elevation;
+        float azimuth;
+        float elevation;
+        float aperture;
+        float aperture_delta;
+
+        float old_aperture;
+        float old_azimuth;
+        float old_elevation;
+        float old_width;
+        float old_height;
+    } position;
+
 public slots:
+    void refreshLabels_slot();
 
 private:
 
@@ -65,49 +104,28 @@ private:
     void mousePressEvent(QMouseEvent* event);
     void mouseReleaseEvent(QMouseEvent *releaseEvent);
     void resizeEvent(QResizeEvent *);
+    void mouseDoubleClickEvent ( QMouseEvent * event );
 
     bool isObjectVisible(ObjectRect* rect);
 
-    int threads_count;
     int mode;
     int resizePoint;
-
-    float zoom_min;
-    float zoom_max;
+    bool moveEnabled;
+    bool zoomEnabled;
+    bool createEnabled;
+    bool editEnabled;
 
     int previous_height;
     int previous_width;
     bool pixmap_initialized;
 
-    QImage src_image;
+    int sight_width;
+
     QPixmap src_image_map;
 
     QGraphicsPixmapItem* last_pixmap;
     ObjectRect * selected_rect;
     QGraphicsEllipseItem* sight;
-
-    struct {
-        int start_x;
-        int start_y;
-
-        QPointF offset_1;
-        QPointF offset_2;
-        QPointF offset_3;
-        QPointF offset_4;
-
-        float start_azimuth;
-        float start_elevation;
-        float azimuth;
-        float elevation;
-        float aperture;
-        float aperture_delta;
-
-        float old_aperture;
-        float old_azimuth;
-        float old_elevation;
-        float old_width;
-        float old_height;
-    } position;
 
     struct {
         int start_x;

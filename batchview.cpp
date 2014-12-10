@@ -2,7 +2,6 @@
 #include "ui_batchview.h"
 
 #include "objectitem.h"
-#include <QLayoutItem>
 
 BatchView::BatchView(QWidget *parent, PanoramaViewer* pano, int batchmode, int batchviewmode) :
     QMainWindow(parent),
@@ -117,7 +116,7 @@ void BatchView::insertItem(ObjectRect *rect)
     object->setImage(pano->cropObject(rect));
     object->setType(rect->getType());
     object->setBlurred(rect->isBlurred());
-    object->setValidState(rect->isValidated());
+    object->setValidState(rect->getObjectRectState());
     object->setManualStatus(rect->getManualStatus());
     object->setAutomaticStatus(rect->getAutomaticStatus());
 
@@ -263,7 +262,7 @@ void BatchView::mergeResults()
             if(rect->getId() == item->id)
             {
 
-                rect->setValidated(item->validstate);
+                rect->setObjectRectState(item->validstate);
                 rect->setBlurred(item->blurred);
                 rect->setType(item->type);
                 rect->setManualStatus(item->manualStatus);

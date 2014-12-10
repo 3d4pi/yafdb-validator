@@ -220,6 +220,8 @@ int ObjectRect::getId()
 
 void ObjectRect::setObjectRectType(int type)
 {
+    this->rect_type = type;
+
     switch(type)
     {
         case ObjectRectType::Manual:
@@ -237,8 +239,15 @@ void ObjectRect::setObjectRectType(int type)
     this->render();
 }
 
+int ObjectRect::getObjectRectType()
+{
+    return this->rect_type;
+}
+
 void ObjectRect::setObjectRectState(int state)
 {
+    this->rect_state = state;
+
     switch(state)
     {
         case ObjectRectState::Valid:
@@ -251,6 +260,21 @@ void ObjectRect::setObjectRectState(int state)
 
     // Cal rendering procedure
     this->render();
+}
+
+void ObjectRect::setObjectType(int type)
+{
+    this->type = type;
+}
+
+int ObjectRect::getObjectType()
+{
+    return this->type;
+}
+
+int ObjectRect::getObjectRectState()
+{
+    return this->rect_state;
 }
 
 void ObjectRect::render()
@@ -278,6 +302,14 @@ void ObjectRect::setProjectionParametters(float azimuth,
 void ObjectRect::setProjectionPoints()
 {
     this->projection_parameters.points = this->points;
+}
+
+void ObjectRect::setProjectionPoints(QPointF p1, QPointF p2, QPointF p3, QPointF p4)
+{
+    this->projection_parameters.points[0] = p1;
+    this->projection_parameters.points[1] = p2;
+    this->projection_parameters.points[2] = p3;
+    this->projection_parameters.points[3] = p4;
 }
 
 float ObjectRect::proj_azimuth()
@@ -342,17 +374,12 @@ bool ObjectRect::isBlurred()
 
 bool ObjectRect::isValidated()
 {
-    return this->info.validated;
+    return (this->rect_state == ObjectRectState::Valid);
 }
 
 void ObjectRect::setBlurred(bool value)
 {
     this->info.blurred = value;
-}
-
-void ObjectRect::setValidated(bool value)
-{
-    this->info.validated = value;
 }
 
 QString ObjectRect::getManualStatus()
@@ -373,4 +400,111 @@ void ObjectRect::setManualStatus(QString value)
 void ObjectRect::setAutomaticStatus(QString value)
 {
     this->info.automatic_status = value;
+}
+
+ObjectRect* ObjectRect::copy()
+{
+    ObjectRect* rect_copy = new ObjectRect();
+    rect_copy->setObjectRectType( this->getObjectRectType() );
+    rect_copy->setObjectRectState( this->getObjectRectState() );
+    rect_copy->setManualStatus( this->getManualStatus() );
+    rect_copy->setBlurred( this->isBlurred() );
+    rect_copy->setId( this->getId() );
+
+    rect_copy->setProjectionParametters(this->proj_azimuth(),
+                                        this->proj_elevation(),
+                                        this->proj_aperture(),
+                                        this->proj_width(),
+                                        this->proj_height());
+
+    rect_copy->setPoints(this->proj_point_1(),
+                         this->proj_point_2(),
+                         this->proj_point_3(),
+                         this->proj_point_4());
+
+    rect_copy->setProjectionPoints();
+
+    return rect_copy;
+}
+
+void ObjectRect::mapTo(float width, float height, float azimuth, float elevation, float aperture)
+{
+    double p1_x = 0.0;
+    double p1_y = 0.0;
+    double p2_x = 0.0;
+    double p2_y = 0.0;
+    double p3_x = 0.0;
+    double p3_y = 0.0;
+    double p4_x = 0.0;
+    double p4_y = 0.0;
+
+    g2g_point(this->proj_width(),
+              this->proj_height(),
+              this->proj_azimuth(),
+              this->proj_elevation(),
+              this->proj_aperture(),
+              this->proj_point_1().x(),
+              this->proj_point_1().y(),
+
+              width,
+              height,
+              azimuth,
+              elevation,
+              aperture,
+              &p1_x,
+              &p1_y);
+
+      g2g_point(this->proj_width(),
+                this->proj_height(),
+                this->proj_azimuth(),
+                this->proj_elevation(),
+                this->proj_aperture(),
+                this->proj_point_2().x(),
+                this->proj_point_2().y(),
+
+                width,
+                height,
+                azimuth,
+                elevation,
+                aperture,
+                &p2_x,
+                &p2_y);
+
+      g2g_point(this->proj_width(),
+                this->proj_height(),
+                this->proj_azimuth(),
+                this->proj_elevation(),
+                this->proj_aperture(),
+                this->proj_point_3().x(),
+                this->proj_point_3().y(),
+
+                width,
+                height,
+                azimuth,
+                elevation,
+                aperture,
+                &p3_x,
+                &p3_y);
+
+      g2g_point(this->proj_width(),
+                this->proj_height(),
+                this->proj_azimuth(),
+                this->proj_elevation(),
+                this->proj_aperture(),
+                this->proj_point_4().x(),
+                this->proj_point_4().y(),
+
+                width,
+                height,
+                azimuth,
+                elevation,
+                aperture,
+                &p4_x,
+                &p4_y);
+
+      this->setPoints(QPointF( p1_x, p1_y ),
+                      QPointF( p2_x, p2_y ),
+                      QPointF( p3_x, p3_y ),
+                      QPointF( p4_x, p4_y ));
+
 }

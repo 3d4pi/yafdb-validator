@@ -110,7 +110,7 @@ void PanoramaViewer::loadImage(QString path)
 void PanoramaViewer::loadImage(QImage image)
 {
     this->src_image = image;
-    this->src_image_map = QPixmap::fromImage(this->src_image);
+    this->src_image_map = QPixmap::fromImage(image);
 
     this->render();
 }
@@ -356,6 +356,7 @@ void PanoramaViewer::mouseDoubleClickEvent(QMouseEvent *event)
     if (clicked_rect != NULL)
     {
         EditView* w = new EditView(this, clicked_rect);
+        w->setAttribute( Qt::WA_DeleteOnClose );
         w->show();
     }
 }

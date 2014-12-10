@@ -178,24 +178,28 @@ MainWindow::~MainWindow()
 void MainWindow::on_untypedButton_clicked()
 {
     BatchView* w = new BatchView(this, this->pano, BatchMode::Manual, BatchViewMode::OnlyUntyped);
+    w->setAttribute( Qt::WA_DeleteOnClose );
     w->show();
 }
 
 void MainWindow::on_facesButton_clicked()
 {
     BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyFaces);
+    w->setAttribute( Qt::WA_DeleteOnClose );
     w->show();
 }
 
 void MainWindow::on_platesButton_clicked()
 {
     BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyNumberPlates);
+    w->setAttribute( Qt::WA_DeleteOnClose );
     w->show();
 }
 
 void MainWindow::on_preInvalidatedButton_clicked()
 {
     BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyPreInvalidated);
+    w->setAttribute( Qt::WA_DeleteOnClose );
     w->show();
 }
 

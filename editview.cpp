@@ -9,7 +9,7 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
 
     this->ref_rect = rect;
 
-    pano_parent = qobject_cast<PanoramaViewer *>(parent);
+    this->pano_parent = qobject_cast<PanoramaViewer *>(parent);
 
     // Connect signal for labels refresh
     connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels_slot()));

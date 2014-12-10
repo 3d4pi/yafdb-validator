@@ -16,6 +16,9 @@ ObjectRect::ObjectRect()
     this->pen = new QPen(QColor(0, 255, 255, 255), 2);
     this->brush = new QBrush(QColor(0, 255, 0, 50), Qt::SolidPattern);
 
+    // Default contour setup
+    this->contour_pen = new QPen(QColor(160, 32, 240, 255), 2);
+
     // Default projection parameters
     this->projection_parameters.azimuth = 0.0;
     this->projection_parameters.elevation = 0.0;
@@ -35,6 +38,10 @@ ObjectRect::ObjectRect()
     this->info.blurred = false;
     this->info.validated = false;
     this->info.type = ObjectType::None;
+
+    this->contour = new QGraphicsPolygonItem( this );
+    this->contour->setPen( *this->contour_pen );
+    this->contour->setBrush( Qt::NoBrush );
 
     this->render();
 }
@@ -281,9 +288,20 @@ void ObjectRect::render()
 {
     this->polygon = QPolygonF( this->points );
 
+    QVector<QPointF> contour_points;
+    contour_points.append( QPointF(this->points[0].x() - 2, this->points[0].y() - 2) );
+    contour_points.append( QPointF(this->points[1].x() - 2, this->points[1].y() + 2) );
+    contour_points.append( QPointF(this->points[2].x() + 2, this->points[2].y() + 2) );
+    contour_points.append( QPointF(this->points[3].x() + 2, this->points[3].y() - 2) );
+
+    QPolygonF contour_polygon( contour_points );
+    this->contour->setPolygon( contour_polygon );
+
     this->setPen( * this->pen );
     this->setBrush( * this->brush );
     this->setPolygon( this->polygon );
+
+
 }
 
 void ObjectRect::setProjectionParametters(float azimuth,

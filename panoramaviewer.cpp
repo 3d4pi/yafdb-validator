@@ -63,6 +63,7 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
 
     QPen elipse_pen;
     elipse_pen.setColor( Qt::red );
+    elipse_pen.setWidth( 2 );
 
     this->sight_width = 800;
     this->sight = this->scene->addEllipse(0, 0, this->sight_width, this->sight_width, elipse_pen);
@@ -276,13 +277,18 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
     else if (event->buttons() & Qt::RightButton)
     {
 
-        ObjectRect* clicked_rect = qgraphicsitem_cast<ObjectRect*>(this->itemAt(event->x(), event->y()));
+        QGraphicsPolygonItem* clicked_poly = qgraphicsitem_cast<QGraphicsPolygonItem*>(this->itemAt(event->x(), event->y()));
 
-        // Verify that clicked object is a widget and is not null
-        if (clicked_rect != NULL)
+        if (clicked_poly != NULL)
         {
-            // Convert object to ObjectRect
-            this->selected_rect = clicked_rect;
+            ObjectRect* clicked_rect = qgraphicsitem_cast<ObjectRect*>(clicked_poly->parentItem());
+
+            // Verify that clicked object is a widget and is not null
+            if (clicked_rect != NULL)
+            {
+                // Convert object to ObjectRect
+                this->selected_rect = clicked_rect;
+            }
         }
 
         if(this->selected_rect)
@@ -352,14 +358,19 @@ void PanoramaViewer::mouseDoubleClickEvent(QMouseEvent *event)
     if(!this->editEnabled)
         return;
 
-    ObjectRect* clicked_rect = qgraphicsitem_cast<ObjectRect*>(this->itemAt(event->x(), event->y()));
+    QGraphicsPolygonItem* clicked_poly = qgraphicsitem_cast<QGraphicsPolygonItem*>(this->itemAt(event->x(), event->y()));
 
-    // Verify that clicked object is a widget and is not null
-    if (clicked_rect != NULL)
+    if(clicked_poly != NULL)
     {
-        EditView* w = new EditView(this, clicked_rect);
-        w->setAttribute( Qt::WA_DeleteOnClose );
-        w->show();
+        ObjectRect* clicked_rect = qgraphicsitem_cast<ObjectRect*>(clicked_poly->parentItem());
+
+        // Verify that clicked object is a widget and is not null
+        if (clicked_rect != NULL)
+        {
+            EditView* w = new EditView(this, clicked_rect);
+            w->setAttribute( Qt::WA_DeleteOnClose );
+            w->show();
+        }
     }
 }
 

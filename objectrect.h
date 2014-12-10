@@ -109,6 +109,9 @@ public:
 
 private:
 
+    // Contour object
+    QGraphicsPolygonItem* contour;
+
     // Points container
     QVector<QPointF> points;
 
@@ -117,6 +120,7 @@ private:
 
     // Pen container
     QPen* pen;
+    QPen* contour_pen;
 
     // Brush container
     QBrush* brush;

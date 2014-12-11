@@ -16,7 +16,7 @@ public:
 
     //DetectedObject ObjectRectToDetectedObject(ObjectRect* obj);
 
- private:
+private:
     DetectedObject toDetectedObject(cv::FileNodeIterator iterator);
     void writeItem(cv::FileStorage &fs, DetectedObject obj);
 };

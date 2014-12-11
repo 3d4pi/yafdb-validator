@@ -16,9 +16,9 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
     }
 
     QStandardItemModel* model =
-            qobject_cast<QStandardItemModel*>(this->ui->typeList->model());
+        qobject_cast<QStandardItemModel*>(this->ui->typeList->model());
     QModelIndex firstIndex = model->index(0, this->ui->typeList->modelColumn(),
-            this->ui->typeList->rootModelIndex());
+                                          this->ui->typeList->rootModelIndex());
     QStandardItem* firstItem = model->itemFromIndex(firstIndex);
     firstItem->setSelectable(false);
 
@@ -36,7 +36,7 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
             Qt::AlignCenter,
             this->size(),
             qApp->desktop()->availableGeometry()
-    ));
+        ));
 
     // Start window maximized
     this->showMaximized();
@@ -76,18 +76,18 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
 
     switch(this->ref_rect->getType())
     {
-        case ObjectType::None:
-            this->ui->clannNameLabel->setText("Class name: None");
-            break;
-        case ObjectType::Face:
-            this->ui->clannNameLabel->setText("Class name: Face");
-            break;
-        case ObjectType::NumberPlate:
-            this->ui->clannNameLabel->setText("Class name: NumberPlate");
-            break;
-        case ObjectType::ToBlur:
-            this->ui->clannNameLabel->setText("Class name: ToBlur");
-            break;
+    case ObjectType::None:
+        this->ui->clannNameLabel->setText("Class name: None");
+        break;
+    case ObjectType::Face:
+        this->ui->clannNameLabel->setText("Class name: Face");
+        break;
+    case ObjectType::NumberPlate:
+        this->ui->clannNameLabel->setText("Class name: NumberPlate");
+        break;
+    case ObjectType::ToBlur:
+        this->ui->clannNameLabel->setText("Class name: ToBlur");
+        break;
     }
 
     this->ui->widthLabel->setText("Width: " + QString::number( (int) this->ref_rect->getSize().width() ));
@@ -100,27 +100,27 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
     switch(this->ref_rect->getType())
     {
 
-        case ObjectType::None:
-            this->ui->typeList->setCurrentIndex( 0 );
-            break;
-        case ObjectType::Face:
-            this->ui->typeList->setCurrentIndex( 1 );
-            break;
-        case ObjectType::NumberPlate:
-            this->ui->typeList->setCurrentIndex( 2 );
-            break;
-        case ObjectType::ToBlur:
-            this->ui->typeList->setCurrentIndex( 3 );
-            break;
+    case ObjectType::None:
+        this->ui->typeList->setCurrentIndex( 0 );
+        break;
+    case ObjectType::Face:
+        this->ui->typeList->setCurrentIndex( 1 );
+        break;
+    case ObjectType::NumberPlate:
+        this->ui->typeList->setCurrentIndex( 2 );
+        break;
+    case ObjectType::ToBlur:
+        this->ui->typeList->setCurrentIndex( 3 );
+        break;
     }
 
     this->rect_copy = this->ref_rect->copy();
 
     this->rect_copy->mapTo(this->pano->dest_image_map.width(),
-                     this->pano->dest_image_map.height(),
-                     this->rect_copy->proj_azimuth(),
-                     this->rect_copy->proj_elevation(),
-                     this->rect_copy->proj_aperture());
+                           this->pano->dest_image_map.height(),
+                           this->rect_copy->proj_azimuth(),
+                           this->rect_copy->proj_elevation(),
+                           this->rect_copy->proj_aperture());
 
     this->pano->rect_list.append( this->rect_copy );
     this->pano->scene->addItem( this->rect_copy );
@@ -157,7 +157,7 @@ void EditView::on_confirmButton_clicked()
                                    rect->proj_azimuth(),
                                    rect->proj_elevation(),
                                    rect->proj_aperture()
-                                   );
+                                  );
 
             rect->setProjectionPoints(this->rect_copy->getPoint1(),
                                       this->rect_copy->getPoint2(),
@@ -166,15 +166,15 @@ void EditView::on_confirmButton_clicked()
 
             switch(this->ui->typeList->currentIndex())
             {
-                case 1:
-                    rect->setType( ObjectType::Face );
-                    break;
-                case 2:
-                    rect->setType( ObjectType::NumberPlate );
-                    break;
-                case 3:
-                    rect->setType( ObjectType::ToBlur );
-                    break;
+            case 1:
+                rect->setType( ObjectType::Face );
+                break;
+            case 2:
+                rect->setType( ObjectType::NumberPlate );
+                break;
+            case 3:
+                rect->setType( ObjectType::ToBlur );
+                break;
             }
 
             rect->setObjectRectState( this->ui->validCheckBox->checkState() ? ObjectRectState::Valid : ObjectRectState::Invalid );

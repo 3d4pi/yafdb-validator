@@ -87,5 +87,6 @@ int g2g_point(
     * c_y = + ( ( pi[2] / pi[0] ) / c_pixel ) + ( c_height / 2.0 );
 
     /* Compute frist order visibility condition */
-    if ( pi[0] > 0 ) return( 1 ); else return( 0 );
+    if ( pi[0] > 0 ) return( 1 );
+    else return( 0 );
 }

@@ -12,15 +12,15 @@ public:
     QString algorithm;
 
     struct gnomonic_struct {
-      int width;
-      int aperture_x;
-      int aperture_y;
+        int width;
+        int aperture_x;
+        int aperture_y;
     } gnomonic;
 
     struct params_struct {
-      float azimuth;
-      float elevation;
-      float aperture;
+        float azimuth;
+        float elevation;
+        float aperture;
     } params;
 
     QString source;
@@ -28,9 +28,9 @@ public:
     QString className;
 
     struct area_struct {
-      int system;
-      QPointF p1;
-      QPointF p2;
+        int system;
+        QPointF p1;
+        QPointF p2;
     } area;
 
     QString falsePositive;

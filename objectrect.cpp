@@ -100,9 +100,9 @@ void ObjectRect::setPoint3_Rigid(QPointF point, QPointF offset)
 {
 
     QPointF centered (
-                    point.x() - offset.x(),
-                    point.y() - offset.y()
-                );
+        point.x() - offset.x(),
+        point.y() - offset.y()
+    );
 
     this->setPoint3_Rigid(centered);
 }
@@ -127,32 +127,32 @@ void ObjectRect::setPoints(QPointF p1, QPointF p2, QPointF p3, QPointF p4)
 }
 
 void ObjectRect::moveObject(QPointF pos,
-                             QPointF offset_1,
-                             QPointF offset_2,
-                             QPointF offset_3,
-                             QPointF offset_4)
+                            QPointF offset_1,
+                            QPointF offset_2,
+                            QPointF offset_3,
+                            QPointF offset_4)
 {
 
     // Center point by clicking offset
     QPointF centered_point_1 (
-                    pos.x() - offset_1.x(),
-                    pos.y() - offset_1.y()
-                );
+        pos.x() - offset_1.x(),
+        pos.y() - offset_1.y()
+    );
 
     QPointF centered_point_2 (
-                    pos.x() - offset_2.x(),
-                    pos.y() - offset_2.y()
-                );
+        pos.x() - offset_2.x(),
+        pos.y() - offset_2.y()
+    );
 
     QPointF centered_point_3 (
-                    pos.x() - offset_3.x(),
-                    pos.y() - offset_3.y()
-                );
+        pos.x() - offset_3.x(),
+        pos.y() - offset_3.y()
+    );
 
     QPointF centered_point_4 (
-                    pos.x() - offset_4.x(),
-                    pos.y() - offset_4.y()
-                );
+        pos.x() - offset_4.x(),
+        pos.y() - offset_4.y()
+    );
 
     // Move object point 1
     this->setPoint1(centered_point_1);
@@ -169,24 +169,24 @@ QVector<QPointF> ObjectRect::simulate_moveObject(QPointF pos, QPointF offset_1, 
 
     // Center point by clicking offset
     QPointF centered_point_1 (
-                    pos.x() - offset_1.x(),
-                    pos.y() - offset_1.y()
-                );
+        pos.x() - offset_1.x(),
+        pos.y() - offset_1.y()
+    );
 
     QPointF centered_point_2 (
-                    pos.x() - offset_2.x(),
-                    pos.y() - offset_2.y()
-                );
+        pos.x() - offset_2.x(),
+        pos.y() - offset_2.y()
+    );
 
     QPointF centered_point_3 (
-                    pos.x() - offset_3.x(),
-                    pos.y() - offset_3.y()
-                );
+        pos.x() - offset_3.x(),
+        pos.y() - offset_3.y()
+    );
 
     QPointF centered_point_4 (
-                    pos.x() - offset_4.x(),
-                    pos.y() - offset_4.y()
-                );
+        pos.x() - offset_4.x(),
+        pos.y() - offset_4.y()
+    );
 
     output.append( centered_point_1 );
     output.append( centered_point_2 );
@@ -278,15 +278,15 @@ void ObjectRect::setObjectRectType(int type)
 
     switch(type)
     {
-        case ObjectRectType::Manual:
-            this->pen->setColor( QColor(0, 255, 255, 255) );
-            break;
-        case ObjectRectType::Valid:
-            this->pen->setColor( QColor(0, 255, 0, 255) );
-            break;
-        case ObjectRectType::Invalid:
-            this->pen->setColor( QColor(255, 0, 0, 255) );
-            break;
+    case ObjectRectType::Manual:
+        this->pen->setColor( QColor(0, 255, 255, 255) );
+        break;
+    case ObjectRectType::Valid:
+        this->pen->setColor( QColor(0, 255, 0, 255) );
+        break;
+    case ObjectRectType::Invalid:
+        this->pen->setColor( QColor(255, 0, 0, 255) );
+        break;
     }
 
     // Refresh pen
@@ -305,15 +305,15 @@ void ObjectRect::setObjectRectState(int state)
 
     switch(state)
     {
-        case ObjectRectState::None:
-            this->brush->setColor( QColor(0, 0, 0, 0) );
-            break;
-        case ObjectRectState::Valid:
-            this->brush->setColor( QColor(0, 255, 0, 50) );
-            break;
-        case ObjectRectState::Invalid:
-            this->brush->setColor( QColor(255, 0, 0, 50) );
-            break;
+    case ObjectRectState::None:
+        this->brush->setColor( QColor(0, 0, 0, 0) );
+        break;
+    case ObjectRectState::Valid:
+        this->brush->setColor( QColor(0, 255, 0, 50) );
+        break;
+    case ObjectRectState::Invalid:
+        this->brush->setColor( QColor(255, 0, 0, 50) );
+        break;
     }
 
     // Render brush
@@ -367,7 +367,9 @@ void ObjectRect::render()
     this->resize_rect_polygon = QPolygonF( resize_rect_points );
     this->resize_rect->setPolygon( this->resize_rect_polygon );
 
-    if(this->getSize().width() < 50 || this->getSize().height() < 50)
+    qDebug() << this->getSize();
+
+    if(this->getSize().width() < 70 || this->getSize().height() < 70 )
     {
         this->pen->setWidth( 1 );
         this->contour_pen->setWidth( 1 );
@@ -386,10 +388,10 @@ void ObjectRect::render()
 }
 
 void ObjectRect::setProjectionParametters(float azimuth,
-                                           float elevation,
-                                           float aperture,
-                                           float width,
-                                           float height)
+        float elevation,
+        float aperture,
+        float width,
+        float height)
 {
     this->projection_parameters.azimuth = azimuth;
     this->projection_parameters.elevation = elevation;
@@ -553,58 +555,58 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
               &p1_x,
               &p1_y);
 
-      g2g_point(this->proj_width(),
-                this->proj_height(),
-                this->proj_azimuth(),
-                this->proj_elevation(),
-                this->proj_aperture(),
-                this->proj_point_2().x(),
-                this->proj_point_2().y(),
+    g2g_point(this->proj_width(),
+              this->proj_height(),
+              this->proj_azimuth(),
+              this->proj_elevation(),
+              this->proj_aperture(),
+              this->proj_point_2().x(),
+              this->proj_point_2().y(),
 
-                width,
-                height,
-                azimuth,
-                elevation,
-                aperture,
-                &p2_x,
-                &p2_y);
+              width,
+              height,
+              azimuth,
+              elevation,
+              aperture,
+              &p2_x,
+              &p2_y);
 
-      g2g_point(this->proj_width(),
-                this->proj_height(),
-                this->proj_azimuth(),
-                this->proj_elevation(),
-                this->proj_aperture(),
-                this->proj_point_3().x(),
-                this->proj_point_3().y(),
+    g2g_point(this->proj_width(),
+              this->proj_height(),
+              this->proj_azimuth(),
+              this->proj_elevation(),
+              this->proj_aperture(),
+              this->proj_point_3().x(),
+              this->proj_point_3().y(),
 
-                width,
-                height,
-                azimuth,
-                elevation,
-                aperture,
-                &p3_x,
-                &p3_y);
+              width,
+              height,
+              azimuth,
+              elevation,
+              aperture,
+              &p3_x,
+              &p3_y);
 
-      g2g_point(this->proj_width(),
-                this->proj_height(),
-                this->proj_azimuth(),
-                this->proj_elevation(),
-                this->proj_aperture(),
-                this->proj_point_4().x(),
-                this->proj_point_4().y(),
+    g2g_point(this->proj_width(),
+              this->proj_height(),
+              this->proj_azimuth(),
+              this->proj_elevation(),
+              this->proj_aperture(),
+              this->proj_point_4().x(),
+              this->proj_point_4().y(),
 
-                width,
-                height,
-                azimuth,
-                elevation,
-                aperture,
-                &p4_x,
-                &p4_y);
+              width,
+              height,
+              azimuth,
+              elevation,
+              aperture,
+              &p4_x,
+              &p4_y);
 
-      this->setPoints(QPointF( p1_x, p1_y ),
-                      QPointF( p2_x, p2_y ),
-                      QPointF( p3_x, p3_y ),
-                      QPointF( p4_x, p4_y ));
+    this->setPoints(QPointF( p1_x, p1_y ),
+                    QPointF( p2_x, p2_y ),
+                    QPointF( p3_x, p3_y ),
+                    QPointF( p4_x, p4_y ));
 
 }
 

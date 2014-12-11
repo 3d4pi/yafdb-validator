@@ -107,16 +107,16 @@ void YMLParser::writeItem(cv::FileStorage &fs, DetectedObject obj)
 
     // Write square area coodinates
     fs << "area" << "{";
-        fs << "system" << obj.area.system;
-        fs << "p1" << cv::Point2d(obj.area.p1.x(), obj.area.p1.y());
-        fs << "p2" << cv::Point2d(obj.area.p2.x(), obj.area.p2.y());
+    fs << "system" << obj.area.system;
+    fs << "p1" << cv::Point2d(obj.area.p1.x(), obj.area.p1.y());
+    fs << "p2" << cv::Point2d(obj.area.p2.x(), obj.area.p2.y());
     fs << "}";
 
     // Write params
     fs << "params" << "{";
-        fs << "azimuth" << obj.params.azimuth;
-        fs << "elevation" << obj.params.elevation;
-        fs << "aperture" << obj.params.aperture;
+    fs << "azimuth" << obj.params.azimuth;
+    fs << "elevation" << obj.params.elevation;
+    fs << "aperture" << obj.params.aperture;
     fs << "}";
 
     // Write status tags
@@ -135,9 +135,9 @@ void YMLParser::writeYML(QList<DetectedObject> objects, QString path)
 
     // Write gnomonic parameters
     fs << "gnomonic" << "{";
-        fs << "width" << objects.first().gnomonic.width;
-        fs << "aperture_x" << objects.first().gnomonic.aperture_x;
-        fs << "aperture_y" << objects.first().gnomonic.aperture_y;
+    fs << "width" << objects.first().gnomonic.width;
+    fs << "aperture_x" << objects.first().gnomonic.aperture_x;
+    fs << "aperture_y" << objects.first().gnomonic.aperture_y;
     fs << "}";
 
     // Write source file path
@@ -146,30 +146,30 @@ void YMLParser::writeYML(QList<DetectedObject> objects, QString path)
     // Write objects
     fs << "objects" << "[";
 
-        // Iterate over objects
-        foreach (DetectedObject obj, objects) {
+    // Iterate over objects
+    foreach (DetectedObject obj, objects) {
 
-            // Open array element
-            fs << "{";
+        // Open array element
+        fs << "{";
 
-                // Object writer method
-                this->writeItem(fs, obj);
+        // Object writer method
+        this->writeItem(fs, obj);
 
-                // Write childrens if present
-                if(obj.childrens.length() > 0)
-                {
-                    fs << "children" << "[";
-                        foreach (DetectedObject child, obj.childrens) {
-                            fs << "{";
-                                this->writeItem(fs, child);
-                            fs << "}";
-                        }
-                    fs << "]";
-                }
-
-            // Close array element
-            fs << "}";
+        // Write childrens if present
+        if(obj.childrens.length() > 0)
+        {
+            fs << "children" << "[";
+            foreach (DetectedObject child, obj.childrens) {
+                fs << "{";
+                this->writeItem(fs, child);
+                fs << "}";
+            }
+            fs << "]";
         }
+
+        // Close array element
+        fs << "}";
+    }
 
     // Close array
     fs << "]";
@@ -191,17 +191,17 @@ DetectedObject YMLParser::ObjectRectToDetectedObject(ObjectRect* obj)
 
     switch(obj->objecttype)
     {
-        case ObjectType::Face:
-            detected.className = "Face";
-            break;
+    case ObjectType::Face:
+        detected.className = "Face";
+        break;
 
-        case ObjectType::NumberPlate:
-            detected.className = "NumberPlate";
-            break;
+    case ObjectType::NumberPlate:
+        detected.className = "NumberPlate";
+        break;
 
-        case ObjectType::ToBlur:
-            detected.className = "ToBlur";
-            break;
+    case ObjectType::ToBlur:
+        detected.className = "ToBlur";
+        break;
 
     }
 

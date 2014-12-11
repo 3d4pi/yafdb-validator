@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
             Qt::AlignCenter,
             this->size(),
             qApp->desktop()->availableGeometry()
-    ));
+        ));
 
     // Start window maximized
     this->showMaximized();
@@ -92,40 +92,40 @@ void MainWindow::refreshLabels()
     {
         switch(rect->getType())
         {
-            case ObjectType::None:
-                untyped++;
-                break;
-            case ObjectType::Face:
+        case ObjectType::None:
+            untyped++;
+            break;
+        case ObjectType::Face:
 
-                if(rect->getAutomaticStatus() == "Valid" || rect->getAutomaticStatus() == "None")
-                    facecount++;
+            if(rect->getAutomaticStatus() == "Valid" || rect->getAutomaticStatus() == "None")
+                facecount++;
 
-                if( (rect->getAutomaticStatus() == "Valid" || rect->getAutomaticStatus() == "None")
-                        && rect->getManualStatus() != "None")
-                {
-                    facesvalidated++;
-                }
+            if( (rect->getAutomaticStatus() == "Valid" || rect->getAutomaticStatus() == "None")
+                    && rect->getManualStatus() != "None")
+            {
+                facesvalidated++;
+            }
 
-                if(rect->getAutomaticStatus() != "None" && rect->getAutomaticStatus() != "Valid")
-                {
-                    preinvalidatedcount++;
-                }
-                if(rect->getAutomaticStatus() != "None" && rect->getAutomaticStatus() != "Valid" && rect->getManualStatus() != "None")
-                {
-                    preinvalidatedvalidated++;
-                }
+            if(rect->getAutomaticStatus() != "None" && rect->getAutomaticStatus() != "Valid")
+            {
+                preinvalidatedcount++;
+            }
+            if(rect->getAutomaticStatus() != "None" && rect->getAutomaticStatus() != "Valid" && rect->getManualStatus() != "None")
+            {
+                preinvalidatedvalidated++;
+            }
 
-                break;
-            case ObjectType::NumberPlate:
+            break;
+        case ObjectType::NumberPlate:
 
-                numberplatescount++;
+            numberplatescount++;
 
-                if(rect->getManualStatus() != "None")
-                {
-                    numberplatesvalidated++;
-                }
+            if(rect->getManualStatus() != "None")
+            {
+                numberplatesvalidated++;
+            }
 
-                break;
+            break;
         }
     }
 
@@ -140,21 +140,21 @@ void MainWindow::refreshLabels()
 
     if(facesvalidated != facecount)
     {
-       this->ui->facesLabel->setStyleSheet("QLabel {color: " + this->warn_color + "; }");
+        this->ui->facesLabel->setStyleSheet("QLabel {color: " + this->warn_color + "; }");
     } else {
         this->ui->facesLabel->setStyleSheet("QLabel {color: " + this->good_color + "; }");
     }
 
     if(numberplatesvalidated != numberplatescount)
     {
-       this->ui->platesLabel->setStyleSheet("QLabel {color: " + this->warn_color + "; }");
+        this->ui->platesLabel->setStyleSheet("QLabel {color: " + this->warn_color + "; }");
     } else {
         this->ui->platesLabel->setStyleSheet("QLabel {color: " + this->good_color + "; }");
     }
 
     if(preinvalidatedvalidated != preinvalidatedcount)
     {
-       this->ui->preInvalidatedLabel->setStyleSheet("QLabel {color: " + this->warn_color + "; }");
+        this->ui->preInvalidatedLabel->setStyleSheet("QLabel {color: " + this->warn_color + "; }");
     } else {
         this->ui->preInvalidatedLabel->setStyleSheet("QLabel {color: " + this->good_color + "; }");
     }
@@ -242,10 +242,10 @@ void MainWindow::on_pushButton_clicked()
         rect->setProjectionPoints();
 
         rect->setProjectionParametters(this->pano->position.azimuth,
-                                                             this->pano->position.elevation,
-                                                             this->pano->position.aperture,
-                                                             this->pano->dest_image.width(),
-                                                             this->pano->dest_image.height());
+                                       this->pano->position.elevation,
+                                       this->pano->position.aperture,
+                                       this->pano->dest_image.width(),
+                                       this->pano->dest_image.height());
 
         // Add selection object to scene
         this->pano->rect_list.append( rect );
@@ -283,10 +283,10 @@ void MainWindow::on_pushButton_clicked()
         rect->setProjectionPoints();
 
         rect->setProjectionParametters(this->pano->position.azimuth,
-                                                             this->pano->position.elevation,
-                                                             this->pano->position.aperture,
-                                                             this->pano->dest_image.width(),
-                                                             this->pano->dest_image.height());
+                                       this->pano->position.elevation,
+                                       this->pano->position.aperture,
+                                       this->pano->dest_image.width(),
+                                       this->pano->dest_image.height());
 
         // Add selection object to scene
         this->pano->rect_list.append( rect );
@@ -324,10 +324,10 @@ void MainWindow::on_pushButton_clicked()
         rect->setProjectionPoints();
 
         rect->setProjectionParametters(this->pano->position.azimuth,
-                                                             this->pano->position.elevation,
-                                                             this->pano->position.aperture,
-                                                             this->pano->dest_image.width(),
-                                                             this->pano->dest_image.height());
+                                       this->pano->position.elevation,
+                                       this->pano->position.aperture,
+                                       this->pano->dest_image.width(),
+                                       this->pano->dest_image.height());
 
         // Add selection object to scene
         this->pano->rect_list.append( rect );

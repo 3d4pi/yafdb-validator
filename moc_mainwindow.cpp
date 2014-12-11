@@ -29,7 +29,7 @@ struct qt_meta_stringdata_MainWindow_t {
     )
 static const qt_meta_stringdata_MainWindow_t qt_meta_stringdata_MainWindow = {
     {
-QT_MOC_LITERAL(0, 0, 10)
+        QT_MOC_LITERAL(0, 0, 10)
     },
     "MainWindow\0"
 };
@@ -37,18 +37,18 @@ QT_MOC_LITERAL(0, 0, 10)
 
 static const uint qt_meta_data_MainWindow[] = {
 
- // content:
-       7,       // revision
-       0,       // classname
-       0,    0, // classinfo
-       0,    0, // methods
-       0,    0, // properties
-       0,    0, // enums/sets
-       0,    0, // constructors
-       0,       // flags
-       0,       // signalCount
+// content:
+    7,       // revision
+    0,       // classname
+    0,    0, // classinfo
+    0,    0, // methods
+    0,    0, // properties
+    0,    0, // enums/sets
+    0,    0, // constructors
+    0,       // flags
+    0,       // signalCount
 
-       0        // eod
+    0        // eod
 };
 
 void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, void **_a)
@@ -60,8 +60,9 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
 }
 
 const QMetaObject MainWindow::staticMetaObject = {
-    { &QMainWindow::staticMetaObject, qt_meta_stringdata_MainWindow.data,
-      qt_meta_data_MainWindow,  qt_static_metacall, 0, 0}
+    {   &QMainWindow::staticMetaObject, qt_meta_stringdata_MainWindow.data,
+        qt_meta_data_MainWindow,  qt_static_metacall, 0, 0
+    }
 };
 
 

@@ -20,7 +20,7 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano, int batchmode, int b
             Qt::AlignCenter,
             this->size(),
             qApp->desktop()->availableGeometry()
-    ));
+        ));
 
     // Start window maximized
     this->showMaximized();
@@ -41,9 +41,9 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano, int batchmode, int b
     new QShortcut(QKeySequence("Ctrl+i"), this, SLOT(invertSelection()));
 
     QStandardItemModel* model =
-            qobject_cast<QStandardItemModel*>(this->ui->TypeList->model());
+        qobject_cast<QStandardItemModel*>(this->ui->TypeList->model());
     QModelIndex firstIndex = model->index(0, this->ui->TypeList->modelColumn(),
-            this->ui->TypeList->rootModelIndex());
+                                          this->ui->TypeList->rootModelIndex());
     QStandardItem* firstItem = model->itemFromIndex(firstIndex);
     firstItem->setSelectable(false);
 
@@ -58,52 +58,52 @@ void BatchView::populate(int batchviewmode)
     {
         switch(batchviewmode)
         {
-            case BatchViewMode::All:
+        case BatchViewMode::All:
+            this->insertItem(rect);
+            break;
+        case BatchViewMode::OnlyUntyped:
+            if(rect->getType() == ObjectType::None)
+            {
                 this->insertItem(rect);
-                break;
-            case BatchViewMode::OnlyUntyped:
-                if(rect->getType() == ObjectType::None)
-                {
-                    this->insertItem(rect);
-                }
-                break;
-            case BatchViewMode::OnlyFaces:
-                if(rect->getType() == ObjectType::Face &&
-                        (rect->getAutomaticStatus() == "Valid" || rect->getAutomaticStatus() == "None"))
-                {
-                    this->insertItem(rect);
-                }
-                break;
-            case BatchViewMode::OnlyUnapprovedFaces:
-                if(rect->getType() == ObjectType::Face
-                        && rect->getManualStatus() == "None"
-                        && rect->getAutomaticStatus() == "Valid")
-                {
-                    this->insertItem(rect);
-                }
-                break;
-            case BatchViewMode::OnlyNumberPlates:
-                if(rect->getType() == ObjectType::NumberPlate)
-                {
-                    this->insertItem(rect);
-                }
-                break;
-            case BatchViewMode::OnlyUnapprovedNumberPlates:
-                if(rect->getType() == ObjectType::NumberPlate
-                        && rect->getManualStatus() == "None"
-                        && rect->getAutomaticStatus() == "Valid")
-                {
-                    this->insertItem(rect);
-                }
-                break;
-            case BatchViewMode::OnlyPreInvalidated:
-                if(rect->getType() != ObjectType::None
-                        && rect->getAutomaticStatus() != "Valid"
-                        && rect->getAutomaticStatus() != "None")
-                {
-                    this->insertItem(rect);
-                }
-                break;
+            }
+            break;
+        case BatchViewMode::OnlyFaces:
+            if(rect->getType() == ObjectType::Face &&
+                    (rect->getAutomaticStatus() == "Valid" || rect->getAutomaticStatus() == "None"))
+            {
+                this->insertItem(rect);
+            }
+            break;
+        case BatchViewMode::OnlyUnapprovedFaces:
+            if(rect->getType() == ObjectType::Face
+                    && rect->getManualStatus() == "None"
+                    && rect->getAutomaticStatus() == "Valid")
+            {
+                this->insertItem(rect);
+            }
+            break;
+        case BatchViewMode::OnlyNumberPlates:
+            if(rect->getType() == ObjectType::NumberPlate)
+            {
+                this->insertItem(rect);
+            }
+            break;
+        case BatchViewMode::OnlyUnapprovedNumberPlates:
+            if(rect->getType() == ObjectType::NumberPlate
+                    && rect->getManualStatus() == "None"
+                    && rect->getAutomaticStatus() == "Valid")
+            {
+                this->insertItem(rect);
+            }
+            break;
+        case BatchViewMode::OnlyPreInvalidated:
+            if(rect->getType() != ObjectType::None
+                    && rect->getAutomaticStatus() != "Valid"
+                    && rect->getAutomaticStatus() != "None")
+            {
+                this->insertItem(rect);
+            }
+            break;
         }
     }
 
@@ -147,18 +147,18 @@ void BatchView::setMode(int mode)
 {
     switch(mode)
     {
-        case BatchMode::Manual:
-            this->ui->setType->setEnabled(true);
-            this->ui->TypeList->setEnabled(true);
-            this->ui->InvalidateButton->setEnabled(false);
-            this->ui->ValidateButton->setEnabled(false);
-            break;
-        case BatchMode::Auto:
-            this->ui->setType->setEnabled(false);
-            this->ui->TypeList->setEnabled(false);
-            this->ui->InvalidateButton->setEnabled(true);
-            this->ui->ValidateButton->setEnabled(true);
-            break;
+    case BatchMode::Manual:
+        this->ui->setType->setEnabled(true);
+        this->ui->TypeList->setEnabled(true);
+        this->ui->InvalidateButton->setEnabled(false);
+        this->ui->ValidateButton->setEnabled(false);
+        break;
+    case BatchMode::Auto:
+        this->ui->setType->setEnabled(false);
+        this->ui->TypeList->setEnabled(false);
+        this->ui->InvalidateButton->setEnabled(true);
+        this->ui->ValidateButton->setEnabled(true);
+        break;
     }
 }
 
@@ -300,11 +300,11 @@ void BatchView::on_ApplyButton_clicked()
     if(haveNoClass)
     {
         QMessageBox::StandardButton reply;
-         reply = QMessageBox::question(this, "Warning", "Not all objects have a class defined, quit anyway?",
-                                       QMessageBox::Yes|QMessageBox::No);
-         if (reply == QMessageBox::No) {
-           replyMSG = false;
-         }
+        reply = QMessageBox::question(this, "Warning", "Not all objects have a class defined, quit anyway?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::No) {
+            replyMSG = false;
+        }
 
         if(replyMSG)
         {
@@ -314,11 +314,11 @@ void BatchView::on_ApplyButton_clicked()
         }
     } else if(!haveNoClass && haveNoManualState) {
         QMessageBox::StandardButton reply;
-         reply = QMessageBox::question(this, "Warning", "Not all objects have been validated, quit anyway?",
-                                       QMessageBox::Yes|QMessageBox::No);
-         if (reply == QMessageBox::No) {
-           replyMSG = false;
-         }
+        reply = QMessageBox::question(this, "Warning", "Not all objects have been validated, quit anyway?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::No) {
+            replyMSG = false;
+        }
 
         if(replyMSG)
         {

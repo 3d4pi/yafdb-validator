@@ -32,10 +32,10 @@ public:
                     QPointF offset_4);
 
     QVector<QPointF> simulate_moveObject(QPointF pos,
-                    QPointF offset_1,
-                    QPointF offset_2,
-                    QPointF offset_3,
-                    QPointF offset_4);
+                                         QPointF offset_1,
+                                         QPointF offset_2,
+                                         QPointF offset_3,
+                                         QPointF offset_4);
 
     // Points getters
     QPointF getPoint1();

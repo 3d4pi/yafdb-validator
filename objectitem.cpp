@@ -147,15 +147,15 @@ void ObjectItem::setType(int type)
 
     switch(type)
     {
-        case ObjectType::Face:
-            this->ui->typeLabel->setPixmap( QPixmap(":/resources/icons/Face.png") );
-            break;
-        case ObjectType::NumberPlate:
-            this->ui->typeLabel->setPixmap( QPixmap(":/resources/icons/Plate.png") );
-            break;
-        case ObjectType::ToBlur:
-            this->ui->typeLabel->setPixmap( QPixmap(":/resources/icons/Blur.png") );
-            break;
+    case ObjectType::Face:
+        this->ui->typeLabel->setPixmap( QPixmap(":/resources/icons/Face.png") );
+        break;
+    case ObjectType::NumberPlate:
+        this->ui->typeLabel->setPixmap( QPixmap(":/resources/icons/Plate.png") );
+        break;
+    case ObjectType::ToBlur:
+        this->ui->typeLabel->setPixmap( QPixmap(":/resources/icons/Blur.png") );
+        break;
     }
 }
 
@@ -165,27 +165,27 @@ void ObjectItem::setRectType(int type)
 
     switch(type)
     {
-        case ObjectItemRectType::Valid:
-            this->setStyleSheet(
-                "QLabel#imageLabel{"
-                "border: " + QString::number(this->border_size) + "px solid rgb(0, 255, 0);"
-                "}"
-            );
-            break;
-        case ObjectItemRectType::Invalid:
-            this->setStyleSheet(
-                "QLabel#imageLabel{"
-                "border: " + QString::number(this->border_size) + "px solid rgb(255, 0, 0);"
-                "}"
-            );
-            break;
-        case ObjectItemRectType::Manual:
-            this->setStyleSheet(
-                "QLabel#imageLabel{"
-                "border: " + QString::number(this->border_size) + "px solid rgb(0, 255, 255);"
-                "}"
-            );
-            break;
+    case ObjectItemRectType::Valid:
+        this->setStyleSheet(
+            "QLabel#imageLabel{"
+            "border: " + QString::number(this->border_size) + "px solid rgb(0, 255, 0);"
+            "}"
+        );
+        break;
+    case ObjectItemRectType::Invalid:
+        this->setStyleSheet(
+            "QLabel#imageLabel{"
+            "border: " + QString::number(this->border_size) + "px solid rgb(255, 0, 0);"
+            "}"
+        );
+        break;
+    case ObjectItemRectType::Manual:
+        this->setStyleSheet(
+            "QLabel#imageLabel{"
+            "border: " + QString::number(this->border_size) + "px solid rgb(0, 255, 255);"
+            "}"
+        );
+        break;
     }
 }
 
@@ -207,18 +207,18 @@ void ObjectItem::setValidState(int state)
 
     switch(state)
     {
-        case ObjectValidState::Valid:
-            this->ui->validFrame->setStyleSheet("background-color: rgba(0, 255, 0, 50);");
-            this->valid = true;
-            break;
-        case ObjectValidState::Invalid:
-            this->ui->validFrame->setStyleSheet("background-color: rgba(255, 0, 0, 50);");
-            this->valid = false;
-            break;
-        case ObjectValidState::None:
-            this->ui->validFrame->setStyleSheet("background-color: rgba(0, 0, 0, 50);");
-            this->valid = false;
-            break;
+    case ObjectValidState::Valid:
+        this->ui->validFrame->setStyleSheet("background-color: rgba(0, 255, 0, 50);");
+        this->valid = true;
+        break;
+    case ObjectValidState::Invalid:
+        this->ui->validFrame->setStyleSheet("background-color: rgba(255, 0, 0, 50);");
+        this->valid = false;
+        break;
+    case ObjectValidState::None:
+        this->ui->validFrame->setStyleSheet("background-color: rgba(0, 0, 0, 50);");
+        this->valid = false;
+        break;
     }
 }
 
@@ -244,7 +244,7 @@ void ObjectItem::setManualStatus(QString value)
     this->manualStatus = value;
 }
 
-void ObjectItem::mousePressEvent(QMouseEvent* ){
+void ObjectItem::mousePressEvent(QMouseEvent* ) {
     this->setSelected(!this->selected);
 }
 

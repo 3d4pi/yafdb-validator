@@ -132,7 +132,7 @@ QSize FlowLayout::minimumSize() const
     QSize size;
     QLayoutItem *item;
     foreach (item, itemList)
-        size = size.expandedTo(item->minimumSize());
+    size = size.expandedTo(item->minimumSize());
 
     size += QSize(2*margin(), 2*margin());
     return size;
@@ -153,11 +153,11 @@ int FlowLayout::doLayout(const QRect &rect, bool testOnly) const
         int spaceX = horizontalSpacing();
         if (spaceX == -1)
             spaceX = wid->style()->layoutSpacing(
-                QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Horizontal);
+                         QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Horizontal);
         int spaceY = verticalSpacing();
         if (spaceY == -1)
             spaceY = wid->style()->layoutSpacing(
-                QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Vertical);
+                         QSizePolicy::PushButton, QSizePolicy::PushButton, Qt::Vertical);
         int nextX = x + item->sizeHint().width() + spaceX;
         if (nextX - spaceX > effectiveRect.right() && lineHeight > 0) {
             x = effectiveRect.x();

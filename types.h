@@ -5,7 +5,7 @@ struct ObjectItemRectType
 {
     enum Type
     {
-       Valid = 1, Invalid = 2, Manual = 3
+        Valid = 1, Invalid = 2, Manual = 3
     };
 };
 
@@ -13,7 +13,7 @@ struct ObjectRectType
 {
     enum Type
     {
-       Valid = 1, Invalid = 2, Manual = 3
+        Valid = 1, Invalid = 2, Manual = 3
     };
 };
 
@@ -21,7 +21,7 @@ struct ObjectRectState
 {
     enum Type
     {
-       None = 0, Valid = 1, Invalid = 2
+        None = 0, Valid = 1, Invalid = 2
     };
 };
 
@@ -29,7 +29,7 @@ struct ObjectType
 {
     enum Type
     {
-       None = 0, Face = 1, NumberPlate = 2, ToBlur = 3
+        None = 0, Face = 1, NumberPlate = 2, ToBlur = 3
     };
 };
 
@@ -37,7 +37,7 @@ struct ObjectValidState
 {
     enum Type
     {
-       Valid = 1, Invalid = 2, None = 3
+        Valid = 1, Invalid = 2, None = 3
     };
 };
 

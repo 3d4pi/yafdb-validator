@@ -496,4 +496,6 @@ void MainWindow::on_pushButton_4_clicked()
         this->pano->rect_list.append( rect );
         this->pano->scene->addItem( rect );
     }
+
+    emit refreshLabels();
 }

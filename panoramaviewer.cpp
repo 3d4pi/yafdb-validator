@@ -440,13 +440,24 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
     // Section creation section (create a new object)
     else if (this->mode == Mode::Create)
     {
+        // Check if creation is enabled
         if(!this->createEnabled)
             return;
+
+        QSizeF sight_rect_size = (this->sight->boundingRect().size() * this->sight->scale());
+
+        // Check if rect is in creation zone
+        if (!(MouseX >= this->sight->pos().x()
+                && MouseX < (this->sight->pos().x() + sight_rect_size.width())
+                && MouseY >= this->sight->pos().y()
+                && MouseY < (this->sight->pos().y() + sight_rect_size.height())))
+        {
+            return;
+        }
 
         // Check if temporary object is created
         if(this->increation_rect.rect == NULL)
         {
-
             this->increation_rect.rect = new ObjectRect();
             this->increation_rect.rect->setObjectRectType(ObjectRectType::Manual);
             this->increation_rect.rect->setType(ObjectType::None);

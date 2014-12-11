@@ -114,6 +114,7 @@ public:
     void setAutomaticStatus(QString value);
 
     void setResizeEnabled(bool value);
+    bool isResizeEnabled();
 
 private:
 
@@ -170,6 +171,8 @@ private:
         QString manual_status;
         QString automatic_status;
     } info;
+
+    bool resizeEnabled;
 
 };
 

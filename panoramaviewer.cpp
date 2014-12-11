@@ -190,13 +190,18 @@ void PanoramaViewer::render()
     {
 
         // Check that scene has not moved
-        if( rect->proj_azimuth() != this->position.azimuth ||
-                rect->proj_elevation() != this->position.elevation ||
-                rect->proj_aperture() != this->position.aperture)
+        if(rect->getAutomaticStatus() == "None")
         {
-            rect->setResizeEnabled( false );
+            if( rect->proj_azimuth() != this->position.azimuth ||
+                    rect->proj_elevation() != this->position.elevation ||
+                    rect->proj_aperture() != this->position.aperture )
+            {
+                rect->setResizeEnabled( false );
+            } else {
+                rect->setResizeEnabled( true );
+            }
         } else {
-            rect->setResizeEnabled( true );
+            rect->setResizeEnabled( false );
         }
 
         rect->mapTo(this->dest_image_map.width(),
@@ -331,6 +336,9 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
                                           mouse_scene.x() - this->selected_rect->getPoint4().x(),
                                           mouse_scene.y() - this->selected_rect->getPoint4().y()
                                       );
+
+            if(!this->selected_rect->isResizeEnabled())
+                return;
 
             if( (this->position.offset_3.x() > 0) && (this->position.offset_3.y() > 0) )
             {

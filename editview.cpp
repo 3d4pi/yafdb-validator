@@ -10,11 +10,6 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
     this->ref_rect = rect;
     this->pano_parent = qobject_cast<PanoramaViewer *>(parent);
 
-    if (this->ref_rect->getAutomaticStatus() != "None")
-    {
-        this->ui->typeList->setEnabled( false );
-    }
-
     QStandardItemModel* model =
         qobject_cast<QStandardItemModel*>(this->ui->typeList->model());
     QModelIndex firstIndex = model->index(0, this->ui->typeList->modelColumn(),
@@ -66,6 +61,12 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
     this->pano->setCreateEnabled( false );
     this->pano->setEditEnabled( false );
 
+    if (this->ref_rect->getAutomaticStatus() != "None")
+    {
+        this->ui->typeList->setEnabled( false );
+        this->ui->deleteButton->setEnabled( false );
+    }
+
     // Load input image
     this->pano->loadImage( pano_parent->src_image );
 
@@ -115,6 +116,8 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
     }
 
     this->rect_copy = this->ref_rect->copy();
+
+    //this->rect_copy->setResizeEnabled( false );
 
     this->rect_copy->mapTo(this->pano->dest_image_map.width(),
                            this->pano->dest_image_map.height(),

@@ -52,6 +52,8 @@ ObjectRect::ObjectRect()
     this->resize_rect->setPen( *this->pen );
     this->resize_rect->setBrush( Qt::NoBrush );
 
+    this->resizeEnabled = true;
+
     this->render();
 }
 
@@ -510,6 +512,9 @@ void ObjectRect::setManualStatus(QString value)
 void ObjectRect::setAutomaticStatus(QString value)
 {
     this->info.automatic_status = value;
+
+    if(value != "None")
+        this->setResizeEnabled( false );
 }
 
 ObjectRect* ObjectRect::copy()
@@ -518,6 +523,7 @@ ObjectRect* ObjectRect::copy()
     rect_copy->setObjectRectType( this->getObjectRectType() );
     rect_copy->setObjectRectState( this->getObjectRectState() );
     rect_copy->setManualStatus( this->getManualStatus() );
+    rect_copy->setAutomaticStatus( this->getAutomaticStatus() );
     rect_copy->setBlurred( this->isBlurred() );
     rect_copy->setId( this->getId() );
 
@@ -621,5 +627,12 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
 
 void ObjectRect::setResizeEnabled(bool value)
 {
+    this->resizeEnabled = value;
     this->resize_rect->setVisible( value );
 }
+
+bool ObjectRect::isResizeEnabled()
+{
+    return this->resizeEnabled;
+}
+

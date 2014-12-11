@@ -52,6 +52,12 @@ private slots:
 
     void on_ApplyButton_clicked();
 
+    void on_selectAllButton_clicked();
+
+    void on_unSelectAllButton_clicked();
+
+    void on_invertSelectionButton_clicked();
+
 private:
     Ui::BatchView *ui;
 

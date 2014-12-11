@@ -213,7 +213,14 @@
          <item row="0" column="0">
           <widget class="QPushButton" name="pushButton">
            <property name="text">
-            <string>Pop items</string>
+            <string>Pop random items</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="pushButton_2">
+           <property name="text">
+            <string>Clear items</string>
            </property>
           </widget>
          </item>

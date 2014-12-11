@@ -211,20 +211,20 @@ void MainWindow::on_pushButton_clicked()
 {
     srand( this->timer->nsecsElapsed() );
 
-    for (int x = 0; x < 20; x++)
+    for (int x = 0; x < 5; x++)
     {
 
         // Create selection object
         ObjectRect* rect = new ObjectRect();
 
-        int randtype = (rand() % 4) + 1;
-        rect->setType( randtype );
+        //int randtype = (rand() % 4) + 1;
+        rect->setType( ObjectType::Face );
 
         rect->setObjectRectState(ObjectRectState::None);
 
-        int randstate = (rand() % 2);
-        rect->setObjectRectType( randstate > 0 ? ObjectItemRectType::Valid : ObjectItemRectType::Invalid );
-        rect->setAutomaticStatus( randstate > 0 ? "Valid" : "Ratio");
+        //int randstate = (rand() % 2);
+        rect->setObjectRectType( ObjectItemRectType::Valid );
+        rect->setAutomaticStatus( "Valid" );
 
         rect->setBlurred(true);
 
@@ -251,6 +251,89 @@ void MainWindow::on_pushButton_clicked()
         this->pano->rect_list.append( rect );
         this->pano->scene->addItem(rect);
     }
+
+    for (int x = 0; x < 5; x++)
+    {
+
+        // Create selection object
+        ObjectRect* rect = new ObjectRect();
+
+        //int randtype = (rand() % 4) + 1;
+        rect->setType( ObjectType::Face );
+
+        rect->setObjectRectState(ObjectRectState::None);
+
+        //int randstate = (rand() % 2);
+        rect->setObjectRectType( ObjectItemRectType::Invalid );
+        rect->setAutomaticStatus( "Ratio" );
+
+        rect->setBlurred(true);
+
+        rect->setId(this->pano->rect_list_index++);
+
+        float rect_size = 64.0;
+        float pos_x = ((float) (rand() % this->pano->dest_image_map.width() - rect_size));
+        float pos_y = ((float) (rand() % this->pano->dest_image_map.height() - rect_size));
+
+        rect->setPoints(QPointF(pos_x, pos_y),
+                        QPointF(pos_x, pos_y + rect_size),
+                        QPointF(pos_x + rect_size, pos_y + rect_size),
+                        QPointF(pos_x + rect_size, pos_y));
+
+        rect->setProjectionPoints();
+
+        rect->setProjectionParametters(this->pano->position.azimuth,
+                                                             this->pano->position.elevation,
+                                                             this->pano->position.aperture,
+                                                             this->pano->dest_image.width(),
+                                                             this->pano->dest_image.height());
+
+        // Add selection object to scene
+        this->pano->rect_list.append( rect );
+        this->pano->scene->addItem(rect);
+    }
+
+    for (int x = 0; x < 5; x++)
+    {
+
+        // Create selection object
+        ObjectRect* rect = new ObjectRect();
+
+        //int randtype = (rand() % 4) + 1;
+        rect->setType( ObjectType::NumberPlate );
+
+        rect->setObjectRectState(ObjectRectState::None);
+
+        //int randstate = (rand() % 2);
+        rect->setObjectRectType( ObjectItemRectType::Valid );
+        rect->setAutomaticStatus( "Valid" );
+
+        rect->setBlurred(true);
+
+        rect->setId(this->pano->rect_list_index++);
+
+        float rect_size = 64.0;
+        float pos_x = ((float) (rand() % this->pano->dest_image_map.width() - rect_size));
+        float pos_y = ((float) (rand() % this->pano->dest_image_map.height() - rect_size));
+
+        rect->setPoints(QPointF(pos_x, pos_y),
+                        QPointF(pos_x, pos_y + rect_size),
+                        QPointF(pos_x + rect_size, pos_y + rect_size),
+                        QPointF(pos_x + rect_size, pos_y));
+
+        rect->setProjectionPoints();
+
+        rect->setProjectionParametters(this->pano->position.azimuth,
+                                                             this->pano->position.elevation,
+                                                             this->pano->position.aperture,
+                                                             this->pano->dest_image.width(),
+                                                             this->pano->dest_image.height());
+
+        // Add selection object to scene
+        this->pano->rect_list.append( rect );
+        this->pano->scene->addItem(rect);
+    }
+
     /*
     for (int x = 0; x < 100; x++)
     {
@@ -343,4 +426,15 @@ void MainWindow::on_horizontalSlider_sliderMoved(int position)
     this->pano->backupPosition();
     this->pano->scale_factor = (position / 100.0);
     this->pano->render();
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    foreach(ObjectRect* rect, this->pano->rect_list)
+    {
+        this->pano->rect_list.removeOne( rect );
+        delete rect;
+    }
+
+    emit refreshLabels();
 }

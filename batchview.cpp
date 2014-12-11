@@ -333,3 +333,18 @@ void BatchView::on_ApplyButton_clicked()
     }
 
 }
+
+void BatchView::on_selectAllButton_clicked()
+{
+    this->selectAll();
+}
+
+void BatchView::on_unSelectAllButton_clicked()
+{
+    this->unSelectAll();
+}
+
+void BatchView::on_invertSelectionButton_clicked()
+{
+    this->invertSelection();
+}

@@ -112,6 +112,7 @@ private:
 
     // Contour object
     QGraphicsPolygonItem* contour;
+    QGraphicsPolygonItem* contour2;
 
     // Resize rect object
     QGraphicsPolygonItem* resize_rect;

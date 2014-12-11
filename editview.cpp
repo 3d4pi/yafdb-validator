@@ -10,7 +10,6 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
     this->ref_rect = rect;
     this->pano_parent = qobject_cast<PanoramaViewer *>(parent);
 
-
     if (this->ref_rect->getAutomaticStatus() != "None")
     {
         this->ui->typeList->setEnabled( false );

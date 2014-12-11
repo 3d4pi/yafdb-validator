@@ -88,6 +88,8 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
         break;
     case ObjectType::ToBlur:
         this->ui->clannNameLabel->setText("Class name: ToBlur");
+        this->ui->validCheckBox->setEnabled( false );
+        this->ui->blurCheckBox->setEnabled( false );
         break;
     }
 
@@ -180,7 +182,14 @@ void EditView::on_confirmButton_clicked()
                 break;
             }
 
-            rect->setObjectRectState( this->ui->validCheckBox->checkState() ? ObjectRectState::Valid : ObjectRectState::Invalid );
+            if(rect->getType() == ObjectType::ToBlur)
+            {
+                rect->setObjectRectState( ObjectRectState::ToBlur );
+            } else {
+                rect->setObjectRectState( this->ui->validCheckBox->checkState() ? ObjectRectState::Valid : ObjectRectState::Invalid );
+            }
+
+            rect->setManualStatus( this->ui->validCheckBox->checkState() ? "Valid" : "Invalid" );
             rect->setBlurred( this->ui->blurCheckBox->checkState() );
 
             break;

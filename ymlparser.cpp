@@ -127,11 +127,42 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator)
     object->setAutomaticStatus( QString(autoStatus.c_str()) );
     object->setAutomaticStatus( (object->getAutomaticStatus().length() > 0 ? object->getAutomaticStatus() : "None") );
 
+    if(object->getAutomaticStatus() != "None")
+    {
+        if(object->getManualStatus() == "Valid")
+        {
+            object->setObjectRectType( ObjectRectType::Valid );
+        } else {
+            object->setObjectRectType( ObjectRectType::Invalid );
+        }
+    } else {
+        object->setObjectRectType( ObjectRectType::Manual );
+    }
+
     // Parse manual status
     std::string manualStatus;
     (*iterator)["manualStatus"] >> manualStatus;
     object->setManualStatus( QString(manualStatus.c_str()) );
     object->setManualStatus( (object->getManualStatus().length() > 0 ? object->getManualStatus() : "None") );
+
+    if(object->getType() == ObjectType::ToBlur)
+    {
+        object->setObjectRectState( ObjectRectState::ToBlur );
+    } else {
+
+        if(object->getManualStatus() != "None")
+        {
+            if(object->getManualStatus() == "Valid")
+            {
+                object->setObjectRectState( ObjectRectState::Valid );
+            } else {
+                object->setObjectRectState( ObjectRectState::Invalid );
+            }
+        } else {
+            object->setObjectRectState( ObjectRectState::None );
+        }
+
+    }
 
     cv::FileNode childNode = (*iterator)["childrens"];
     for (cv::FileNodeIterator child = childNode.begin(); child != childNode.end(); ++child) {

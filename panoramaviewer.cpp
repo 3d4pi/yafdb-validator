@@ -606,8 +606,8 @@ QImage PanoramaViewer::cropObject(ObjectRect* rect)
 
     // Convert points to a QRect and deduce borders sizes
     QRect rect_sel(
-                    QPoint(rect->proj_point_1().x() + 2, rect->proj_point_1().y() + 2),
-                    QPoint(rect->proj_point_3().x() - 2, rect->proj_point_3().y() - 2)
+                    QPoint(rect->proj_point_1().x() + rect->getBorderWidth(), rect->proj_point_1().y() + rect->getBorderWidth()),
+                    QPoint(rect->proj_point_3().x() - rect->getBorderWidth(), rect->proj_point_3().y() - rect->getBorderWidth())
                 );
 
     QImage temp_dest(rect->proj_width(), rect->proj_height(), QImage::Format_RGB32);

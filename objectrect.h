@@ -57,6 +57,7 @@ public:
 
     // Size getters
     QSizeF getSize();
+    float  getBorderWidth();
 
     // Id setter
     void setId(int id);
@@ -132,6 +133,8 @@ private:
 
     // Pen container
     QPen* pen;
+    QPen* contour_pen;
+    QPen* contour2_pen;
 
     // Brush container
     QBrush* brush;

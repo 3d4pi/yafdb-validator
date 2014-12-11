@@ -107,6 +107,8 @@ private:
     void mouseDoubleClickEvent ( QMouseEvent * event );
 
     bool isObjectVisible(ObjectRect* rect);
+    bool isInSight(QPointF pos, float tolerance = 0.0);
+    bool isObjectInSight(QPointF p1, QPointF p2, QPointF p3, QPointF p4);
 
     int mode;
     int resizePoint;

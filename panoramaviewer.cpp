@@ -346,6 +346,14 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
 
         } else {
 
+            // Check if creation is enabled
+            if(!this->createEnabled)
+                return;
+
+            // Check if mouse in in sight
+            if(!this->isInSight( mouse_scene ))
+                return;
+
             qDebug() << "Mode::Create";
 
             // Switch in creation mode
@@ -440,20 +448,10 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
     // Section creation section (create a new object)
     else if (this->mode == Mode::Create)
     {
-        // Check if creation is enabled
-        if(!this->createEnabled)
-            return;
 
-        QSizeF sight_rect_size = (this->sight->boundingRect().size() * this->sight->scale());
-
-        // Check if rect is in creation zone
-        if (!(MouseX >= this->sight->pos().x()
-                && MouseX < (this->sight->pos().x() + sight_rect_size.width())
-                && MouseY >= this->sight->pos().y()
-                && MouseY < (this->sight->pos().y() + sight_rect_size.height())))
-        {
+        // Check if mouse in in sight
+        if(!this->isInSight( mouse_scene ))
             return;
-        }
 
         // Check if temporary object is created
         if(this->increation_rect.rect == NULL)
@@ -505,6 +503,16 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
         }
     } else if(this->mode == Mode::MoveCreate)
     {
+        // Check if mouse and rect are in in sight
+        QVector<QPointF> points = this->selected_rect->simulate_moveObject(mouse_scene,
+                                                                  this->position.offset_1,
+                                                                  this->position.offset_2,
+                                                                  this->position.offset_3,
+                                                                  this->position.offset_4);
+
+        if(!this->isObjectInSight( points[0], points[1], points[2], points[3] ))
+            return;
+
         qDebug() << "Mode::MoveCreate";
 
         // Check that scene has not moved
@@ -530,6 +538,13 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
         this->selected_rect->setProjectionPoints();
     } else if(this->mode == Mode::MoveResize)
     {
+        // Check if mouse and rect are in in sight
+        if(!this->isObjectInSight( this->selected_rect->getPoint1(),
+                                   this->selected_rect->getPoint2(),
+                                   this->selected_rect->getPoint3(),
+                                   this->selected_rect->getPoint4()) && !this->isInSight( mouse_scene ))
+            return;
+
         // Check that scene has not moved
         if( this->selected_rect->proj_azimuth() != this->position.azimuth ||
             this->selected_rect->proj_elevation() != this->position.elevation ||
@@ -703,6 +718,35 @@ bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
               &p4_y);
 
     if( state != 1 || state2 != 1 || state3 != 1 || state4 != 1){
+        return false;
+    } else {
+        return true;
+    }
+}
+
+bool PanoramaViewer::isInSight(QPointF pos, float tolerance)
+{
+    QSizeF sight_rect_size = (this->sight->boundingRect().size() * this->sight->scale());
+
+    // Check if rect is in creation zone
+    if (!((pos.x() + tolerance) >= this->sight->pos().x()
+            &&(pos.x() + tolerance) < (this->sight->pos().x() + sight_rect_size.width())
+            && (pos.y() + tolerance) >= this->sight->pos().y()
+            && (pos.y() + tolerance) < (this->sight->pos().y() + sight_rect_size.height())))
+    {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+bool PanoramaViewer::isObjectInSight(QPointF p1, QPointF p2, QPointF p3, QPointF p4)
+{
+    if(!(this->isInSight( p1 )
+            && this->isInSight( p2 )
+            && this->isInSight( p3 )
+            && this->isInSight( p4 )))
+    {
         return false;
     } else {
         return true;

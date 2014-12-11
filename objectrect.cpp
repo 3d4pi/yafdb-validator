@@ -163,6 +163,39 @@ void ObjectRect::moveObject(QPointF pos,
     this->render();
 }
 
+QVector<QPointF> ObjectRect::simulate_moveObject(QPointF pos, QPointF offset_1, QPointF offset_2, QPointF offset_3, QPointF offset_4)
+{
+    QVector<QPointF> output;
+
+    // Center point by clicking offset
+    QPointF centered_point_1 (
+                    pos.x() - offset_1.x(),
+                    pos.y() - offset_1.y()
+                );
+
+    QPointF centered_point_2 (
+                    pos.x() - offset_2.x(),
+                    pos.y() - offset_2.y()
+                );
+
+    QPointF centered_point_3 (
+                    pos.x() - offset_3.x(),
+                    pos.y() - offset_3.y()
+                );
+
+    QPointF centered_point_4 (
+                    pos.x() - offset_4.x(),
+                    pos.y() - offset_4.y()
+                );
+
+    output.append( centered_point_1 );
+    output.append( centered_point_2 );
+    output.append( centered_point_3 );
+    output.append( centered_point_4 );
+
+    return output;
+}
+
 QPointF ObjectRect::getPoint1()
 {
     return this->points[0];

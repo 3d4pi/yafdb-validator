@@ -367,8 +367,6 @@ void ObjectRect::render()
     this->resize_rect_polygon = QPolygonF( resize_rect_points );
     this->resize_rect->setPolygon( this->resize_rect_polygon );
 
-    qDebug() << this->getSize();
-
     if(this->getSize().width() < 70 || this->getSize().height() < 70 )
     {
         this->pen->setWidth( 1 );
@@ -381,6 +379,7 @@ void ObjectRect::render()
     }
 
     this->setPen( *this->pen );
+    this->resize_rect->setPen( *this->pen );
     this->contour->setPen( *this->contour_pen );
     this->contour2->setPen( *this->contour2_pen );
 

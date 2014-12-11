@@ -57,6 +57,29 @@
            </property>
           </widget>
          </item>
+         <item row="5" column="1">
+          <widget class="QPushButton" name="toBlurButton">
+           <property name="maximumSize">
+            <size>
+             <width>24</width>
+             <height>24</height>
+            </size>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="resources.qrc">
+             <normaloff>:/resources/icons/Tiles.png</normaloff>:/resources/icons/Tiles.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>16</width>
+             <height>16</height>
+            </size>
+           </property>
+          </widget>
+         </item>
          <item row="2" column="0">
           <widget class="QLabel" name="platesLabel">
            <property name="font">
@@ -66,7 +89,20 @@
             </font>
            </property>
            <property name="text">
-            <string>Number plates: N/A</string>
+            <string>Number plates: 0/0</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="toBlurLabel">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>To blur: 0</string>
            </property>
           </widget>
          </item>
@@ -116,19 +152,6 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="untypedLabel">
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Untyped items: 0</string>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="0">
           <widget class="QLabel" name="preInvalidatedLabel">
            <property name="font">
@@ -139,29 +162,6 @@
            </property>
            <property name="text">
             <string>Pre-invalidated: 0/0</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="untypedButton">
-           <property name="maximumSize">
-            <size>
-             <width>24</width>
-             <height>24</height>
-            </size>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="resources.qrc">
-             <normaloff>:/resources/icons/Tiles.png</normaloff>:/resources/icons/Tiles.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>16</width>
-             <height>16</height>
-            </size>
            </property>
           </widget>
          </item>
@@ -188,8 +188,21 @@
            </property>
           </widget>
          </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="untypedLabel">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Untyped items: 0</string>
+           </property>
+          </widget>
+         </item>
          <item row="4" column="1">
-          <widget class="QPushButton" name="toBlurButton">
+          <widget class="QPushButton" name="untypedButton">
            <property name="maximumSize">
             <size>
              <width>24</width>
@@ -208,19 +221,6 @@
              <width>16</width>
              <height>16</height>
             </size>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QLabel" name="toBlurLabel">
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>To blur: 0/0</string>
            </property>
           </widget>
          </item>

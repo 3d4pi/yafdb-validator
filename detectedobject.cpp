@@ -4,7 +4,6 @@ DetectedObject::DetectedObject()
 {
     this->autoStatus = "None";
     this->manualStatus = "None";
-    this->falsePositive = "No";
 
     this->area.p1 = QPointF(0.0, 0.0);
     this->area.p2 = QPointF(0.0, 0.0);

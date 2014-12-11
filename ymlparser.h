@@ -3,6 +3,7 @@
 
 #include <opencv2/core/core.hpp>
 #include "detectedobject.h"
+#include "objectrect.h"
 #include <QString>
 #include <QList>
 
@@ -11,14 +12,12 @@ class YMLParser
 public:
     YMLParser();
 
-    QList<DetectedObject> loadYML(QString path);
-    void writeYML(QList<DetectedObject> objects, QString path);
-
-    //DetectedObject ObjectRectToDetectedObject(ObjectRect* obj);
+    void writeYML(QList<ObjectRect*> objects, QString path);
+    QList<ObjectRect*> loadYML(QString path);
 
 private:
-    DetectedObject toDetectedObject(cv::FileNodeIterator iterator);
-    void writeItem(cv::FileStorage &fs, DetectedObject obj);
+    void writeItem(cv::FileStorage &fs, ObjectRect* obj);
+    ObjectRect* readItem(cv::FileNodeIterator iterator);
 };
 
 #endif // YMLREADER_H

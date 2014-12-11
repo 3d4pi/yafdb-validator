@@ -404,6 +404,16 @@ void ObjectRect::setProjectionParametters(float azimuth,
     this->projection_parameters.height = height;
 }
 
+void ObjectRect::setSourceImagePath(QString path)
+{
+    this->projection_parameters.source_image = path;
+}
+
+QString ObjectRect::getSourceImagePath()
+{
+    return this->projection_parameters.source_image;
+}
+
 void ObjectRect::setProjectionPoints()
 {
     this->projection_parameters.points = this->points;

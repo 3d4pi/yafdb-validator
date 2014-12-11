@@ -72,6 +72,9 @@ public:
                                   float elevation,
                                   float aperture);
 
+    void setSourceImagePath(QString path);
+    QString getSourceImagePath();
+
     void setProjectionPoints();
     void setProjectionPoints(QPointF p1,
                              QPointF p2,
@@ -115,6 +118,8 @@ public:
 
     void setResizeEnabled(bool value);
     bool isResizeEnabled();
+
+    QList<ObjectRect*> childrens;
 
 private:
 
@@ -161,6 +166,7 @@ private:
         float width;
         float height;
         QVector<QPointF> points;
+        QString source_image;
     } projection_parameters;
 
     // Projection parameters structure

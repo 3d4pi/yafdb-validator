@@ -482,6 +482,8 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
                     this->dest_image.width(),
                     this->dest_image.height());
 
+            this->increation_rect.rect->setSourceImagePath( this->image_path );
+
             // Move selection object to mouse coords
             this->increation_rect.rect->setPoints(
                 mouse_scene,

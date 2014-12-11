@@ -472,3 +472,28 @@ void MainWindow::on_pushButton_2_clicked()
 
     emit refreshLabels();
 }
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    YMLParser parser;
+    parser.writeYML( this->pano->rect_list, "/home/f0x/Bureau/yml.yml" );
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    YMLParser parser;
+    QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/yml.yml" );
+
+    foreach(ObjectRect* rect, loaded_rects)
+    {
+        rect->mapTo(this->pano->dest_image_map.width(),
+                    this->pano->dest_image_map.height(),
+                    this->pano->position.azimuth,
+                    this->pano->position.elevation,
+                    this->pano->position.aperture);
+
+        rect->setId( this->pano->rect_list_index++ );
+        this->pano->rect_list.append( rect );
+        this->pano->scene->addItem( rect );
+    }
+}

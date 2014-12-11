@@ -18,7 +18,7 @@ SOURCES += main.cpp \
     batchview.cpp \
     flowlayout.cpp \
     objectitem.cpp \
-#    ymlparser.cpp \
+    ymlparser.cpp \
     g2g_point.cpp \
     objectrect.cpp \
     editview.cpp
@@ -30,7 +30,7 @@ HEADERS  += mainwindow.h \
     flowlayout.h \
     objectitem.h \
     types.h \
-#    ymlparser.h \
+    ymlparser.h \
     g2g_point.h \
     objectrect.h \
     editview.h

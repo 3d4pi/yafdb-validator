@@ -314,6 +314,9 @@ void ObjectRect::setObjectRectState(int state)
     case ObjectRectState::Invalid:
         this->brush->setColor( QColor(255, 0, 0, 50) );
         break;
+    case ObjectRectState::ToBlur:
+        this->brush->setColor( QColor(255, 255, 0, 50) );
+        break;
     }
 
     // Render brush
@@ -465,6 +468,13 @@ int ObjectRect::getType()
 void ObjectRect::setType(int value)
 {
     this->info.type = value;
+
+    switch(value)
+    {
+    case ObjectType::ToBlur:
+        this->setObjectRectState( ObjectRectState::ToBlur );
+        break;
+    }
 }
 
 bool ObjectRect::isBlurred()

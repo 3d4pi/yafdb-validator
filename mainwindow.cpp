@@ -87,6 +87,7 @@ void MainWindow::refreshLabels()
     int preinvalidatedcount = 0;
     int preinvalidatedvalidated = 0;
 
+    int toblurcount = 0;
 
     foreach(ObjectRect* rect, this->pano->rect_list)
     {
@@ -126,6 +127,10 @@ void MainWindow::refreshLabels()
             }
 
             break;
+        case ObjectType::ToBlur:
+
+            toblurcount++;
+            break;
         }
     }
 
@@ -136,6 +141,34 @@ void MainWindow::refreshLabels()
     } else {
         this->ui->untypedLabel->setStyleSheet("QLabel {color: " + this->good_color + "; }");
         this->ui->untypedButton->setEnabled(false);
+    }
+
+    if(facecount <= 0)
+    {
+        this->ui->facesButton->setEnabled(false);
+    } else {
+        this->ui->facesButton->setEnabled(true);
+    }
+
+    if(numberplatescount <= 0)
+    {
+        this->ui->platesButton->setEnabled(false);
+    } else {
+        this->ui->platesButton->setEnabled(true);
+    }
+
+    if(preinvalidatedcount <= 0)
+    {
+        this->ui->preInvalidatedButton->setEnabled(false);
+    } else {
+        this->ui->preInvalidatedButton->setEnabled(true);
+    }
+
+    if(toblurcount <= 0)
+    {
+        this->ui->toBlurButton->setEnabled(false);
+    } else {
+        this->ui->toBlurButton->setEnabled(true);
     }
 
     if(facesvalidated != facecount)
@@ -159,17 +192,11 @@ void MainWindow::refreshLabels()
         this->ui->preInvalidatedLabel->setStyleSheet("QLabel {color: " + this->good_color + "; }");
     }
 
-    if(facecount <= 0)
-    {
-        //this->ui->facesButton->setEnabled(false);
-    } else {
-
-    }
-
     this->ui->untypedLabel->setText("Untyped items: " + QString::number(untyped));
     this->ui->facesLabel->setText("Faces: " + QString::number(facesvalidated) + "/" + QString::number(facecount));
     this->ui->platesLabel->setText("Number plates: " + QString::number(numberplatesvalidated) + "/" + QString::number(numberplatescount));
     this->ui->preInvalidatedLabel->setText("Pre-invalidated: " + QString::number(preinvalidatedvalidated) + "/" + QString::number(preinvalidatedcount));
+    this->ui->toBlurLabel->setText("To blur: " + QString::number(toblurcount));
 
 }
 
@@ -203,6 +230,13 @@ void MainWindow::on_platesButton_clicked()
 void MainWindow::on_preInvalidatedButton_clicked()
 {
     BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyPreInvalidated);
+    w->setAttribute( Qt::WA_DeleteOnClose );
+    w->show();
+}
+
+void MainWindow::on_toBlurButton_clicked()
+{
+    BatchView* w = new BatchView(this, this->pano, BatchMode::ToBlur, BatchViewMode::OnlyToBlur);
     w->setAttribute( Qt::WA_DeleteOnClose );
     w->show();
 }

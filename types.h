@@ -21,7 +21,7 @@ struct ObjectRectState
 {
     enum Type
     {
-        None = 0, Valid = 1, Invalid = 2
+        None = 0, Valid = 1, Invalid = 2, ToBlur = 3
     };
 };
 
@@ -46,7 +46,7 @@ struct BatchMode
     enum Type
     {
 
-        Manual = 0, Auto = 1
+        Manual = 0, Auto = 1, ToBlur = 3
     };
 };
 
@@ -61,7 +61,8 @@ struct BatchViewMode
         OnlyUnapprovedFaces = 4,
         OnlyNumberPlates = 5,
         OnlyUnapprovedNumberPlates = 6,
-        OnlyPreInvalidated = 7
+        OnlyPreInvalidated = 7,
+        OnlyToBlur = 8
     };
 };
 

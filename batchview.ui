@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1053</width>
-    <height>452</height>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -37,7 +37,7 @@
            <x>0</x>
            <y>0</y>
            <width>717</width>
-           <height>430</height>
+           <height>498</height>
           </rect>
          </property>
         </widget>
@@ -60,17 +60,24 @@
          <string>Selection operations</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_8">
-         <item row="0" column="0">
-          <widget class="QPushButton" name="ValidateButton">
-           <property name="text">
-            <string>Validate</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QPushButton" name="InvalidateButton">
            <property name="text">
             <string>Invalidate</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QPushButton" name="NoBlurButton">
+           <property name="text">
+            <string>No blur</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QPushButton" name="ValidateButton">
+           <property name="text">
+            <string>Validate</string>
            </property>
           </widget>
          </item>
@@ -81,10 +88,10 @@
            </property>
           </widget>
          </item>
-         <item row="3" column="0">
-          <widget class="QPushButton" name="NoBlurButton">
+         <item row="4" column="0">
+          <widget class="QPushButton" name="deleteButton">
            <property name="text">
-            <string>No blur</string>
+            <string>Delete</string>
            </property>
           </widget>
          </item>

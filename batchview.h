@@ -26,6 +26,7 @@ public:
 
     FlowLayout * MainLayout;
     QList<ObjectItem*> elements;
+    QList<int> toremove_ids;
 
     void setMode(int mode);
     void insertItem(ObjectRect* rect);
@@ -57,6 +58,8 @@ private slots:
     void on_unSelectAllButton_clicked();
 
     void on_invertSelectionButton_clicked();
+
+    void on_deleteButton_clicked();
 
 private:
     Ui::BatchView *ui;

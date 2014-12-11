@@ -104,6 +104,12 @@ void BatchView::populate(int batchviewmode)
                 this->insertItem(rect);
             }
             break;
+        case BatchViewMode::OnlyToBlur:
+            if(rect->getType() == ObjectType::ToBlur)
+            {
+                this->insertItem(rect);
+            }
+            break;
         }
     }
 
@@ -144,20 +150,25 @@ BatchView::~BatchView()
 }
 
 void BatchView::setMode(int mode)
-{
+{   
     switch(mode)
     {
     case BatchMode::Manual:
-        this->ui->setType->setEnabled(true);
-        this->ui->TypeList->setEnabled(true);
         this->ui->InvalidateButton->setEnabled(false);
         this->ui->ValidateButton->setEnabled(false);
         break;
     case BatchMode::Auto:
         this->ui->setType->setEnabled(false);
         this->ui->TypeList->setEnabled(false);
-        this->ui->InvalidateButton->setEnabled(true);
-        this->ui->ValidateButton->setEnabled(true);
+        this->ui->deleteButton->setEnabled(false);
+        break;
+    case BatchMode::ToBlur:
+        this->ui->setType->setEnabled(false);
+        this->ui->TypeList->setEnabled(false);
+        this->ui->InvalidateButton->setEnabled(false);
+        this->ui->ValidateButton->setEnabled(false);
+        this->ui->BlurButton->setEnabled(false);
+        this->ui->NoBlurButton->setEnabled(false);
         break;
     }
 }
@@ -210,6 +221,19 @@ void BatchView::on_NoBlurButton_clicked()
     }
 }
 
+void BatchView::on_deleteButton_clicked()
+{
+    foreach(ObjectItem* item, this->elements )
+    {
+        if(item->selected)
+        {
+            this->toremove_ids.append( item->id );
+            this->elements.removeOne( item );
+            delete item;
+        }
+    }
+}
+
 void BatchView::on_BlurButton_clicked()
 {
     foreach(ObjectItem* item, this->elements )
@@ -258,16 +282,28 @@ void BatchView::on_setType_clicked()
 
 void BatchView::mergeResults()
 {
+    // Merge existing objects
     foreach(ObjectItem* item, this->elements )
     {
         foreach (ObjectRect* rect, this->pano->rect_list) {
             if(rect->getId() == item->id)
             {
-
                 rect->setObjectRectState(item->validstate);
                 rect->setBlurred(item->blurred);
                 rect->setType(item->type);
                 rect->setManualStatus(item->manualStatus);
+            }
+        }
+    }
+
+    // Delete requested objects
+    foreach(int id, this->toremove_ids )
+    {
+        foreach (ObjectRect* rect, this->pano->rect_list) {
+            if(rect->getId() == id)
+            {
+                this->pano->rect_list.removeOne( rect );
+                delete rect;
             }
         }
     }

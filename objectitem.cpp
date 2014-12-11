@@ -207,16 +207,20 @@ void ObjectItem::setValidState(int state)
 
     switch(state)
     {
-    case ObjectValidState::Valid:
+    case ObjectRectState::Valid:
         this->ui->validFrame->setStyleSheet("background-color: rgba(0, 255, 0, 50);");
         this->valid = true;
         break;
-    case ObjectValidState::Invalid:
+    case ObjectRectState::Invalid:
         this->ui->validFrame->setStyleSheet("background-color: rgba(255, 0, 0, 50);");
         this->valid = false;
         break;
-    case ObjectValidState::None:
+    case ObjectRectState::None:
         this->ui->validFrame->setStyleSheet("background-color: rgba(0, 0, 0, 50);");
+        this->valid = false;
+        break;
+    case ObjectRectState::ToBlur:
+        this->ui->validFrame->setStyleSheet("background-color: rgba(255, 255, 0, 50);");
         this->valid = false;
         break;
     }

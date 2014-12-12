@@ -46,6 +46,8 @@ public:
     void setCreateEnabled(bool value);
     void setEditEnabled(bool value);
 
+    bool isObjectVisible(ObjectRect* rect);
+
     QList<ObjectRect*> rect_list;
 
     QImage src_image;
@@ -106,7 +108,6 @@ private:
     void resizeEvent(QResizeEvent *);
     void mouseDoubleClickEvent ( QMouseEvent * event );
 
-    bool isObjectVisible(ObjectRect* rect);
     bool isInSight(QPointF pos, float tolerance = 0.0);
     bool isObjectInSight(QPointF p1, QPointF p2, QPointF p3, QPointF p4);
 

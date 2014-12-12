@@ -496,6 +496,10 @@ void MainWindow::on_pushButton_4_clicked()
         rect->setId( this->pano->rect_list_index++ );
         this->pano->rect_list.append( rect );
         this->pano->scene->addItem( rect );
+
+        if( !this->pano->isObjectVisible( rect ) )
+            rect->setVisible( false );
+
     }
 
     emit refreshLabels();

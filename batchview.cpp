@@ -47,6 +47,8 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano, int batchmode, int b
     QStandardItem* firstItem = model->itemFromIndex(firstIndex);
     firstItem->setSelectable(false);
 
+    this->pressed_keys.CTRL = false;
+
     // Connect signal for labels refresh
     connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels()));
 }

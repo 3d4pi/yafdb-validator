@@ -120,28 +120,28 @@ void ObjectRect::setPoint4(QPointF point)
 void ObjectRect::setPoints(QPointF p1, QPointF p2, QPointF p3, QPointF p4)
 {
 
-    if( p1.x() <= 0 || p1.y() <= 0 )
+    if( p1.x() == 0 || p1.y() == 0 )
     {
         this->setPoint1( QPointF( p2.x(), p4.y() ) );
     } else {
         this->setPoint1( p1 );
     }
 
-    if( p2.x() <= 0 || p2.y() <= 0 )
+    if( p2.x() == 0 || p2.y() == 0 )
     {
         this->setPoint2( QPointF( p1.x(), p3.y() ) );
     } else {
         this->setPoint2( p2 );
     }
 
-    if( p3.x() <= 0 || p3.y() <= 0 )
+    if( p3.x() == 0 || p3.y() == 0 )
     {
         this->setPoint3( QPointF( p4.x(), p2.y() ) );
     } else {
         this->setPoint3( p3 );
     }
 
-    if( p4.x() <= 0 || p4.y() <= 0 )
+    if( p4.x() == 0 || p4.y() == 0 )
     {
         this->setPoint4( QPointF( p3.x(), p1.y() ) );
     } else {

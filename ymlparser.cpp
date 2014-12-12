@@ -129,7 +129,7 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator)
 
     if(object->getAutomaticStatus() != "None")
     {
-        if(object->getManualStatus() == "Valid")
+        if(object->getAutomaticStatus() == "Valid")
         {
             object->setObjectRectType( ObjectRectType::Valid );
         } else {

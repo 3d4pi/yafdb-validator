@@ -483,6 +483,7 @@ void MainWindow::on_pushButton_4_clicked()
 {
     YMLParser parser;
     QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/yml.yml" );
+   // QList<ObjectRect*> loaded_rects_ref = parser.loadYML( "/home/f0x/Bureau/ref.yml", YMLType::Detector );
 
     foreach(ObjectRect* rect, loaded_rects)
     {

@@ -69,6 +69,15 @@ private:
     void mergeResults();
     void populate(int batchviewmode);
 
+    struct {
+        bool CTRL;
+    } pressed_keys;
+
+protected:
+    void wheelEvent(QWheelEvent* event);
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
+
 signals:
     void refreshLabels();
 

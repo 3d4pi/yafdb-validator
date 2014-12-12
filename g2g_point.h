@@ -23,8 +23,8 @@
      *  \param  c_azim   Azimuth of secondary gnomonic center
      *  \param  c_elev   Elevation of secondary gnomonic center
      *  \param  c_appe   Apperture of the secondary gnomonic projection
-     *  \param  c_x      X position of the point in secondary rectilinear image
-     *  \param  c_y      Y position of the point in secondary rectilinear image
+     *  \param  c_x      X position of the point in secondary rectilinear image (Optionnal)
+     *  \param  c_y      Y position of the point in secondary rectilinear image (Optionnal)
      *
      *  \return Returns one if first order visibility test of the computed point
      *  coordinates is triggered, zero otherwise
@@ -44,8 +44,8 @@ int g2g_point(
     double   const c_azim,
     double   const c_elev,
     double   const c_appe,
-    double * const c_x,
-    double * const c_y
+    double * const c_x = NULL,
+    double * const c_y = NULL
 
 );
 

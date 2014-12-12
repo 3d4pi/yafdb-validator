@@ -27,33 +27,27 @@ void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
 
     // Write square area coodinates
     fs << "area" << "{";
-    fs << "p1" << cv::Point2d(obj->proj_point_1().x(), obj->proj_point_1().y());
-    fs << "p2" << cv::Point2d(obj->proj_point_2().x(), obj->proj_point_2().y());
-    fs << "p3" << cv::Point2d(obj->proj_point_3().x(), obj->proj_point_3().y());
-    fs << "p4" << cv::Point2d(obj->proj_point_4().x(), obj->proj_point_4().y());
+        fs << "p1" << cv::Point2d(obj->proj_point_1().x(), obj->proj_point_1().y());
+        fs << "p2" << cv::Point2d(obj->proj_point_2().x(), obj->proj_point_2().y());
+        fs << "p3" << cv::Point2d(obj->proj_point_3().x(), obj->proj_point_3().y());
+        fs << "p4" << cv::Point2d(obj->proj_point_4().x(), obj->proj_point_4().y());
     fs << "}";
 
     // Write params
     fs << "params" << "{";
-    fs << "azimuth" << obj->proj_azimuth();
-    fs << "elevation" << obj->proj_elevation();
-    fs << "aperture" << obj->proj_aperture();
-    fs << "width" << obj->proj_width();
-    fs << "height" << obj->proj_height();
+        fs << "azimuth" << obj->proj_azimuth();
+        fs << "elevation" << obj->proj_elevation();
+        fs << "aperture" << obj->proj_aperture();
+        fs << "width" << obj->proj_width();
+        fs << "height" << obj->proj_height();
     fs << "}";
-
-    qDebug() << "Write AZ: " << obj->proj_azimuth();
-    qDebug() << "Write EL: " << obj->proj_elevation();
-    qDebug() << "Write AP: " << obj->proj_aperture();
-    qDebug() << "Write W: " << obj->proj_width();
-    qDebug() << "Write H: " << obj->proj_height();
 
     // Write status tags
     fs << "autoStatus" << obj->getAutomaticStatus().toStdString();
     fs << "manualStatus" << obj->getManualStatus().toStdString();
 }
 
-ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator)
+ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
 {
     // Initialize detected object
     ObjectRect* object = new ObjectRect;
@@ -62,14 +56,16 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator)
     std::string className;
     (*iterator)["className"] >> className;
 
-    if(className == "Face")
+    QString lowerClassName = QString( className.c_str() ).toLower();
+
+    if(lowerClassName == "face")
     {
         object->setType( ObjectType::Face );
-    } else if(className == "NumberPlate") {
+    } else if(lowerClassName == "numberplate") {
         object->setType( ObjectType::NumberPlate );
-    } else if(className == "ToBlur") {
+    } else if(lowerClassName == "toblur") {
         object->setType( ObjectType::ToBlur );
-    } else if(className == "None") {
+    } else if(lowerClassName == "none") {
         object->setType( ObjectType::None );
     }
 
@@ -80,16 +76,24 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator)
     cv::Point2d pt_3;
     cv::Point2d pt_4;
 
-    areaNode["p1"] >> pt_1;
-    areaNode["p2"] >> pt_2;
-    areaNode["p3"] >> pt_3;
-    areaNode["p4"] >> pt_4;
+    switch(ymltype)
+    {
+    case YMLType::Detector:
+        areaNode["p1"] >> pt_1;
+        areaNode["p2"] >> pt_3;
+        break;
+    case YMLType::Validator:
+        areaNode["p1"] >> pt_1;
+        areaNode["p2"] >> pt_2;
+        areaNode["p3"] >> pt_3;
+        areaNode["p4"] >> pt_4;
+        break;
+    }
 
     object->setPoints(QPointF(pt_1.x, pt_1.y),
                       QPointF(pt_2.x, pt_2.y),
                       QPointF(pt_3.x, pt_3.y),
                       QPointF(pt_4.x, pt_4.y));
-    //object->setProjectionPoints();
 
     // Parse gnomonic params
     cv::FileNode paramsNode = (*iterator)["params"];
@@ -104,13 +108,6 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator)
     paramsNode["aperture"] >> aperture;
     paramsNode["width"] >> width;
     paramsNode["height"] >> height;
-
-
-    qDebug() << "Read AZ: " << azimuth;
-    qDebug() << "Read EL: " << elevation;
-    qDebug() << "Read AP: " << aperture;
-    qDebug() << "Read W: " << width;
-    qDebug() << "Read H: " << height;
 
     object->setProjectionParametters(azimuth,
                                     elevation,
@@ -169,6 +166,8 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator)
         object->childrens.append( this->readItem( child ) );
     }
 
+    object->setResizeEnabled( false );
+
     // Return object
     return object;
 }
@@ -213,7 +212,7 @@ void YMLParser::writeYML(QList<ObjectRect*> objects, QString path)
     fs << "]";
 }
 
-QList<ObjectRect*> YMLParser::loadYML(QString path)
+QList<ObjectRect*> YMLParser::loadYML(QString path, int ymltype)
 {
     // Init output list
     QList<ObjectRect*> out_list;
@@ -228,7 +227,7 @@ QList<ObjectRect*> YMLParser::loadYML(QString path)
     for (cv::FileNodeIterator it = objectsNode.begin(); it != objectsNode.end(); ++it) {
 
         // Initialize detected object
-        ObjectRect* object = this->readItem(it);
+        ObjectRect* object = this->readItem(it, ymltype);
 
         std::string source_image;
         fs["source_image"] >> source_image;

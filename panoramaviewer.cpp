@@ -217,7 +217,6 @@ void PanoramaViewer::render()
             rect->setVisible( false );
         }
     }
-
 }
 
 // Function to update zoom of current scene
@@ -615,12 +614,24 @@ QImage PanoramaViewer::cropObject(ObjectRect* rect)
 {
 
     // Convert points to a QRect and deduce borders sizes
+
+    ObjectRect* rect_mapped = rect->copy();
+
+    rect_mapped->mapTo(this->width(),
+                       this->height(),
+                       rect->proj_azimuth(),
+                       rect->proj_elevation(),
+                       rect->proj_aperture());
+    rect_mapped->setProjectionPoints();
+
     QRect rect_sel(
-        QPoint(rect->proj_point_1().x() + rect->getBorderWidth(), rect->proj_point_1().y() + rect->getBorderWidth()),
-        QPoint(rect->proj_point_3().x() - rect->getBorderWidth(), rect->proj_point_3().y() - rect->getBorderWidth())
+        QPoint(rect_mapped->proj_point_1().x() + rect_mapped->getBorderWidth(), rect_mapped->proj_point_1().y() + rect_mapped->getBorderWidth()),
+        QPoint(rect_mapped->proj_point_3().x() - rect_mapped->getBorderWidth(), rect_mapped->proj_point_3().y() - rect_mapped->getBorderWidth())
     );
 
-    QImage temp_dest(rect->proj_width(), rect->proj_height(), QImage::Format_RGB32);
+    delete rect_mapped;
+
+    QImage temp_dest(this->width(), this->height(), QImage::Format_RGB32);
 
     lg_etg_apperturep(
 
@@ -629,8 +640,8 @@ QImage PanoramaViewer::cropObject(ObjectRect* rect)
         this->src_image.height(),
         CHANNELS_COUNT,
         ( inter_C8_t * ) temp_dest.bits(),
-        rect->proj_width(),
-        rect->proj_height(),
+        this->width(),
+        this->height(),
         CHANNELS_COUNT,
         rect->proj_azimuth(),
         rect->proj_elevation(),
@@ -654,14 +665,6 @@ void PanoramaViewer::backupPosition()
 
 bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
 {
-    double p1_x = 0.0;
-    double p1_y = 0.0;
-    double p2_x = 0.0;
-    double p2_y = 0.0;
-    double p3_x = 0.0;
-    double p3_y = 0.0;
-    double p4_x = 0.0;
-    double p4_y = 0.0;
 
     int state = g2g_point(rect->proj_width(),
                           rect->proj_height(),
@@ -675,9 +678,7 @@ bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
                           this->dest_image_map.height(),
                           this->position.azimuth,
                           this->position.elevation,
-                          this->position.aperture,
-                          &p1_x,
-                          &p1_y);
+                          this->position.aperture);
 
     int state2 = g2g_point(rect->proj_width(),
                            rect->proj_height(),
@@ -691,9 +692,7 @@ bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
                            this->dest_image_map.height(),
                            this->position.azimuth,
                            this->position.elevation,
-                           this->position.aperture,
-                           &p2_x,
-                           &p2_y);
+                           this->position.aperture);
 
     int state3 = g2g_point(rect->proj_width(),
                            rect->proj_height(),
@@ -707,9 +706,7 @@ bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
                            this->dest_image_map.height(),
                            this->position.azimuth,
                            this->position.elevation,
-                           this->position.aperture,
-                           &p3_x,
-                           &p3_y);
+                           this->position.aperture);
 
     int state4 = g2g_point(rect->proj_width(),
                            rect->proj_height(),
@@ -723,9 +720,7 @@ bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
                            this->dest_image_map.height(),
                            this->position.azimuth,
                            this->position.elevation,
-                           this->position.aperture,
-                           &p4_x,
-                           &p4_y);
+                           this->position.aperture);
 
     if( state != 1 || state2 != 1 || state3 != 1 || state4 != 1) {
         return false;

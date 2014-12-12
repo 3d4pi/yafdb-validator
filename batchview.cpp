@@ -384,3 +384,37 @@ void BatchView::on_invertSelectionButton_clicked()
 {
     this->invertSelection();
 }
+
+void BatchView::wheelEvent(QWheelEvent * event)
+{
+    int delta = (event->delta() / 120) * 10;
+
+    if( this->pressed_keys.CTRL )
+    {
+        int newvalue = (this->ui->horizontalSlider->value() + delta);
+
+        if (newvalue < this->ui->horizontalSlider->minimum()
+                || newvalue > this->ui->horizontalSlider->maximum())
+        {
+            return;
+        }
+
+        this->ui->horizontalSlider->setValue( newvalue );
+
+        foreach(ObjectItem* item, this->elements )
+        {
+            item->setSize(QSize(newvalue, newvalue));
+        }
+    }
+}
+
+void BatchView::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Control)
+        this->pressed_keys.CTRL = true;
+}
+
+void BatchView::keyReleaseEvent(QKeyEvent *)
+{
+    this->pressed_keys.CTRL = false;
+}

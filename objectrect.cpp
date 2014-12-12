@@ -396,6 +396,7 @@ void ObjectRect::render()
     this->resize_rect_polygon = QPolygonF( resize_rect_points );
     this->resize_rect->setPolygon( this->resize_rect_polygon );
 
+
     if(this->getSize().width() < 70 || this->getSize().height() < 70 )
     {
         this->pen->setWidth( 1 );
@@ -579,14 +580,7 @@ ObjectRect* ObjectRect::copy()
 
 void ObjectRect::mapTo(float width, float height, float azimuth, float elevation, float aperture)
 {
-    double p1_x = 0.0;
-    double p1_y = 0.0;
-    double p2_x = 0.0;
-    double p2_y = 0.0;
-    double p3_x = 0.0;
-    double p3_y = 0.0;
-    double p4_x = 0.0;
-    double p4_y = 0.0;
+    QPointF p1, p2, p3, p4;
 
     g2g_point(this->proj_width(),
               this->proj_height(),
@@ -601,8 +595,8 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
               azimuth,
               elevation,
               aperture,
-              &p1_x,
-              &p1_y);
+              &p1.rx(),
+              &p1.ry());
 
     g2g_point(this->proj_width(),
               this->proj_height(),
@@ -617,8 +611,8 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
               azimuth,
               elevation,
               aperture,
-              &p2_x,
-              &p2_y);
+              &p2.rx(),
+              &p2.ry());
 
     g2g_point(this->proj_width(),
               this->proj_height(),
@@ -633,8 +627,8 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
               azimuth,
               elevation,
               aperture,
-              &p3_x,
-              &p3_y);
+              &p3.rx(),
+              &p3.ry());
 
     g2g_point(this->proj_width(),
               this->proj_height(),
@@ -649,14 +643,10 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
               azimuth,
               elevation,
               aperture,
-              &p4_x,
-              &p4_y);
+              &p4.rx(),
+              &p4.ry());
 
-    this->setPoints(QPointF( p1_x, p1_y ),
-                    QPointF( p2_x, p2_y ),
-                    QPointF( p3_x, p3_y ),
-                    QPointF( p4_x, p4_y ));
-
+    this->setPoints( p1, p2, p3, p4 );
 }
 
 void ObjectRect::setResizeEnabled(bool value)

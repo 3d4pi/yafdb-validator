@@ -82,6 +82,7 @@ public:
 
 public slots:
     void refreshLabels_slot();
+    void updateScaleSlider_slot(int value);
 
 private:
 
@@ -107,6 +108,9 @@ private:
     void mouseReleaseEvent(QMouseEvent *releaseEvent);
     void resizeEvent(QResizeEvent *);
     void mouseDoubleClickEvent ( QMouseEvent * event );
+
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
 
     bool isInSight(QPointF pos, float tolerance = 0.0);
     bool isObjectInSight(QPointF p1, QPointF p2, QPointF p3, QPointF p4);
@@ -136,8 +140,13 @@ private:
         ObjectRect * rect;
     } increation_rect;
 
+    struct {
+        bool CTRL;
+    } pressed_keys;
+
 signals:
     void refreshLabels();
+    void updateScaleSlider(int value);
 
 };
 

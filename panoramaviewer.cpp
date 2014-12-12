@@ -68,8 +68,14 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->sight_width = 800;
     this->sight = this->scene->addRect( this->dest_image_map.width() / 2, this->dest_image_map.height() / 2, this->sight_width, this->sight_width , sight_pen);
 
+    this->pressed_keys.CTRL = false;
+
     // Connect signal for labels refresh
     connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels()));
+
+    connect(this, SIGNAL(updateScaleSlider(int)), parent, SLOT(updateScaleSlider(int)));
+
+
 }
 
 inline float clamp(float x, float a, float b)
@@ -242,21 +248,31 @@ void PanoramaViewer::setView(float azimuth, float elevation)
 // Mouse wheel handler
 void PanoramaViewer::wheelEvent(QWheelEvent* event)
 {
-    // Check if zoom is enabled
-    if(!this->zoomEnabled)
-        return;
-
     // Determine delta
     int delta = (event->delta() / 120);
 
-    // Update current zoom level
-    float old_zoom = this->position.aperture_delta;
-    this->position.aperture_delta -= (delta * 1.5);
-    this->position.aperture_delta = clamp(this->position.aperture_delta, this->zoom_min, this->zoom_max);
+    if( this->pressed_keys.CTRL )
+    {
+        this->scale_factor = (this->scale_factor + (delta / 50.0));
+        this->scale_factor = clamp(this->scale_factor, 0.1, 1.0);
+        emit updateScaleSlider( this->scale_factor * 10 );
+        this->render();
+    } else {
 
-    // Apply zoom level
-    if(this->position.aperture_delta != old_zoom)
-        this->setZoom(this->position.aperture_delta);
+        // Check if zoom is enabled
+        if(!this->zoomEnabled)
+            return;
+
+        // Update current zoom level
+        float old_zoom = this->position.aperture_delta;
+        this->position.aperture_delta -= (delta * 1.5);
+        this->position.aperture_delta = clamp(this->position.aperture_delta, this->zoom_min, this->zoom_max);
+
+        // Apply zoom level
+        if(this->position.aperture_delta != old_zoom)
+            this->setZoom(this->position.aperture_delta);
+
+    }
 }
 
 // Mouse buttons click handler
@@ -391,9 +407,18 @@ void PanoramaViewer::mouseDoubleClickEvent(QMouseEvent *event)
         // Verify that clicked object is a widget and is not null
         if (clicked_rect != NULL)
         {
-            EditView* w = new EditView(this, clicked_rect);
-            w->setAttribute( Qt::WA_DeleteOnClose );
-            w->show();
+            if( (event->buttons() == Qt::RightButton) )
+            {
+                this->position.azimuth = clicked_rect->proj_azimuth();
+                this->position.elevation = clicked_rect->proj_elevation();
+                this->position.aperture = clicked_rect->proj_aperture();
+                this->render();
+            } else if ( event->buttons() == Qt::LeftButton )
+            {
+                EditView* w = new EditView(this, clicked_rect);
+                w->setAttribute( Qt::WA_DeleteOnClose );
+                w->show();
+            }
         }
     }
 }
@@ -505,8 +530,8 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
             );
 
             QToolTip::showText(event->globalPos(),
-                               QString::number( (int) this->increation_rect.rect->getSize().width() ) + "x" +
-                               QString::number( (int) this->increation_rect.rect->getSize().height() ),
+                               QString::number( (int) (this->increation_rect.rect->getSize().width() / this->scale_factor) ) + "x" +
+                               QString::number( (int) (this->increation_rect.rect->getSize().height() / this->scale_factor )),
                                this, rect() );
 
         }
@@ -584,6 +609,11 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
                 this->dest_image.height());
 
         this->selected_rect->setProjectionPoints();
+
+        QToolTip::showText(event->globalPos(),
+                           QString::number( (int) (this->selected_rect->getSize().width() / this->scale_factor) ) + "x" +
+                           QString::number( (int) (this->selected_rect->getSize().height() / this->scale_factor )),
+                           this, rect() );
     }
 }
 
@@ -782,3 +812,21 @@ void PanoramaViewer::refreshLabels_slot()
 {
     emit refreshLabels();
 }
+
+void PanoramaViewer::updateScaleSlider_slot(int value)
+{
+    emit updateScaleSlider(value);
+}
+
+
+void PanoramaViewer::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Control)
+        this->pressed_keys.CTRL = true;
+}
+
+void PanoramaViewer::keyReleaseEvent(QKeyEvent *)
+{
+    this->pressed_keys.CTRL = false;
+}
+

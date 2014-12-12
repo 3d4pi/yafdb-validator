@@ -200,6 +200,11 @@ void MainWindow::refreshLabels()
 
 }
 
+void MainWindow::updateScaleSlider(int value)
+{
+    this->ui->horizontalSlider->setValue( value );
+}
+
 MainWindow::~MainWindow()
 {
     //delete this->pano;
@@ -458,7 +463,7 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
     this->pano->backupPosition();
-    this->pano->scale_factor = (position / 100.0);
+    this->pano->scale_factor = (position / 10.0);
     this->pano->render();
 }
 

@@ -25,6 +25,7 @@ public:
 
 private slots:
     void refreshLabels();
+    void updateScaleSlider(int value);
 
     void on_untypedButton_clicked();
 

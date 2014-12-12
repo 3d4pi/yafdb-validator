@@ -91,6 +91,18 @@ void ObjectRect::setPoint3_Rigid(QPointF point)
     new_p2.setY( new_p3.y() );
     new_p4.setX( new_p3.x() );
 
+    if ( (new_p3.x() - new_p2.x()) < 1 )
+    {
+        new_p3.setX( new_p2.x() + 1 );
+        new_p4.setX( new_p3.x() );
+    }
+
+    if ( (new_p2.y() - new_p1.y()) < 1 )
+    {
+        new_p2.setY( new_p1.y() + 1 );
+        new_p3.setY( new_p2.y() );
+    }
+
     // Update positions
     this->setPoints( new_p1, new_p2, new_p3, new_p4 );
 

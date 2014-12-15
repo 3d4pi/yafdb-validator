@@ -165,17 +165,6 @@ void EditView::on_deleteButton_clicked()
 
 void EditView::mergeEditedRect(ObjectRect* destination)
 {
-    this->rect_copy->mapTo(destination->proj_width(),
-                           destination->proj_height(),
-                           destination->proj_azimuth(),
-                           destination->proj_elevation(),
-                           destination->proj_aperture()
-                          );
-
-    destination->setProjectionPoints(this->rect_copy->getPoint1(),
-                              this->rect_copy->getPoint2(),
-                              this->rect_copy->getPoint3(),
-                              this->rect_copy->getPoint4());
 
     switch(this->ui->typeList->currentIndex())
     {
@@ -189,16 +178,6 @@ void EditView::mergeEditedRect(ObjectRect* destination)
         destination->setType( ObjectType::ToBlur );
         break;
     }
-
-    if(destination->getType() == ObjectType::ToBlur)
-    {
-        destination->setObjectRectState( ObjectRectState::ToBlur );
-    } else {
-        destination->setObjectRectState( this->ui->validCheckBox->checkState() ? ObjectRectState::Valid : ObjectRectState::Invalid );
-    }
-
-    destination->setManualStatus( this->ui->validCheckBox->checkState() ? "Valid" : "Invalid" );
-    destination->setBlurred( this->ui->blurCheckBox->checkState() );
 }
 
 void EditView::mergeEditedItem(ObjectItem* destination)
@@ -243,6 +222,7 @@ void EditView::on_confirmButton_clicked()
             if(rect->getId() == this->rect_copy->getId())
             {
                 rect->mergeWith( this->rect_copy );
+                this->mergeEditedRect( rect );
                 break;
             }
         }

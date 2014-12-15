@@ -201,12 +201,40 @@ void EditView::mergeEditedRect(ObjectRect* destination)
     destination->setBlurred( this->ui->blurCheckBox->checkState() );
 }
 
+void EditView::mergeEditedItem(ObjectItem* destination)
+{
+    switch(this->ui->typeList->currentIndex())
+    {
+    case 1:
+        destination->setType( ObjectType::Face );
+        break;
+    case 2:
+        destination->setType( ObjectType::NumberPlate );
+        break;
+    case 3:
+        destination->setType( ObjectType::ToBlur );
+        break;
+    }
+
+    if(destination->type == ObjectType::ToBlur)
+    {
+        destination->setValidState( ObjectRectState::ToBlur );
+    } else {
+        destination->setValidState( this->ui->validCheckBox->checkState() ? ObjectRectState::Valid : ObjectRectState::Invalid );
+    }
+
+    destination->setManualStatus( this->ui->validCheckBox->checkState() ? "Valid" : "Invalid" );
+    destination->setBlurred( this->ui->blurCheckBox->checkState() );
+}
+
+
 void EditView::on_confirmButton_clicked()
 {
     switch(this->mode)
     {
     case EditMode::Single:
         this->ref_rect->mergeWith( this->rect_copy );
+        this->mergeEditedItem( this->item );
         this->item->setImage( this->pano_parent->cropObject( this->rect_copy ) );
         break;
     case EditMode::Scene:

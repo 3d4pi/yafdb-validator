@@ -46,6 +46,7 @@ private:
     int mode;
 
     void mergeEditedRect(ObjectRect* destination);
+    void mergeEditedItem(ObjectItem* destination);
 
 signals:
     void refreshLabels();

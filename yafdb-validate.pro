@@ -21,7 +21,8 @@ SOURCES += main.cpp \
     ymlparser.cpp \
     g2g_point.cpp \
     objectrect.cpp \
-    editview.cpp
+    editview.cpp \
+    etg_point.cpp
 
 HEADERS  += mainwindow.h \
     panoramaviewer.h \
@@ -33,7 +34,8 @@ HEADERS  += mainwindow.h \
     ymlparser.h \
     g2g_point.h \
     objectrect.h \
-    editview.h
+    editview.h \
+    etg_point.h
 
 FORMS    += mainwindow.ui \
     batchview.ui \

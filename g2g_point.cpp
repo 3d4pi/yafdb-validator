@@ -25,7 +25,6 @@
   */
 
 #include "g2g_point.h"
-#include <QDebug>
 
 int g2g_point(
 

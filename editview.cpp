@@ -1,11 +1,14 @@
 #include "editview.h"
 #include "ui_editview.h"
 
-EditView::EditView(QWidget *parent, ObjectRect* rect) :
+EditView::EditView(QWidget *parent, ObjectRect* rect, ObjectItem* item, int mode) :
     QMainWindow(parent),
     ui(new Ui::EditView)
 {
     ui->setupUi(this);
+
+    this->mode = mode;
+    this->item = item;
 
     this->ref_rect = rect;
     this->pano_parent = qobject_cast<PanoramaViewer *>(parent);
@@ -150,53 +153,65 @@ void EditView::on_deleteButton_clicked()
     this->close();
 }
 
-void EditView::on_confirmButton_clicked()
+void EditView::mergeEditedRect(ObjectRect* destination)
 {
+    this->rect_copy->mapTo(destination->proj_width(),
+                           destination->proj_height(),
+                           destination->proj_azimuth(),
+                           destination->proj_elevation(),
+                           destination->proj_aperture()
+                          );
 
-    foreach(ObjectRect* rect, this->pano_parent->rect_list)
+    destination->setProjectionPoints(this->rect_copy->getPoint1(),
+                              this->rect_copy->getPoint2(),
+                              this->rect_copy->getPoint3(),
+                              this->rect_copy->getPoint4());
+
+    switch(this->ui->typeList->currentIndex())
     {
-        if(rect->getId() == this->rect_copy->getId())
-        {
-            this->rect_copy->mapTo(rect->proj_width(),
-                                   rect->proj_height(),
-                                   rect->proj_azimuth(),
-                                   rect->proj_elevation(),
-                                   rect->proj_aperture()
-                                  );
-
-            rect->setProjectionPoints(this->rect_copy->getPoint1(),
-                                      this->rect_copy->getPoint2(),
-                                      this->rect_copy->getPoint3(),
-                                      this->rect_copy->getPoint4());
-
-            switch(this->ui->typeList->currentIndex())
-            {
-            case 1:
-                rect->setType( ObjectType::Face );
-                break;
-            case 2:
-                rect->setType( ObjectType::NumberPlate );
-                break;
-            case 3:
-                rect->setType( ObjectType::ToBlur );
-                break;
-            }
-
-            if(rect->getType() == ObjectType::ToBlur)
-            {
-                rect->setObjectRectState( ObjectRectState::ToBlur );
-            } else {
-                rect->setObjectRectState( this->ui->validCheckBox->checkState() ? ObjectRectState::Valid : ObjectRectState::Invalid );
-            }
-
-            rect->setManualStatus( this->ui->validCheckBox->checkState() ? "Valid" : "Invalid" );
-            rect->setBlurred( this->ui->blurCheckBox->checkState() );
-
-            break;
-        }
+    case 1:
+        destination->setType( ObjectType::Face );
+        break;
+    case 2:
+        destination->setType( ObjectType::NumberPlate );
+        break;
+    case 3:
+        destination->setType( ObjectType::ToBlur );
+        break;
     }
 
-    this->pano_parent->render();
+    if(destination->getType() == ObjectType::ToBlur)
+    {
+        destination->setObjectRectState( ObjectRectState::ToBlur );
+    } else {
+        destination->setObjectRectState( this->ui->validCheckBox->checkState() ? ObjectRectState::Valid : ObjectRectState::Invalid );
+    }
+
+    destination->setManualStatus( this->ui->validCheckBox->checkState() ? "Valid" : "Invalid" );
+    destination->setBlurred( this->ui->blurCheckBox->checkState() );
+}
+
+void EditView::on_confirmButton_clicked()
+{
+    switch(this->mode)
+    {
+    case EditMode::Single:
+        this->ref_rect->mergeWith( this->rect_copy );
+        this->item->setImage( this->pano_parent->cropObject( this->rect_copy ) );
+        break;
+    case EditMode::Scene:
+        foreach(ObjectRect* rect, this->pano_parent->rect_list)
+        {
+            if(rect->getId() == this->rect_copy->getId())
+            {
+                rect->mergeWith( this->rect_copy );
+                break;
+            }
+        }
+
+        this->pano_parent->render();
+        break;
+    }
 
     emit refreshLabels();
 

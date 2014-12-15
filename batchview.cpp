@@ -1,8 +1,6 @@
 #include "batchview.h"
 #include "ui_batchview.h"
 
-#include "objectitem.h"
-
 BatchView::BatchView(QWidget *parent, PanoramaViewer* pano, int batchmode, int batchviewmode) :
     QMainWindow(parent),
     ui(new Ui::BatchView)
@@ -119,26 +117,7 @@ void BatchView::populate(int batchviewmode)
 
 void BatchView::insertItem(ObjectRect *rect)
 {
-    ObjectItem* object = new ObjectItem();
-    object->setId(rect->getId());
-    object->setImage(pano->cropObject(rect));
-    object->setType(rect->getType());
-    object->setBlurred(rect->isBlurred());
-    object->setValidState(rect->getObjectRectState());
-    object->setManualStatus(rect->getManualStatus());
-    object->setAutomaticStatus(rect->getAutomaticStatus());
-
-    if(rect->getAutomaticStatus() != "None")
-    {
-        if(rect->getAutomaticStatus() == "Valid")
-        {
-            object->setRectType(ObjectItemRectType::Valid);
-        } else {
-            object->setRectType(ObjectItemRectType::Invalid);
-        }
-    } else {
-        object->setRectType(ObjectItemRectType::Manual);
-    }
+    ObjectItem* object = new ObjectItem(0, this->pano, rect);
 
     object->setSize( QSize(this->ui->horizontalSlider->value(), this->ui->horizontalSlider->value()) );
 
@@ -290,10 +269,11 @@ void BatchView::mergeResults()
         foreach (ObjectRect* rect, this->pano->rect_list) {
             if(rect->getId() == item->id)
             {
-                rect->setObjectRectState(item->validstate);
+                /*rect->setObjectRectState(item->validstate);
                 rect->setBlurred(item->blurred);
                 rect->setType(item->type);
-                rect->setManualStatus(item->manualStatus);
+                rect->setManualStatus(item->manualStatus);*/
+                rect->mergeWith( item->rect );
             }
         }
     }
@@ -348,6 +328,7 @@ void BatchView::on_ApplyButton_clicked()
         {
             this->mergeResults();
             emit refreshLabels();
+            this->pano->render();
             this->close();
         }
     } else if(!haveNoClass && haveNoManualState) {
@@ -362,11 +343,13 @@ void BatchView::on_ApplyButton_clicked()
         {
             this->mergeResults();
             emit refreshLabels();
+            this->pano->render();
             this->close();
         }
     } else {
         this->mergeResults();
         emit refreshLabels();
+        this->pano->render();
         this->close();
     }
 
@@ -419,4 +402,12 @@ void BatchView::keyPressEvent(QKeyEvent *event)
 void BatchView::keyReleaseEvent(QKeyEvent *)
 {
     this->pressed_keys.CTRL = false;
+}
+
+void BatchView::on_pushButton_clicked()
+{
+    foreach(ObjectItem* item, this->elements )
+    {
+        item->setRect( item->rect );
+    }
 }

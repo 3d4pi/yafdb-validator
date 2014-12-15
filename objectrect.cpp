@@ -566,8 +566,9 @@ void ObjectRect::setAutomaticStatus(QString value)
 
 ObjectRect* ObjectRect::copy()
 {
-    ObjectRect* rect_copy = new ObjectRect();
+    ObjectRect* rect_copy = new ObjectRect;
     rect_copy->setObjectRectType( this->getObjectRectType() );
+    rect_copy->setType( this->getType() );
     rect_copy->setObjectRectState( this->getObjectRectState() );
     rect_copy->setManualStatus( this->getManualStatus() );
     rect_copy->setAutomaticStatus( this->getAutomaticStatus() );
@@ -588,6 +589,28 @@ ObjectRect* ObjectRect::copy()
     rect_copy->setProjectionPoints();
 
     return rect_copy;
+}
+
+void ObjectRect::mergeWith(ObjectRect *rect)
+{
+    rect->mapTo(this->proj_width(),
+                           this->proj_height(),
+                           this->proj_azimuth(),
+                           this->proj_elevation(),
+                           this->proj_aperture()
+                          );
+
+    this->setProjectionPoints(rect->getPoint1(),
+                              rect->getPoint2(),
+                              rect->getPoint3(),
+                              rect->getPoint4());
+
+    this->setType( rect->getType() );
+
+    this->setObjectRectState( rect->getObjectRectState() );
+
+    this->setManualStatus( rect->getManualStatus() );
+    this->setBlurred( rect->isBlurred() );
 }
 
 void ObjectRect::mapTo(float width, float height, float azimuth, float elevation, float aperture)

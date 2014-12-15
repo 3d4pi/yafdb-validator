@@ -4,7 +4,10 @@
 #include <QWidget>
 #include <QImage>
 #include <QPixmap>
+#include <QMouseEvent>
 #include "types.h"
+#include "objectrect.h"
+#include "panoramaviewer.h"
 
 namespace Ui {
 class ObjectItem;
@@ -16,6 +19,7 @@ class ObjectItem : public QWidget
 
 public:
     explicit ObjectItem(QWidget *parent = 0);
+    explicit ObjectItem(QWidget *parent, PanoramaViewer* pano, ObjectRect* rect);
 
     bool LoadImage(QString path);
     bool setImage(QImage image);
@@ -25,6 +29,8 @@ public:
     void setType(int type);
     void setBlurred(bool value);
     void setSelected(bool value);
+    void setRect(ObjectRect* rect);
+    void setPano(PanoramaViewer* pano);
 
     void setValidState(int state);
 
@@ -45,6 +51,8 @@ public:
     bool valid;
     int validstate;
     bool blurred;
+    ObjectRect* rect;
+    PanoramaViewer* parent_pano;
 
     ~ObjectItem();
 
@@ -52,6 +60,7 @@ private:
     Ui::ObjectItem *ui;
 
     void mousePressEvent(QMouseEvent *ev);
+    void mouseDoubleClickEvent ( QMouseEvent * event );
 
     int border_size;
 

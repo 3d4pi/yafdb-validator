@@ -415,7 +415,7 @@ void PanoramaViewer::mouseDoubleClickEvent(QMouseEvent *event)
                 this->render();
             } else if ( event->buttons() == Qt::LeftButton )
             {
-                EditView* w = new EditView(this, clicked_rect);
+                EditView* w = new EditView(this, clicked_rect, NULL, EditMode::Scene);
                 w->setAttribute( Qt::WA_DeleteOnClose );
                 w->show();
             }

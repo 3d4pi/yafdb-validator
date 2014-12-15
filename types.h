@@ -50,6 +50,15 @@ struct BatchMode
     };
 };
 
+struct EditMode
+{
+    enum Type
+    {
+
+        Single = 1, Scene = 2
+    };
+};
+
 struct BatchViewMode
 {
     enum Type

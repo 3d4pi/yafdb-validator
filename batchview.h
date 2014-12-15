@@ -6,11 +6,13 @@
 #include <QShortcut>
 #include <QMessageBox>
 #include <QLayoutItem>
+#include <QMouseEvent>
 
 #include "flowlayout.h"
 #include "panoramaviewer.h"
 #include "objectrect.h"
 #include "objectitem.h"
+#include "panoramaviewer.h"
 
 namespace Ui {
 class BatchView;
@@ -60,6 +62,8 @@ private slots:
     void on_invertSelectionButton_clicked();
 
     void on_deleteButton_clicked();
+
+    void on_pushButton_clicked();
 
 private:
     Ui::BatchView *ui;

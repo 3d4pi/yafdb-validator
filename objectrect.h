@@ -83,6 +83,7 @@ public:
 
     // Copy function
     ObjectRect* copy();
+    void mergeWith(ObjectRect* rect);
 
     // Point map function
     void mapTo(float width,

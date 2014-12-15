@@ -31,6 +31,7 @@ public:
     void setSelected(bool value);
     void setRect(ObjectRect* rect);
     void setPano(PanoramaViewer* pano);
+    void remove(bool value);
 
     void setValidState(int state);
 
@@ -53,6 +54,9 @@ public:
     bool blurred;
     ObjectRect* rect;
     PanoramaViewer* parent_pano;
+    QList<ObjectItem*> parent_elements;
+    QList<int> parent_toremove_ids;
+    bool toBeRemoved;
 
     ~ObjectItem();
 

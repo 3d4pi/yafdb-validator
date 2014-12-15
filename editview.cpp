@@ -147,10 +147,20 @@ void EditView::on_cancelButton_clicked()
 
 void EditView::on_deleteButton_clicked()
 {
-    pano_parent->rect_list.removeOne( this->ref_rect );
-    delete this->ref_rect;
-    emit refreshLabels();
-    this->close();
+    switch(this->mode)
+    {
+    case EditMode::Single:
+        this->item->remove( true );
+        emit refreshLabels();
+        this->close();
+        break;
+    case EditMode::Scene:
+        pano_parent->rect_list.removeOne( this->ref_rect );
+        delete this->ref_rect;
+        emit refreshLabels();
+        this->close();
+        break;
+    }
 }
 
 void EditView::mergeEditedRect(ObjectRect* destination)

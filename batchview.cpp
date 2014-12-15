@@ -208,9 +208,7 @@ void BatchView::on_deleteButton_clicked()
     {
         if(item->selected)
         {
-            this->toremove_ids.append( item->id );
-            this->elements.removeOne( item );
-            delete item;
+            item->remove( true );
         }
     }
 }
@@ -269,20 +267,16 @@ void BatchView::mergeResults()
         foreach (ObjectRect* rect, this->pano->rect_list) {
             if(rect->getId() == item->id)
             {
-                /*rect->setObjectRectState(item->validstate);
-                rect->setBlurred(item->blurred);
-                rect->setType(item->type);
-                rect->setManualStatus(item->manualStatus);*/
                 rect->mergeWith( item->rect );
             }
         }
     }
 
     // Delete requested objects
-    foreach(int id, this->toremove_ids )
+    foreach(ObjectItem* item, this->elements )
     {
         foreach (ObjectRect* rect, this->pano->rect_list) {
-            if(rect->getId() == id)
+            if(item->toBeRemoved && (item->id == rect->getId()))
             {
                 this->pano->rect_list.removeOne( rect );
                 delete rect;

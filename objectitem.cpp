@@ -18,6 +18,8 @@ ObjectItem::ObjectItem(QWidget *parent) :
     this->border_size = 4;
 
     this->setSize(QSize(128, 128));
+
+    this->toBeRemoved = false;
 }
 
 ObjectItem::ObjectItem(QWidget *parent, PanoramaViewer* pano, ObjectRect* rect) :
@@ -38,8 +40,17 @@ ObjectItem::ObjectItem(QWidget *parent, PanoramaViewer* pano, ObjectRect* rect) 
 
     this->setPano( pano );
     this->setRect( rect );
+    this->parent_elements = parent_elements;
+
+    this->toBeRemoved = false;
 }
 
+void ObjectItem::remove(bool value)
+{
+    this->toBeRemoved = value;
+    this->setVisible( !value );
+    this->setEnabled( !value );
+}
 
 void ObjectItem::setId(int id)
 {
@@ -314,8 +325,6 @@ void ObjectItem::mousePressEvent(QMouseEvent* event) {
     {
         this->setSelected(!this->selected);
     }
-
-    qDebug() << this->rect->getObjectType();
 }
 
 

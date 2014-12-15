@@ -397,11 +397,3 @@ void BatchView::keyReleaseEvent(QKeyEvent *)
 {
     this->pressed_keys.CTRL = false;
 }
-
-void BatchView::on_pushButton_clicked()
-{
-    foreach(ObjectItem* item, this->elements )
-    {
-        item->setRect( item->rect );
-    }
-}

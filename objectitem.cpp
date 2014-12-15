@@ -310,11 +310,13 @@ void ObjectItem::setPano(PanoramaViewer *pano)
 void ObjectItem::setAutomaticStatus(QString value)
 {
     this->autoStatus = value;
+    this->rect->setAutomaticStatus( value );
 }
 
 void ObjectItem::setManualStatus(QString value)
 {
     this->manualStatus = value;
+    this->rect->setManualStatus( value );
 }
 
 

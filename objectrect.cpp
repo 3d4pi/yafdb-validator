@@ -606,10 +606,11 @@ void ObjectRect::mergeWith(ObjectRect *rect)
                               rect->getPoint4());
 
     this->setType( rect->getType() );
-
     this->setObjectRectState( rect->getObjectRectState() );
 
     this->setManualStatus( rect->getManualStatus() );
+    this->setAutomaticStatus( rect->getAutomaticStatus() );
+
     this->setBlurred( rect->isBlurred() );
 }
 

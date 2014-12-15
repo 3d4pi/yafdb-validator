@@ -63,8 +63,6 @@ private slots:
 
     void on_deleteButton_clicked();
 
-    void on_pushButton_clicked();
-
 private:
     Ui::BatchView *ui;
 

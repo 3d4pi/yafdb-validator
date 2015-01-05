@@ -35,6 +35,7 @@ ObjectRect::ObjectRect()
     this->info.blurred = false;
     this->info.validated = false;
     this->info.type = ObjectType::None;
+    this->info.sub_type = ObjectSubType::None;
 
     // Default contour setup
     this->contour_pen = new QPen(QColor(255, 255, 255, 255), 2);

@@ -82,19 +82,32 @@ EditView::EditView(QWidget *parent, ObjectRect* rect, ObjectItem* item, int mode
     switch(this->ref_rect->getType())
     {
     case ObjectType::None:
-        this->ui->clannNameLabel->setText("Class name: None");
+        this->ui->classNameLabel->setText("Class name: None");
         break;
     case ObjectType::Face:
-        this->ui->clannNameLabel->setText("Class name: Face");
+        this->ui->classNameLabel->setText("Class name: Face");
         break;
     case ObjectType::NumberPlate:
-        this->ui->clannNameLabel->setText("Class name: NumberPlate");
+        this->ui->classNameLabel->setText("Class name: NumberPlate");
         break;
     case ObjectType::ToBlur:
-        this->ui->clannNameLabel->setText("Class name: ToBlur");
+        this->ui->classNameLabel->setText("Class name: ToBlur");
         this->ui->validCheckBox->setEnabled( false );
         this->ui->blurCheckBox->setEnabled( false );
         break;
+    }
+
+    switch(this->ref_rect->getSubType())
+    {
+    case ObjectSubType::None:
+         this->ui->subClassLabel->setText("Sub class name: None");
+         break;
+    case ObjectSubType::Front:
+         this->ui->subClassLabel->setText("Sub class name: Front");
+         break;
+    case ObjectSubType::Profile:
+         this->ui->subClassLabel->setText("Sub class name: Profile");
+         break;
     }
 
     this->ui->widthLabel->setText("Width: " + QString::number( (int) this->ref_rect->getSize().width() ));

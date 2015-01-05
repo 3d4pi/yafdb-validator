@@ -34,7 +34,7 @@
         </property>
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="0">
-          <widget class="QLabel" name="clannNameLabel">
+          <widget class="QLabel" name="classNameLabel">
            <property name="text">
             <string>Class name: </string>
            </property>
@@ -50,7 +50,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="subClassLabel">
            <property name="text">
-            <string>Sub classes: </string>
+            <string>Sub class name: </string>
            </property>
           </widget>
          </item>

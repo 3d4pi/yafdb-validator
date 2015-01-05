@@ -11,36 +11,43 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = yafdb-validate
 TEMPLATE = app
 
-SOURCES += main.cpp \
-    mainwindow.cpp \
-    panoramaviewer.cpp \
-    detectedobject.cpp \
-    batchview.cpp \
-    flowlayout.cpp \
-    objectitem.cpp \
-    ymlparser.cpp \
-    g2g_point.cpp \
-    objectrect.cpp \
-    editview.cpp \
-    etg_point.cpp
+RESOURCES += \
+    resources.qrc
 
-HEADERS  += mainwindow.h \
-    panoramaviewer.h \
-    detectedobject.h \
-    batchview.h \
-    flowlayout.h \
-    objectitem.h \
-    types.h \
-    ymlparser.h \
-    g2g_point.h \
-    objectrect.h \
-    editview.h \
-    etg_point.h
+INCLUDEPATH += $$PWD/include/ \
+    $$PWD/libs/libgnomonic/lib/libinter/src/ \
+    $$PWD/libs/libgnomonic/src/
 
-FORMS    += mainwindow.ui \
-    batchview.ui \
-    objectitem.ui \
-    editview.ui
+SOURCES += src/main.cpp \
+    src/mainwindow.cpp \
+    src/panoramaviewer.cpp \
+    src/detectedobject.cpp \
+    src/batchview.cpp \
+    src/flowlayout.cpp \
+    src/objectitem.cpp \
+    src/ymlparser.cpp \
+    src/g2g_point.cpp \
+    src/objectrect.cpp \
+    src/editview.cpp \
+    src/etg_point.cpp
+
+HEADERS  += include/mainwindow.h \
+    include/panoramaviewer.h \
+    include/detectedobject.h \
+    include/batchview.h \
+    include/flowlayout.h \
+    include/objectitem.h \
+    include/types.h \
+    include/ymlparser.h \
+    include/g2g_point.h \
+    include/objectrect.h \
+    include/editview.h \
+    include/etg_point.h
+
+FORMS    += ui/mainwindow.ui \
+    ui/batchview.ui \
+    ui/objectitem.ui \
+    ui/editview.ui
 
 LIBS += $$PWD/libs/libgnomonic/lib/libinter/bin/libinter.a \
     $$PWD/libs/libgnomonic/bin/libgnomonic.a \
@@ -63,11 +70,5 @@ LIBS += $$PWD/libs/libgnomonic/lib/libinter/bin/libinter.a \
     -lopencv_ts \
     -lopencv_video \
     -lopencv_videostab
-
-INCLUDEPATH += $$PWD/libs/libgnomonic/lib/libinter/src/ \
-    $$PWD/libs/libgnomonic/src/
-
-RESOURCES += \
-    resources.qrc
 
 

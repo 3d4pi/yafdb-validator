@@ -412,6 +412,7 @@ void PanoramaViewer::mouseDoubleClickEvent(QMouseEvent *event)
                 this->position.azimuth = clicked_rect->proj_azimuth();
                 this->position.elevation = clicked_rect->proj_elevation();
                 this->position.aperture = clicked_rect->proj_aperture();
+                this->position.aperture_delta = (this->position.aperture / (LG_PI / 180.0));
                 this->render();
             } else if ( event->buttons() == Qt::LeftButton )
             {

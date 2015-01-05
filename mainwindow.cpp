@@ -487,13 +487,13 @@ void MainWindow::on_pushButton_3_clicked()
 void MainWindow::on_pushButton_4_clicked()
 {
     YMLParser parser;
-    //QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/yml.yml" );
-    QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/ref.yml", YMLType::Detector );
+    QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/yml.yml" );
+    //QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/ref.yml", YMLType::Detector );
 
     foreach(ObjectRect* rect, loaded_rects)
     {
 
-        double c_x = 0.0;
+        /*double c_x = 0.0;
         double c_y = 0.0;
         double d_x = ((rect->getPoint1().x() / LG_PI2) * this->pano->dest_image_map.width());
         double d_y = ((rect->getPoint1().y() / LG_PI) * this->pano->dest_image_map.height());
@@ -513,9 +513,9 @@ void MainWindow::on_pushButton_4_clicked()
                   &c_x,
                   &c_y);
 
-        qDebug() << QPointF(c_x, c_y);
+        qDebug() << QPointF(c_x, c_y);*/
 
-        /*rect->mapTo(this->pano->dest_image_map.width(),
+        rect->mapTo(this->pano->dest_image_map.width(),
                     this->pano->dest_image_map.height(),
                     this->pano->position.azimuth,
                     this->pano->position.elevation,
@@ -526,7 +526,7 @@ void MainWindow::on_pushButton_4_clicked()
         this->pano->scene->addItem( rect );
 
         if( !this->pano->isObjectVisible( rect ) )
-            rect->setVisible( false );*/
+            rect->setVisible( false );
 
     }
 

@@ -8,7 +8,7 @@ YMLParser::YMLParser()
 
 void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
 {
-    // Write class name name
+    // Write class name
     switch(obj->getType())
     {
     case ObjectType::Face:
@@ -22,6 +22,20 @@ void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
         break;
     case ObjectType::None:
         fs << "className" << "None";
+        break;
+    }
+
+    // Write class name
+    switch(obj->getSubType())
+    {
+    case ObjectSubType::None:
+        fs << "subClassName" << "None";
+        break;
+    case ObjectSubType::Front:
+        fs << "subClassName" << "Front";
+        break;
+    case ObjectSubType::Profile:
+        fs << "subClassName" << "Profile";
         break;
     }
 
@@ -56,7 +70,12 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
     std::string className;
     (*iterator)["className"] >> className;
 
+    // Parse sub class name
+    std::string subClassName;
+    (*iterator)["subClassName"] >> subClassName;
+
     QString lowerClassName = QString( className.c_str() ).toLower();
+    QString lowerSubClassName = QString( subClassName.c_str() ).toLower();
 
     if(lowerClassName == "face")
     {
@@ -67,6 +86,15 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
         object->setType( ObjectType::ToBlur );
     } else if(lowerClassName == "none") {
         object->setType( ObjectType::None );
+    }
+
+    if(lowerSubClassName == "none")
+    {
+        object->setSubType( ObjectSubType::None );
+    } else if(lowerSubClassName == "front") {
+        object->setSubType( ObjectSubType::Front );
+    } else if(lowerSubClassName == "profile") {
+        object->setSubType( ObjectSubType::Profile );
     }
 
     // Parse area points

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>942</width>
-    <height>414</height>
+    <height>497</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -84,7 +84,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="3" column="0">
           <widget class="QCheckBox" name="validCheckBox">
            <property name="text">
             <string>Object is valid ?</string>
@@ -127,11 +127,37 @@
            </item>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="4" column="0">
           <widget class="QCheckBox" name="blurCheckBox">
            <property name="text">
             <string>Blur object ?</string>
            </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Sub type:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="subTypeList">
+           <item>
+            <property name="text">
+             <string>None</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Front</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Profile</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>

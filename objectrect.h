@@ -106,7 +106,9 @@ public:
 
     // Informations get/set
     int getType();
+    int getSubType();
     void setType(int value);
+    void setSubType(int value);
 
     bool isBlurred();
     bool isValidated();
@@ -173,6 +175,7 @@ private:
     // Projection parameters structure
     struct {
         int type;
+        int sub_type;
         bool blurred;
         bool validated;
         QString manual_status;

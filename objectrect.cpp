@@ -514,6 +514,11 @@ int ObjectRect::getType()
     return this->info.type;
 }
 
+int ObjectRect::getSubType()
+{
+    return this->info.sub_type;
+}
+
 void ObjectRect::setType(int value)
 {
     this->info.type = value;
@@ -524,6 +529,11 @@ void ObjectRect::setType(int value)
         this->setObjectRectState( ObjectRectState::ToBlur );
         break;
     }
+}
+
+void ObjectRect::setSubType(int value)
+{
+    this->info.sub_type = value;
 }
 
 bool ObjectRect::isBlurred()
@@ -606,6 +616,7 @@ void ObjectRect::mergeWith(ObjectRect *rect)
                               rect->getPoint4());
 
     this->setType( rect->getType() );
+    this->setSubType( rect->getSubType() );
     this->setObjectRectState( rect->getObjectRectState() );
 
     this->setManualStatus( rect->getManualStatus() );

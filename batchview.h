@@ -63,6 +63,8 @@ private slots:
 
     void on_deleteButton_clicked();
 
+    void on_setSubType_clicked();
+
 private:
     Ui::BatchView *ui;
 

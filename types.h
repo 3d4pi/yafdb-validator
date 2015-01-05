@@ -33,6 +33,14 @@ struct ObjectType
     };
 };
 
+struct ObjectSubType
+{
+    enum Type
+    {
+        None = 0, Front = 1, Profile = 2
+    };
+};
+
 struct ObjectValidState
 {
     enum Type

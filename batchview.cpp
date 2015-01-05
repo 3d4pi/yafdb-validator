@@ -141,6 +141,8 @@ void BatchView::setMode(int mode)
     case BatchMode::Auto:
         this->ui->setType->setEnabled(false);
         this->ui->TypeList->setEnabled(false);
+        this->ui->setSubType->setEnabled(false);
+        this->ui->SubTypeList->setEnabled(false);
         this->ui->deleteButton->setEnabled(false);
         break;
     case BatchMode::ToBlur:
@@ -255,6 +257,17 @@ void BatchView::on_setType_clicked()
         if(item->selected)
         {
             item->setType(this->ui->TypeList->currentIndex());
+        }
+    }
+}
+
+void BatchView::on_setSubType_clicked()
+{
+    foreach(ObjectItem* item, this->elements )
+    {
+        if(item->selected)
+        {
+            item->setSubType(this->ui->SubTypeList->currentIndex());
         }
     }
 }

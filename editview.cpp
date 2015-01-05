@@ -67,6 +67,7 @@ EditView::EditView(QWidget *parent, ObjectRect* rect, ObjectItem* item, int mode
     if (this->ref_rect->getAutomaticStatus() != "None")
     {
         this->ui->typeList->setEnabled( false );
+        this->ui->subTypeList->setEnabled( false );
         this->ui->deleteButton->setEnabled( false );
     }
 
@@ -117,6 +118,20 @@ EditView::EditView(QWidget *parent, ObjectRect* rect, ObjectItem* item, int mode
         break;
     case ObjectType::ToBlur:
         this->ui->typeList->setCurrentIndex( 3 );
+        break;
+    }
+
+    switch(this->ref_rect->getSubType())
+    {
+
+    case ObjectSubType::None:
+        this->ui->subTypeList->setCurrentIndex( 0 );
+        break;
+    case ObjectSubType::Front:
+        this->ui->subTypeList->setCurrentIndex( 1 );
+        break;
+    case ObjectSubType::Profile:
+        this->ui->subTypeList->setCurrentIndex( 2 );
         break;
     }
 
@@ -178,6 +193,19 @@ void EditView::mergeEditedRect(ObjectRect* destination)
         destination->setType( ObjectType::ToBlur );
         break;
     }
+
+    switch(this->ui->subTypeList->currentIndex())
+    {
+    case 0:
+        destination->setSubType( ObjectSubType::None );
+        break;
+    case 1:
+        destination->setSubType( ObjectSubType::Front );
+        break;
+    case 2:
+        destination->setSubType( ObjectSubType::Profile );
+        break;
+    }
 }
 
 void EditView::mergeEditedItem(ObjectItem* destination)
@@ -192,6 +220,19 @@ void EditView::mergeEditedItem(ObjectItem* destination)
         break;
     case 3:
         destination->setType( ObjectType::ToBlur );
+        break;
+    }
+
+    switch(this->ui->subTypeList->currentIndex())
+    {
+    case 0:
+        destination->setSubType( ObjectSubType::None );
+        break;
+    case 1:
+        destination->setSubType( ObjectSubType::Front );
+        break;
+    case 2:
+        destination->setSubType( ObjectSubType::Profile );
         break;
     }
 

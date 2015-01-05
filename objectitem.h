@@ -27,6 +27,7 @@ public:
     void setId(int id);
     void setSize(QSize size);
     void setType(int type);
+    void setSubType(int sub_type);
     void setBlurred(bool value);
     void setSelected(bool value);
     void setRect(ObjectRect* rect);
@@ -48,6 +49,7 @@ public:
 
     int id;
     int type;
+    int sub_type;
     int recttype;
     bool valid;
     int validstate;

@@ -194,6 +194,12 @@ void ObjectItem::setType(int type)
     this->rect->setType( type );
 }
 
+void ObjectItem::setSubType(int sub_type)
+{
+    this->sub_type = sub_type;
+    this->rect->setSubType( sub_type );
+}
+
 void ObjectItem::setRectType(int type)
 {
     this->recttype = type;

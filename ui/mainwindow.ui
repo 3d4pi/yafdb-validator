@@ -69,7 +69,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="resources.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/resources/icons/Tiles.png</normaloff>:/resources/icons/Tiles.png</iconset>
            </property>
            <property name="iconSize">
@@ -118,7 +118,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="resources.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/resources/icons/Tiles.png</normaloff>:/resources/icons/Tiles.png</iconset>
            </property>
            <property name="iconSize">
@@ -141,7 +141,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="resources.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/resources/icons/Tiles.png</normaloff>:/resources/icons/Tiles.png</iconset>
            </property>
            <property name="iconSize">
@@ -177,7 +177,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="resources.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/resources/icons/Tiles.png</normaloff>:/resources/icons/Tiles.png</iconset>
            </property>
            <property name="iconSize">
@@ -213,7 +213,7 @@
             <string/>
            </property>
            <property name="icon">
-            <iconset resource="resources.qrc">
+            <iconset resource="../resources.qrc">
              <normaloff>:/resources/icons/Tiles.png</normaloff>:/resources/icons/Tiles.png</iconset>
            </property>
            <property name="iconSize">
@@ -328,7 +328,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

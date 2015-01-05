@@ -103,7 +103,7 @@
              <string>Face</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../resources.qrc">
               <normaloff>:/resources/icons/Face.png</normaloff>:/resources/icons/Face.png</iconset>
             </property>
            </item>
@@ -112,7 +112,7 @@
              <string>NumberPlate</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../resources.qrc">
               <normaloff>:/resources/icons/Plate.png</normaloff>:/resources/icons/Plate.png</iconset>
             </property>
            </item>
@@ -121,7 +121,7 @@
              <string>To Blur</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../resources.qrc">
               <normaloff>:/resources/icons/Blur.png</normaloff>:/resources/icons/Blur.png</iconset>
             </property>
            </item>
@@ -196,7 +196,7 @@
   </widget>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

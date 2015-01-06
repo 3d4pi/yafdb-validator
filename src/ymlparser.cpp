@@ -97,8 +97,6 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
         object->setType( ObjectType::ToBlur );
     } else if(lowerClassName == "none") {
         object->setType( ObjectType::None );
-    } else {
-        qDebug() << "";
     }
 
     if(lowerSubClassName == "none")

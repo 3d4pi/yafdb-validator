@@ -23,9 +23,11 @@ int main(int argc, char *argv[])
     QStringList args = parser.positionalArguments();
     // source is args.at(0), destination is args.at(1)
 
-    args.append( "/home/f0x/Bureau/Photo_RMLL_2014_panoramique,_WE_grand_public.jpeg" );
-    args.append( "/home/f0x/Bureau/Photo_RMLL_2014_panoramique,_WE_grand_public.yml" );
-    args.append( "/home/f0x/Bureau/Photo_RMLL_2014_panoramique,_WE_grand_public_new.yml" );
+    if( args.length() < 3 )
+    {
+        parser.showHelp();
+        exit( 0 );
+    }
 
     MainWindow w(0, args);
     w.show();

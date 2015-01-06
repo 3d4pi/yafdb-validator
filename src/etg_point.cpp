@@ -1,5 +1,4 @@
 #include "etg_point.h"
-#include <QDebug>
 
 int etg_point(
 
@@ -52,13 +51,9 @@ int etg_point(
     pi[1] = m[1][0] * pf[0] + m[1][1] * pf[1] + m[1][2] * pf[2];
     pi[2] = m[2][0] * pf[0] + m[2][1] * pf[1] + m[2][2] * pf[2];
 
-    qDebug() << pi[0] << " " << pi[1] << " " << pi[2];
-
     /* Compute coordinates in secondary rectilinear frame */
     * c_x = + ( ( pi[1] / pi[0] ) / c_pixel ) + ( c_width  / 2.0 );
     * c_y = + ( ( pi[2] / pi[0] ) / c_pixel ) + ( c_height / 2.0 );
-
-    qDebug() << * c_x << " " << * c_y;
 
     /* Compute frist order visibility condition */
     if ( pi[0] > 0 ) return( 1 ); else return( 0 );

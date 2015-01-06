@@ -65,16 +65,33 @@ MainWindow::MainWindow(QWidget *parent, QStringList args) :
     );
 
     //this->ui->horizontalSlider->setValue(this->pano->scale_factor * 100);
-    qDebug() << args;
 
     // Load input image
     this->pano->loadImage( args.at( 0 ) );
 
     YMLParser parser;
 
-    QFileInfo checkFile( args.at( 2 ) );
+    QFileInfo file1( args.at( 0 ) );
+    QFileInfo file2( args.at( 1 ) );
+    QFileInfo file3( args.at( 2 ) );
 
-    if (checkFile.exists() && checkFile.isFile()) {
+    bool file1_exists = ( file1.exists() && file1.isFile( ));
+    bool file2_exists = ( file2.exists() && file2.isFile( ));
+
+    if( !file1_exists )
+    {
+        std::cout << "Invalid image path: " << args.at( 0 ).toStdString() << std::endl;
+    }
+
+    if( !file2_exists )
+    {
+        std::cout << "Invalid source YML path: " << args.at( 1 ).toStdString() << std::endl;
+    }
+
+    if( !file1_exists || !file2_exists)
+        exit( 0 );
+
+    if (file3.exists() && file3.isFile()) {
         QList<ObjectRect*> loaded_rects = parser.loadYML( args.at( 2 ), YMLType::Validator );
 
         foreach(ObjectRect* rect, loaded_rects)

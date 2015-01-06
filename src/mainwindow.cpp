@@ -499,11 +499,16 @@ void MainWindow::on_pushButton_4_clicked()
                                this->pano->dest_image_map.height(),
                                this->pano->position.azimuth,
                                this->pano->position.elevation,
-                               this->pano->position.aperture);
+                               this->pano->position.aperture,
+                               this->pano->zoom_min * ( LG_PI / 180.0 ),
+                               this->pano->zoom_max * ( LG_PI / 180.0 ));
 
         rect->setId( this->pano->rect_list_index++ );
         this->pano->rect_list.append( rect );
         this->pano->scene->addItem( rect );
+
+        if( !this->pano->isObjectVisible( rect ) )
+            rect->setVisible( false );
 
         /*double c_x = 0.0;
         double c_y = 0.0;

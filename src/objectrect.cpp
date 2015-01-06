@@ -697,18 +697,43 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
     this->setPoints( p1, p2, p3, p4 );
 }
 
+inline float clamp(float x, float a, float b)
+{
+    return x < a ? a : (x > b ? b : x);
+}
+
+
 void ObjectRect::mapFromSpherical(float source_width,
                                   float source_height,
                                   float dest_width,
                                   float dest_height,
                                   float dest_azimuth,
                                   float dest_elevation,
-                                  float dest_aperture)
+                                  float dest_aperture,
+                                  float dest_zoom_min,
+                                  float dest_zoom_max)
 {
     QPointF p1, p3;
 
     double p1_d_x = ((this->getPoint1().x() / LG_PI2) * source_width);
     double p1_d_y = (((this->getPoint1().y()) + ( LG_PI / 2.0 )) / LG_PI ) * source_height;
+
+    double p3_d_x = ((this->getPoint3().x() / LG_PI2) * source_width);
+    double p3_d_y = (((this->getPoint3().y()) + ( LG_PI / 2.0 )) / LG_PI ) * source_height;
+
+    double width  = ( p3_d_x + p1_d_x );
+    double height = ( p3_d_y + p1_d_y );
+
+    float aperture = ( ( ( p3_d_x - p1_d_x ) / source_width ) * 30.0 );
+
+    aperture = aperture < dest_zoom_min ? dest_zoom_min : aperture;
+    aperture = aperture > dest_zoom_max ? dest_zoom_max : aperture;
+
+    double center_x = ( width / 2.0 );
+    double center_y = ( height / 2.0 );
+
+    float azimuth = ( ( center_x / source_width ) * LG_PI2 );
+    float elevation = ( ( - ( center_y / source_height ) + 0.5 ) * LG_PI );
 
     etg_point(source_width,
               source_height,
@@ -716,14 +741,11 @@ void ObjectRect::mapFromSpherical(float source_width,
               p1_d_y,
               dest_width,
               dest_height,
-              dest_azimuth,
-              dest_elevation,
-              dest_aperture,
+              azimuth,
+              elevation,
+              aperture,
               &p1.rx(),
               &p1.ry());
-
-    double p3_d_x = ((this->getPoint3().x() / LG_PI2) * source_width);
-    double p3_d_y = (((this->getPoint3().y()) + ( LG_PI / 2.0 )) / LG_PI ) * source_height;
 
     etg_point(source_width,
               source_height,
@@ -731,9 +753,9 @@ void ObjectRect::mapFromSpherical(float source_width,
               p3_d_y,
               dest_width,
               dest_height,
-              dest_azimuth,
-              dest_elevation,
-              dest_aperture,
+              azimuth,
+              elevation,
+              aperture,
               &p3.rx(),
               &p3.ry());
 
@@ -742,13 +764,19 @@ void ObjectRect::mapFromSpherical(float source_width,
                     p3,
                     QPointF(0.0, 0.0));
 
-    this->setProjectionParametters(dest_azimuth,
-            dest_elevation,
-            dest_aperture,
+    this->setProjectionPoints();
+
+    this->setProjectionParametters(azimuth,
+            elevation,
+            aperture,
             dest_width,
             dest_height);
 
-    this->setProjectionPoints();
+    this->mapTo(dest_width,
+                dest_height,
+                dest_azimuth,
+                dest_elevation,
+                dest_aperture);
 
 }
 

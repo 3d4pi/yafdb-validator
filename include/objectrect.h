@@ -99,7 +99,9 @@ public:
                           float dest_height,
                           float dest_azimuth,
                           float dest_elevation,
-                          float dest_aperture);
+                          float dest_aperture,
+                          float dest_zoom_min,
+                          float dest_zoom_max);
 
     float proj_azimuth();
     float proj_elevation();

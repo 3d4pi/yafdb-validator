@@ -118,6 +118,8 @@ MainWindow::MainWindow(QWidget *parent, QStringList args) :
         }
     }
 
+    this->output_yml = args.at( 2 );
+
     // Initialize labels
     emit refreshLabels();
 
@@ -530,7 +532,7 @@ void MainWindow::on_pushButton_2_clicked()
 void MainWindow::on_pushButton_3_clicked()
 {
     YMLParser parser;
-    parser.writeYML( this->pano->rect_list, "/home/f0x/Bureau/yml2_new.yml" );
+    parser.writeYML( this->pano->rect_list, this->output_yml );
 }
 
 void MainWindow::on_pushButton_4_clicked()

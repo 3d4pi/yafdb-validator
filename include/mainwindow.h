@@ -58,6 +58,8 @@ private:
     QString warn_color;
 
     QElapsedTimer* timer;
+
+    QString output_yml;
 };
 
 #endif // MAINWINDOW_H

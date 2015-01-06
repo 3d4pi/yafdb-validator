@@ -209,6 +209,8 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
                    object->setAutomaticStatus( "Size" );
                 } else if( lowerAutoStatus == "ratio-size" ){
                     object->setAutomaticStatus( "Ratio-Size" );
+                } else if( lowerAutoStatus == "missingoption" ){
+                    object->setAutomaticStatus( "MissingOption" );
                 }
                 break;
             }
@@ -342,6 +344,7 @@ QList<ObjectRect*> YMLParser::loadYML(QString path, int ymltype)
         ObjectRect* object = this->readItem(it, ymltype);
 
         object->setObjectRectType( ObjectRectType::Invalid );
+        object->setAutomaticStatus( (object->getAutomaticStatus().length() <= 0 || object->getAutomaticStatus() == "None") ? "MissingOption" : object->getAutomaticStatus() );
 
         std::string source_image;
         fs["source_image"] >> source_image;

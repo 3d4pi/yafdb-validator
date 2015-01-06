@@ -270,7 +270,14 @@
          <item row="3" column="0">
           <widget class="QPushButton" name="pushButton_4">
            <property name="text">
-            <string>Load YML</string>
+            <string>Load YML (Detector)</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QPushButton" name="pushButton_5">
+           <property name="text">
+            <string>Load YML (Validator)</string>
            </property>
           </widget>
          </item>

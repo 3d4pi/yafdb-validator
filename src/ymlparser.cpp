@@ -80,12 +80,20 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
     if(lowerClassName == "face")
     {
         object->setType( ObjectType::Face );
+    } else if (lowerClassName == "front" || lowerClassName == "front:profile"){
+        object->setType( ObjectType::Face );
+        object->setSubType( ObjectSubType::Front );
+    } else if (lowerClassName == "profile"){
+        object->setType( ObjectType::Face );
+        object->setSubType( ObjectSubType::Profile );
     } else if(lowerClassName == "numberplate") {
         object->setType( ObjectType::NumberPlate );
     } else if(lowerClassName == "toblur") {
         object->setType( ObjectType::ToBlur );
     } else if(lowerClassName == "none") {
         object->setType( ObjectType::None );
+    } else {
+        qDebug() << "";
     }
 
     if(lowerSubClassName == "none")
@@ -146,23 +154,66 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
     object->setProjectionParametters(azimuth, elevation, aperture, width, height);
     object->setProjectionPoints();
 
+    switch(ymltype)
+    {
+    case YMLType::Detector:
+        areaNode["p1"] >> pt_1;
+        areaNode["p2"] >> pt_3;
+        break;
+    case YMLType::Validator:
+        areaNode["p1"] >> pt_1;
+        areaNode["p2"] >> pt_2;
+        areaNode["p3"] >> pt_3;
+        areaNode["p4"] >> pt_4;
+        break;
+    }
+
     // Parse auto status
     std::string autoStatus;
     (*iterator)["autoStatus"] >> autoStatus;
-    object->setAutomaticStatus( QString(autoStatus.c_str()) );
-    object->setAutomaticStatus( (object->getAutomaticStatus().length() > 0 ? object->getAutomaticStatus() : "None") );
 
-    if(object->getAutomaticStatus() != "None")
+    QString lowerAutoStatus = QString( autoStatus.c_str() ).toLower();
+
+    qDebug() << lowerAutoStatus;
+
+    if(lowerAutoStatus != "none")
     {
-        if(object->getAutomaticStatus() == "Valid")
+        if(lowerAutoStatus == "valid")
         {
             object->setObjectRectType( ObjectRectType::Valid );
+            object->setAutomaticStatus( "Valid" );
         } else {
             object->setObjectRectType( ObjectRectType::Invalid );
+
+            switch(ymltype)
+            {
+            case YMLType::Detector:
+                if( lowerAutoStatus == "filtered-ratio" )
+                {
+                   object->setAutomaticStatus( "Ratio" );
+                } else if( lowerAutoStatus == "filtered-size" ){
+                   object->setAutomaticStatus( "Size" );
+                } else if( lowerAutoStatus == "filtered-ratio-size" ){
+                    object->setAutomaticStatus( "Ratio-Size" );
+                }
+                break;
+            case YMLType::Validator:
+                if( lowerAutoStatus == "ratio" )
+                {
+                   object->setAutomaticStatus( "Ratio" );
+                } else if( lowerAutoStatus == "size" ){
+                   object->setAutomaticStatus( "Size" );
+                } else if( lowerAutoStatus == "ratio-size" ){
+                    object->setAutomaticStatus( "Ratio-Size" );
+                }
+                break;
+            }
         }
     } else {
         object->setObjectRectType( ObjectRectType::Manual );
     }
+
+    object->setAutomaticStatus( (object->getAutomaticStatus().length() > 0 ? object->getAutomaticStatus() : "None") );
 
     // Parse manual status
     std::string manualStatus;

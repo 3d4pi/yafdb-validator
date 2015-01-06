@@ -481,14 +481,14 @@ void MainWindow::on_pushButton_2_clicked()
 void MainWindow::on_pushButton_3_clicked()
 {
     YMLParser parser;
-    parser.writeYML( this->pano->rect_list, "/home/f0x/Bureau/yml.yml" );
+    parser.writeYML( this->pano->rect_list, "/home/f0x/Bureau/yml2_new.yml" );
 }
 
 void MainWindow::on_pushButton_4_clicked()
 {
     YMLParser parser;
     //QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/yml.yml" );
-    QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/Photo_RMLL_2014_panoramique,_WE_grand_public.yml", YMLType::Detector );
+    QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/yml2.yml", YMLType::Detector );
 
     foreach(ObjectRect* rect, loaded_rects)
     {
@@ -547,6 +547,32 @@ void MainWindow::on_pushButton_4_clicked()
         if( !this->pano->isObjectVisible( rect ) )
             rect->setVisible( false );*/
 
+    }
+
+    emit refreshLabels();
+}
+
+void MainWindow::on_pushButton_5_clicked()
+{
+    YMLParser parser;
+
+    QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/yml2_new.yml", YMLType::Validator );
+
+    foreach(ObjectRect* rect, loaded_rects)
+    {
+
+        rect->mapTo(this->pano->dest_image_map.width(),
+                    this->pano->dest_image_map.height(),
+                    this->pano->position.azimuth,
+                    this->pano->position.elevation,
+                    this->pano->position.aperture);
+
+        rect->setId( this->pano->rect_list_index++ );
+        this->pano->rect_list.append( rect );
+        this->pano->scene->addItem( rect );
+
+        if( !this->pano->isObjectVisible( rect ) )
+            rect->setVisible( false );
     }
 
     emit refreshLabels();

@@ -66,6 +66,11 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
     // Initialize detected object
     ObjectRect* object = new ObjectRect;
 
+    // Parse falsePositive tag
+    std::string falsePositive;
+    (*iterator)["falsePositive"] >> falsePositive;
+    QString lowerFalsePositive = QString( falsePositive.c_str() ).toLower();
+
     // Parse class name
     std::string className;
     (*iterator)["className"] >> className;
@@ -215,15 +220,20 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
     object->setAutomaticStatus( (object->getAutomaticStatus().length() > 0 ? object->getAutomaticStatus() : "None") );
 
     // Parse manual status
-
     std::string manualStatus;
     (*iterator)["manualStatus"] >> manualStatus;
     object->setManualStatus( QString(manualStatus.c_str()) );
     object->setManualStatus( (object->getManualStatus().length() > 0 ? object->getManualStatus() : "None") );
 
-    if(lowerAutoStatus == "none")
+    if(lowerFalsePositive == "no")
     {
-        object->setManualStatus("Valid");
+        if(lowerAutoStatus == "none")
+        {
+            object->setManualStatus("Valid");
+        }
+    } else if( lowerFalsePositive == "yes" )
+    {
+        object->setManualStatus("Invalid");
     }
 
     if(object->getType() == ObjectType::ToBlur)
@@ -307,11 +317,31 @@ QList<ObjectRect*> YMLParser::loadYML(QString path, int ymltype)
     // Retrieve objects node
     cv::FileNode objectsNode = fs["objects"];
 
+    // Retrieve invalid objects node
+    cv::FileNode invalidObjectsNode = fs["invalidObjects"];
+
     // Iterate over objects
     for (cv::FileNodeIterator it = objectsNode.begin(); it != objectsNode.end(); ++it) {
 
         // Initialize detected object
         ObjectRect* object = this->readItem(it, ymltype);
+
+        std::string source_image;
+        fs["source_image"] >> source_image;
+
+        object->setSourceImagePath( QString(source_image.c_str()) );
+
+        // Append to list
+        out_list.append(object);
+    }
+
+    // Iterate over objects
+    for (cv::FileNodeIterator it = invalidObjectsNode.begin(); it != invalidObjectsNode.end(); ++it) {
+
+        // Initialize detected object
+        ObjectRect* object = this->readItem(it, ymltype);
+
+        object->setObjectRectType( ObjectRectType::Invalid );
 
         std::string source_image;
         fs["source_image"] >> source_image;

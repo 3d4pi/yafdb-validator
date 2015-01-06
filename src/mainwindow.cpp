@@ -7,7 +7,7 @@
 
 #include "ymlparser.h"
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(QWidget *parent, QStringList args) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -65,9 +65,58 @@ MainWindow::MainWindow(QWidget *parent) :
     );
 
     //this->ui->horizontalSlider->setValue(this->pano->scale_factor * 100);
+    qDebug() << args;
 
     // Load input image
-    this->pano->loadImage("/home/f0x/Bureau/result_1404640785_728013-0-25-1.jpeg");
+    this->pano->loadImage( args.at( 0 ) );
+
+    YMLParser parser;
+
+    QFileInfo checkFile( args.at( 2 ) );
+
+    if (checkFile.exists() && checkFile.isFile()) {
+        QList<ObjectRect*> loaded_rects = parser.loadYML( args.at( 2 ), YMLType::Validator );
+
+        foreach(ObjectRect* rect, loaded_rects)
+        {
+
+            rect->mapTo(this->pano->dest_image_map.width(),
+                        this->pano->dest_image_map.height(),
+                        this->pano->position.azimuth,
+                        this->pano->position.elevation,
+                        this->pano->position.aperture);
+
+            rect->setId( this->pano->rect_list_index++ );
+            this->pano->rect_list.append( rect );
+            this->pano->scene->addItem( rect );
+
+            if( !this->pano->isObjectVisible( rect ) )
+                rect->setVisible( false );
+        }
+    } else {
+        QList<ObjectRect*> loaded_rects = parser.loadYML( args.at( 1 ), YMLType::Detector );
+
+        foreach(ObjectRect* rect, loaded_rects)
+        {
+
+            rect->mapFromSpherical(this->pano->src_image.width(),
+                                   this->pano->src_image.height(),
+                                   this->pano->dest_image_map.width(),
+                                   this->pano->dest_image_map.height(),
+                                   this->pano->position.azimuth,
+                                   this->pano->position.elevation,
+                                   this->pano->position.aperture,
+                                   this->pano->zoom_min * ( LG_PI / 180.0 ),
+                                   this->pano->zoom_max * ( LG_PI / 180.0 ));
+
+            rect->setId( this->pano->rect_list_index++ );
+            this->pano->rect_list.append( rect );
+            this->pano->scene->addItem( rect );
+
+            if( !this->pano->isObjectVisible( rect ) )
+                rect->setVisible( false );
+        }
+    }
 
     // Initialize labels
     emit refreshLabels();

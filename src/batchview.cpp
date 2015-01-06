@@ -28,7 +28,7 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano, int batchmode, int b
     this->setMode(batchmode);
     this->populate(batchviewmode);
 
-    QWidget * dummy = new QWidget();
+    QWidget * dummy = new QWidget;
     dummy->setLayout(MainLayout);
 
     this->ui->scrollArea->setWidget(dummy);

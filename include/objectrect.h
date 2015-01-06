@@ -7,6 +7,7 @@
 #include <QDebug>
 
 #include "types.h"
+#include "etg_point.h"
 #include "g2g_point.h"
 
 class ObjectRect : public QGraphicsPolygonItem
@@ -91,6 +92,14 @@ public:
                float azimuth,
                float elevation,
                float aperture);
+
+    void mapFromSpherical(float source_width,
+                          float source_height,
+                          float dest_width,
+                          float dest_height,
+                          float dest_azimuth,
+                          float dest_elevation,
+                          float dest_aperture);
 
     float proj_azimuth();
     float proj_elevation();

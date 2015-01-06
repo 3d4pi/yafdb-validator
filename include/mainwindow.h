@@ -8,7 +8,6 @@
 #include <QPalette>
 #include <QElapsedTimer>
 
-#include "etg_point.h"
 #include "panoramaviewer.h"
 #include "batchview.h"
 

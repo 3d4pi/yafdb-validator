@@ -487,24 +487,34 @@ void MainWindow::on_pushButton_3_clicked()
 void MainWindow::on_pushButton_4_clicked()
 {
     YMLParser parser;
-    QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/yml.yml" );
-    //QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/ref.yml", YMLType::Detector );
+    //QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/yml.yml" );
+    QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/Photo_RMLL_2014_panoramique,_WE_grand_public.yml", YMLType::Detector );
 
     foreach(ObjectRect* rect, loaded_rects)
     {
 
+        rect->mapFromSpherical(this->pano->src_image.width(),
+                               this->pano->src_image.height(),
+                               this->pano->dest_image_map.width(),
+                               this->pano->dest_image_map.height(),
+                               this->pano->position.azimuth,
+                               this->pano->position.elevation,
+                               this->pano->position.aperture);
+
+        rect->setId( this->pano->rect_list_index++ );
+        this->pano->rect_list.append( rect );
+        this->pano->scene->addItem( rect );
+
         /*double c_x = 0.0;
         double c_y = 0.0;
-        double d_x = ((rect->getPoint1().x() / LG_PI2) * this->pano->dest_image_map.width());
-        double d_y = ((rect->getPoint1().y() / LG_PI) * this->pano->dest_image_map.height());
 
-        qDebug() << rect->getPoint1();
-        qDebug() << QPointF(d_x, d_y);
+        double d_x = ((rect->getPoint1().x() / LG_PI2) * this->pano->src_image.width());
+        double d_y = (((rect->getPoint1().y()) + ( LG_PI / 2.0 )) / LG_PI ) * this->pano->src_image.height();
 
-        etg_point(2048,
-                  2048,
-                  ((rect->getPoint1().x() / LG_PI) * 2048),
-                  ((rect->getPoint1().y() / LG_PI) * 2048),
+        etg_point(this->pano->src_image.width(),
+                  this->pano->src_image.height(),
+                  d_x,
+                  d_y,
                   this->pano->dest_image_map.width(),
                   this->pano->dest_image_map.height(),
                   this->pano->position.azimuth,
@@ -513,7 +523,11 @@ void MainWindow::on_pushButton_4_clicked()
                   &c_x,
                   &c_y);
 
-        qDebug() << QPointF(c_x, c_y);*/
+
+        rect->setPoint1(QPointF(c_x, c_y));
+        rect->setId( this->pano->rect_list_index++ );
+        this->pano->rect_list.append( rect );
+        this->pano->scene->addItem( rect );
 
         rect->mapTo(this->pano->dest_image_map.width(),
                     this->pano->dest_image_map.height(),
@@ -526,7 +540,7 @@ void MainWindow::on_pushButton_4_clicked()
         this->pano->scene->addItem( rect );
 
         if( !this->pano->isObjectVisible( rect ) )
-            rect->setVisible( false );
+            rect->setVisible( false );*/
 
     }
 

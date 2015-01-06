@@ -1,5 +1,6 @@
 #include "objectitem.h"
 #include "ui_objectitem.h"
+#include "editview.h"
 #include <QDebug>
 
 ObjectItem::ObjectItem(QWidget *parent) :
@@ -17,6 +18,38 @@ ObjectItem::ObjectItem(QWidget *parent) :
     this->border_size = 4;
 
     this->setSize(QSize(128, 128));
+
+    this->toBeRemoved = false;
+}
+
+ObjectItem::ObjectItem(QWidget *parent, PanoramaViewer* pano, ObjectRect* rect) :
+    QWidget(parent),
+    ui(new Ui::ObjectItem)
+{
+    ui->setupUi(this);
+
+    this->ui->imageLabel->setAlignment(Qt::AlignHCenter | Qt::AlignVCenter);
+    this->setSelected(false);
+
+    this->manualStatus = "None";
+    this->autoStatus = "None";
+
+    this->border_size = 4;
+
+    this->setSize(QSize(128, 128));
+
+    this->setPano( pano );
+    this->setRect( rect );
+    this->parent_elements = parent_elements;
+
+    this->toBeRemoved = false;
+}
+
+void ObjectItem::remove(bool value)
+{
+    this->toBeRemoved = value;
+    this->setVisible( !value );
+    this->setEnabled( !value );
 }
 
 void ObjectItem::setId(int id)
@@ -157,6 +190,14 @@ void ObjectItem::setType(int type)
         this->ui->typeLabel->setPixmap( QPixmap(":/resources/icons/Blur.png") );
         break;
     }
+
+    this->rect->setType( type );
+}
+
+void ObjectItem::setSubType(int sub_type)
+{
+    this->sub_type = sub_type;
+    this->rect->setSubType( sub_type );
 }
 
 void ObjectItem::setRectType(int type)
@@ -199,6 +240,8 @@ void ObjectItem::setBlurred(bool value)
     } else {
         this->ui->blurLabel->setPixmap( QPixmap() );
     }
+
+    this->rect->setBlurred( value );
 }
 
 void ObjectItem::setValidState(int state)
@@ -224,6 +267,8 @@ void ObjectItem::setValidState(int state)
         this->valid = false;
         break;
     }
+
+    this->rect->setObjectRectState( state );
 }
 
 void ObjectItem::setSelected(bool value)
@@ -238,18 +283,68 @@ void ObjectItem::setSelected(bool value)
     }
 }
 
+void ObjectItem::setRect(ObjectRect *src_rect)
+{
+    this->rect = src_rect->copy();
+
+    this->setId(src_rect->getId());
+    this->setImage(this->parent_pano->cropObject(src_rect));
+    this->setType(src_rect->getType());
+    this->setBlurred(src_rect->isBlurred());
+    this->setValidState(src_rect->getObjectRectState());
+    this->setManualStatus(src_rect->getManualStatus());
+    this->setAutomaticStatus(src_rect->getAutomaticStatus());
+
+    if(src_rect->getAutomaticStatus() != "None")
+    {
+        if(src_rect->getAutomaticStatus() == "Valid")
+        {
+            this->setRectType(ObjectItemRectType::Valid);
+        } else {
+            this->setRectType(ObjectItemRectType::Invalid);
+        }
+    } else {
+        this->setRectType(ObjectItemRectType::Manual);
+    }
+}
+
+void ObjectItem::setPano(PanoramaViewer *pano)
+{
+    this->parent_pano = pano;
+}
+
 void ObjectItem::setAutomaticStatus(QString value)
 {
     this->autoStatus = value;
+    this->rect->setAutomaticStatus( value );
 }
 
 void ObjectItem::setManualStatus(QString value)
 {
     this->manualStatus = value;
+    this->rect->setManualStatus( value );
 }
 
-void ObjectItem::mousePressEvent(QMouseEvent* ) {
-    this->setSelected(!this->selected);
+
+void ObjectItem::mousePressEvent(QMouseEvent* event) {
+
+    // Check presence of left click
+    if(event->buttons() & Qt::LeftButton)
+    {
+        this->setSelected(!this->selected);
+    }
+}
+
+
+void ObjectItem::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    // Check presence of right click
+    if(event->buttons() & Qt::RightButton)
+    {
+        EditView* w = new EditView(this->parent_pano, this->rect, this, EditMode::Single);
+        w->setAttribute( Qt::WA_DeleteOnClose );
+        w->show();
+    }
 }
 
 ObjectItem::~ObjectItem()

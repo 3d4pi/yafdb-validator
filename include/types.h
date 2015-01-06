@@ -33,6 +33,14 @@ struct ObjectType
     };
 };
 
+struct ObjectSubType
+{
+    enum Type
+    {
+        None = 0, Front = 1, Profile = 2
+    };
+};
+
 struct ObjectValidState
 {
     enum Type
@@ -47,6 +55,15 @@ struct BatchMode
     {
 
         Manual = 0, Auto = 1, ToBlur = 3
+    };
+};
+
+struct EditMode
+{
+    enum Type
+    {
+
+        Single = 1, Scene = 2
     };
 };
 

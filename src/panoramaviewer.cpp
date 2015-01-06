@@ -68,8 +68,14 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->sight_width = 800;
     this->sight = this->scene->addRect( this->dest_image_map.width() / 2, this->dest_image_map.height() / 2, this->sight_width, this->sight_width , sight_pen);
 
+    this->pressed_keys.CTRL = false;
+
     // Connect signal for labels refresh
     connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels()));
+
+    connect(this, SIGNAL(updateScaleSlider(int)), parent, SLOT(updateScaleSlider(int)));
+
+
 }
 
 inline float clamp(float x, float a, float b)
@@ -217,7 +223,6 @@ void PanoramaViewer::render()
             rect->setVisible( false );
         }
     }
-
 }
 
 // Function to update zoom of current scene
@@ -243,21 +248,31 @@ void PanoramaViewer::setView(float azimuth, float elevation)
 // Mouse wheel handler
 void PanoramaViewer::wheelEvent(QWheelEvent* event)
 {
-    // Check if zoom is enabled
-    if(!this->zoomEnabled)
-        return;
-
     // Determine delta
     int delta = (event->delta() / 120);
 
-    // Update current zoom level
-    float old_zoom = this->position.aperture_delta;
-    this->position.aperture_delta -= (delta * 1.5);
-    this->position.aperture_delta = clamp(this->position.aperture_delta, this->zoom_min, this->zoom_max);
+    if( this->pressed_keys.CTRL )
+    {
+        this->scale_factor = (this->scale_factor + (delta / 50.0));
+        this->scale_factor = clamp(this->scale_factor, 0.1, 1.0);
+        emit updateScaleSlider( this->scale_factor * 10 );
+        this->render();
+    } else {
 
-    // Apply zoom level
-    if(this->position.aperture_delta != old_zoom)
-        this->setZoom(this->position.aperture_delta);
+        // Check if zoom is enabled
+        if(!this->zoomEnabled)
+            return;
+
+        // Update current zoom level
+        float old_zoom = this->position.aperture_delta;
+        this->position.aperture_delta -= (delta * 1.5);
+        this->position.aperture_delta = clamp(this->position.aperture_delta, this->zoom_min, this->zoom_max);
+
+        // Apply zoom level
+        if(this->position.aperture_delta != old_zoom)
+            this->setZoom(this->position.aperture_delta);
+
+    }
 }
 
 // Mouse buttons click handler
@@ -392,9 +407,19 @@ void PanoramaViewer::mouseDoubleClickEvent(QMouseEvent *event)
         // Verify that clicked object is a widget and is not null
         if (clicked_rect != NULL)
         {
-            EditView* w = new EditView(this, clicked_rect);
-            w->setAttribute( Qt::WA_DeleteOnClose );
-            w->show();
+            if( (event->buttons() == Qt::RightButton) )
+            {
+                this->position.azimuth = clicked_rect->proj_azimuth();
+                this->position.elevation = clicked_rect->proj_elevation();
+                this->position.aperture = clicked_rect->proj_aperture();
+                this->position.aperture_delta = (this->position.aperture / (LG_PI / 180.0));
+                this->render();
+            } else if ( event->buttons() == Qt::LeftButton )
+            {
+                EditView* w = new EditView(this, clicked_rect, NULL, EditMode::Scene);
+                w->setAttribute( Qt::WA_DeleteOnClose );
+                w->show();
+            }
         }
     }
 }
@@ -482,6 +507,8 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
                     this->dest_image.width(),
                     this->dest_image.height());
 
+            this->increation_rect.rect->setSourceImagePath( this->image_path );
+
             // Move selection object to mouse coords
             this->increation_rect.rect->setPoints(
                 mouse_scene,
@@ -504,8 +531,8 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
             );
 
             QToolTip::showText(event->globalPos(),
-                               QString::number( (int) this->increation_rect.rect->getSize().width() ) + "x" +
-                               QString::number( (int) this->increation_rect.rect->getSize().height() ),
+                               QString::number( (int) (this->increation_rect.rect->getSize().width() / this->scale_factor) ) + "x" +
+                               QString::number( (int) (this->increation_rect.rect->getSize().height() / this->scale_factor )),
                                this, rect() );
 
         }
@@ -583,6 +610,11 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
                 this->dest_image.height());
 
         this->selected_rect->setProjectionPoints();
+
+        QToolTip::showText(event->globalPos(),
+                           QString::number( (int) (this->selected_rect->getSize().width() / this->scale_factor) ) + "x" +
+                           QString::number( (int) (this->selected_rect->getSize().height() / this->scale_factor )),
+                           this, rect() );
     }
 }
 
@@ -613,12 +645,24 @@ QImage PanoramaViewer::cropObject(ObjectRect* rect)
 {
 
     // Convert points to a QRect and deduce borders sizes
+
+    ObjectRect* rect_mapped = rect->copy();
+
+    rect_mapped->mapTo(this->width(),
+                       this->height(),
+                       rect->proj_azimuth(),
+                       rect->proj_elevation(),
+                       rect->proj_aperture());
+    rect_mapped->setProjectionPoints();
+
     QRect rect_sel(
-        QPoint(rect->proj_point_1().x() + rect->getBorderWidth(), rect->proj_point_1().y() + rect->getBorderWidth()),
-        QPoint(rect->proj_point_3().x() - rect->getBorderWidth(), rect->proj_point_3().y() - rect->getBorderWidth())
+        QPoint(rect_mapped->proj_point_1().x() + rect_mapped->getBorderWidth(), rect_mapped->proj_point_1().y() + rect_mapped->getBorderWidth()),
+        QPoint(rect_mapped->proj_point_3().x() - rect_mapped->getBorderWidth(), rect_mapped->proj_point_3().y() - rect_mapped->getBorderWidth())
     );
 
-    QImage temp_dest(rect->proj_width(), rect->proj_height(), QImage::Format_RGB32);
+    delete rect_mapped;
+
+    QImage temp_dest(this->width(), this->height(), QImage::Format_RGB32);
 
     lg_etg_apperturep(
 
@@ -627,8 +671,8 @@ QImage PanoramaViewer::cropObject(ObjectRect* rect)
         this->src_image.height(),
         CHANNELS_COUNT,
         ( inter_C8_t * ) temp_dest.bits(),
-        rect->proj_width(),
-        rect->proj_height(),
+        this->width(),
+        this->height(),
         CHANNELS_COUNT,
         rect->proj_azimuth(),
         rect->proj_elevation(),
@@ -652,14 +696,6 @@ void PanoramaViewer::backupPosition()
 
 bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
 {
-    double p1_x = 0.0;
-    double p1_y = 0.0;
-    double p2_x = 0.0;
-    double p2_y = 0.0;
-    double p3_x = 0.0;
-    double p3_y = 0.0;
-    double p4_x = 0.0;
-    double p4_y = 0.0;
 
     int state = g2g_point(rect->proj_width(),
                           rect->proj_height(),
@@ -673,9 +709,7 @@ bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
                           this->dest_image_map.height(),
                           this->position.azimuth,
                           this->position.elevation,
-                          this->position.aperture,
-                          &p1_x,
-                          &p1_y);
+                          this->position.aperture);
 
     int state2 = g2g_point(rect->proj_width(),
                            rect->proj_height(),
@@ -689,9 +723,7 @@ bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
                            this->dest_image_map.height(),
                            this->position.azimuth,
                            this->position.elevation,
-                           this->position.aperture,
-                           &p2_x,
-                           &p2_y);
+                           this->position.aperture);
 
     int state3 = g2g_point(rect->proj_width(),
                            rect->proj_height(),
@@ -705,9 +737,7 @@ bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
                            this->dest_image_map.height(),
                            this->position.azimuth,
                            this->position.elevation,
-                           this->position.aperture,
-                           &p3_x,
-                           &p3_y);
+                           this->position.aperture);
 
     int state4 = g2g_point(rect->proj_width(),
                            rect->proj_height(),
@@ -721,9 +751,7 @@ bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
                            this->dest_image_map.height(),
                            this->position.azimuth,
                            this->position.elevation,
-                           this->position.aperture,
-                           &p4_x,
-                           &p4_y);
+                           this->position.aperture);
 
     if( state != 1 || state2 != 1 || state3 != 1 || state4 != 1) {
         return false;
@@ -785,3 +813,21 @@ void PanoramaViewer::refreshLabels_slot()
 {
     emit refreshLabels();
 }
+
+void PanoramaViewer::updateScaleSlider_slot(int value)
+{
+    emit updateScaleSlider(value);
+}
+
+
+void PanoramaViewer::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Control)
+        this->pressed_keys.CTRL = true;
+}
+
+void PanoramaViewer::keyReleaseEvent(QKeyEvent *)
+{
+    this->pressed_keys.CTRL = false;
+}
+

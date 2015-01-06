@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //this->ui->horizontalSlider->setValue(this->pano->scale_factor * 100);
 
     // Load input image
-    this->pano->loadImage("/home/f0x/Bureau/Photo_RMLL_2014_panoramique,_WE_grand_public.jpeg");
+    this->pano->loadImage("/home/f0x/Bureau/result_1404640785_728013-0-25-1.jpeg");
 
     // Initialize labels
     emit refreshLabels();
@@ -198,6 +198,11 @@ void MainWindow::refreshLabels()
     this->ui->preInvalidatedLabel->setText("Pre-invalidated: " + QString::number(preinvalidatedvalidated) + "/" + QString::number(preinvalidatedcount));
     this->ui->toBlurLabel->setText("To blur: " + QString::number(toblurcount));
 
+}
+
+void MainWindow::updateScaleSlider(int value)
+{
+    this->ui->horizontalSlider->setValue( value );
 }
 
 MainWindow::~MainWindow()
@@ -458,7 +463,7 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
     this->pano->backupPosition();
-    this->pano->scale_factor = (position / 100.0);
+    this->pano->scale_factor = (position / 10.0);
     this->pano->render();
 }
 
@@ -468,6 +473,106 @@ void MainWindow::on_pushButton_2_clicked()
     {
         this->pano->rect_list.removeOne( rect );
         delete rect;
+    }
+
+    emit refreshLabels();
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    YMLParser parser;
+    parser.writeYML( this->pano->rect_list, "/home/f0x/Bureau/yml2_new.yml" );
+}
+
+void MainWindow::on_pushButton_4_clicked()
+{
+    YMLParser parser;
+    //QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/yml.yml" );
+    QList<ObjectRect*> loaded_rects = parser.loadYML( "/data/rmll/RMLL_Village_du_Libre/results/blurring/yml_configs/result_1404640785_728013.yml", YMLType::Detector );
+
+    foreach(ObjectRect* rect, loaded_rects)
+    {
+
+        rect->mapFromSpherical(this->pano->src_image.width(),
+                               this->pano->src_image.height(),
+                               this->pano->dest_image_map.width(),
+                               this->pano->dest_image_map.height(),
+                               this->pano->position.azimuth,
+                               this->pano->position.elevation,
+                               this->pano->position.aperture,
+                               this->pano->zoom_min * ( LG_PI / 180.0 ),
+                               this->pano->zoom_max * ( LG_PI / 180.0 ));
+
+        rect->setId( this->pano->rect_list_index++ );
+        this->pano->rect_list.append( rect );
+        this->pano->scene->addItem( rect );
+
+        if( !this->pano->isObjectVisible( rect ) )
+            rect->setVisible( false );
+
+        /*double c_x = 0.0;
+        double c_y = 0.0;
+
+        double d_x = ((rect->getPoint1().x() / LG_PI2) * this->pano->src_image.width());
+        double d_y = (((rect->getPoint1().y()) + ( LG_PI / 2.0 )) / LG_PI ) * this->pano->src_image.height();
+
+        etg_point(this->pano->src_image.width(),
+                  this->pano->src_image.height(),
+                  d_x,
+                  d_y,
+                  this->pano->dest_image_map.width(),
+                  this->pano->dest_image_map.height(),
+                  this->pano->position.azimuth,
+                  this->pano->position.elevation,
+                  this->pano->position.aperture,
+                  &c_x,
+                  &c_y);
+
+
+        rect->setPoint1(QPointF(c_x, c_y));
+        rect->setId( this->pano->rect_list_index++ );
+        this->pano->rect_list.append( rect );
+        this->pano->scene->addItem( rect );
+
+        rect->mapTo(this->pano->dest_image_map.width(),
+                    this->pano->dest_image_map.height(),
+                    this->pano->position.azimuth,
+                    this->pano->position.elevation,
+                    this->pano->position.aperture);
+
+        rect->setId( this->pano->rect_list_index++ );
+        this->pano->rect_list.append( rect );
+        this->pano->scene->addItem( rect );
+
+        if( !this->pano->isObjectVisible( rect ) )
+            rect->setVisible( false );*/
+
+    }
+
+    emit refreshLabels();
+}
+
+void MainWindow::on_pushButton_5_clicked()
+{
+    YMLParser parser;
+
+    QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/yml2_new.yml", YMLType::Validator );
+
+    foreach(ObjectRect* rect, loaded_rects)
+    {
+
+        rect->mapTo(this->pano->dest_image_map.width(),
+                    this->pano->dest_image_map.height(),
+                    this->pano->position.azimuth,
+                    this->pano->position.elevation,
+                    this->pano->position.aperture);
+
+        rect->setId( this->pano->rect_list_index++ );
+        this->pano->rect_list.append( rect );
+        this->pano->scene->addItem( rect );
+
+        if( !this->pano->isObjectVisible( rect ) )
+            rect->setVisible( false );
     }
 
     emit refreshLabels();

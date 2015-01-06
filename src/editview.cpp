@@ -1,11 +1,14 @@
 #include "editview.h"
 #include "ui_editview.h"
 
-EditView::EditView(QWidget *parent, ObjectRect* rect) :
+EditView::EditView(QWidget *parent, ObjectRect* rect, ObjectItem* item, int mode) :
     QMainWindow(parent),
     ui(new Ui::EditView)
 {
     ui->setupUi(this);
+
+    this->mode = mode;
+    this->item = item;
 
     this->ref_rect = rect;
     this->pano_parent = qobject_cast<PanoramaViewer *>(parent);
@@ -64,6 +67,7 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
     if (this->ref_rect->getAutomaticStatus() != "None")
     {
         this->ui->typeList->setEnabled( false );
+        this->ui->subTypeList->setEnabled( false );
         this->ui->deleteButton->setEnabled( false );
     }
 
@@ -78,17 +82,32 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
     switch(this->ref_rect->getType())
     {
     case ObjectType::None:
-        this->ui->clannNameLabel->setText("Class name: None");
+        this->ui->classNameLabel->setText("Class name: None");
         break;
     case ObjectType::Face:
-        this->ui->clannNameLabel->setText("Class name: Face");
+        this->ui->classNameLabel->setText("Class name: Face");
         break;
     case ObjectType::NumberPlate:
-        this->ui->clannNameLabel->setText("Class name: NumberPlate");
+        this->ui->classNameLabel->setText("Class name: NumberPlate");
         break;
     case ObjectType::ToBlur:
-        this->ui->clannNameLabel->setText("Class name: ToBlur");
+        this->ui->classNameLabel->setText("Class name: ToBlur");
+        this->ui->validCheckBox->setEnabled( false );
+        this->ui->blurCheckBox->setEnabled( false );
         break;
+    }
+
+    switch(this->ref_rect->getSubType())
+    {
+    case ObjectSubType::None:
+         this->ui->subClassLabel->setText("Sub class name: None");
+         break;
+    case ObjectSubType::Front:
+         this->ui->subClassLabel->setText("Sub class name: Front");
+         break;
+    case ObjectSubType::Profile:
+         this->ui->subClassLabel->setText("Sub class name: Profile");
+         break;
     }
 
     this->ui->widthLabel->setText("Width: " + QString::number( (int) this->ref_rect->getSize().width() ));
@@ -112,6 +131,20 @@ EditView::EditView(QWidget *parent, ObjectRect* rect) :
         break;
     case ObjectType::ToBlur:
         this->ui->typeList->setCurrentIndex( 3 );
+        break;
+    }
+
+    switch(this->ref_rect->getSubType())
+    {
+
+    case ObjectSubType::None:
+        this->ui->subTypeList->setCurrentIndex( 0 );
+        break;
+    case ObjectSubType::Front:
+        this->ui->subTypeList->setCurrentIndex( 1 );
+        break;
+    case ObjectSubType::Profile:
+        this->ui->subTypeList->setCurrentIndex( 2 );
         break;
     }
 
@@ -142,52 +175,115 @@ void EditView::on_cancelButton_clicked()
 
 void EditView::on_deleteButton_clicked()
 {
-    pano_parent->rect_list.removeOne( this->ref_rect );
-    delete this->ref_rect;
-    emit refreshLabels();
-    this->close();
+    switch(this->mode)
+    {
+    case EditMode::Single:
+        this->item->remove( true );
+        emit refreshLabels();
+        this->close();
+        break;
+    case EditMode::Scene:
+        pano_parent->rect_list.removeOne( this->ref_rect );
+        delete this->ref_rect;
+        emit refreshLabels();
+        this->close();
+        break;
+    }
 }
+
+void EditView::mergeEditedRect(ObjectRect* destination)
+{
+
+    switch(this->ui->typeList->currentIndex())
+    {
+    case 1:
+        destination->setType( ObjectType::Face );
+        break;
+    case 2:
+        destination->setType( ObjectType::NumberPlate );
+        break;
+    case 3:
+        destination->setType( ObjectType::ToBlur );
+        break;
+    }
+
+    switch(this->ui->subTypeList->currentIndex())
+    {
+    case 0:
+        destination->setSubType( ObjectSubType::None );
+        break;
+    case 1:
+        destination->setSubType( ObjectSubType::Front );
+        break;
+    case 2:
+        destination->setSubType( ObjectSubType::Profile );
+        break;
+    }
+}
+
+void EditView::mergeEditedItem(ObjectItem* destination)
+{
+    switch(this->ui->typeList->currentIndex())
+    {
+    case 1:
+        destination->setType( ObjectType::Face );
+        break;
+    case 2:
+        destination->setType( ObjectType::NumberPlate );
+        break;
+    case 3:
+        destination->setType( ObjectType::ToBlur );
+        break;
+    }
+
+    switch(this->ui->subTypeList->currentIndex())
+    {
+    case 0:
+        destination->setSubType( ObjectSubType::None );
+        break;
+    case 1:
+        destination->setSubType( ObjectSubType::Front );
+        break;
+    case 2:
+        destination->setSubType( ObjectSubType::Profile );
+        break;
+    }
+
+    if(destination->type == ObjectType::ToBlur)
+    {
+        destination->setValidState( ObjectRectState::ToBlur );
+    } else {
+        destination->setValidState( this->ui->validCheckBox->checkState() ? ObjectRectState::Valid : ObjectRectState::Invalid );
+    }
+
+    destination->setManualStatus( this->ui->validCheckBox->checkState() ? "Valid" : "Invalid" );
+    destination->setBlurred( this->ui->blurCheckBox->checkState() );
+}
+
 
 void EditView::on_confirmButton_clicked()
 {
-
-    foreach(ObjectRect* rect, this->pano_parent->rect_list)
+    switch(this->mode)
     {
-        if(rect->getId() == this->rect_copy->getId())
+    case EditMode::Single:
+        this->ref_rect->mergeWith( this->rect_copy );
+        this->mergeEditedItem( this->item );
+        this->item->setImage( this->pano_parent->cropObject( this->rect_copy ) );
+        break;
+    case EditMode::Scene:
+        foreach(ObjectRect* rect, this->pano_parent->rect_list)
         {
-            this->rect_copy->mapTo(rect->proj_width(),
-                                   rect->proj_height(),
-                                   rect->proj_azimuth(),
-                                   rect->proj_elevation(),
-                                   rect->proj_aperture()
-                                  );
-
-            rect->setProjectionPoints(this->rect_copy->getPoint1(),
-                                      this->rect_copy->getPoint2(),
-                                      this->rect_copy->getPoint3(),
-                                      this->rect_copy->getPoint4());
-
-            switch(this->ui->typeList->currentIndex())
+            if(rect->getId() == this->rect_copy->getId())
             {
-            case 1:
-                rect->setType( ObjectType::Face );
-                break;
-            case 2:
-                rect->setType( ObjectType::NumberPlate );
-                break;
-            case 3:
-                rect->setType( ObjectType::ToBlur );
+                rect->mergeWith( this->rect_copy );
+                this->mergeEditedRect( rect );
                 break;
             }
-
-            rect->setObjectRectState( this->ui->validCheckBox->checkState() ? ObjectRectState::Valid : ObjectRectState::Invalid );
-            rect->setBlurred( this->ui->blurCheckBox->checkState() );
-
-            break;
         }
-    }
 
-    this->pano_parent->render();
+        this->pano_parent->render();
+        break;
+    }
 
     emit refreshLabels();
 

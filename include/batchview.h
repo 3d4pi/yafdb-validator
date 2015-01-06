@@ -6,11 +6,13 @@
 #include <QShortcut>
 #include <QMessageBox>
 #include <QLayoutItem>
+#include <QMouseEvent>
 
 #include "flowlayout.h"
 #include "panoramaviewer.h"
 #include "objectrect.h"
 #include "objectitem.h"
+#include "panoramaviewer.h"
 
 namespace Ui {
 class BatchView;
@@ -61,6 +63,8 @@ private slots:
 
     void on_deleteButton_clicked();
 
+    void on_setSubType_clicked();
+
 private:
     Ui::BatchView *ui;
 
@@ -68,6 +72,15 @@ private:
 
     void mergeResults();
     void populate(int batchviewmode);
+
+    struct {
+        bool CTRL;
+    } pressed_keys;
+
+protected:
+    void wheelEvent(QWheelEvent* event);
+    void keyPressEvent(QKeyEvent *event);
+    void keyReleaseEvent(QKeyEvent *event);
 
 signals:
     void refreshLabels();

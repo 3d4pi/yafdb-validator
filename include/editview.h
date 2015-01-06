@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QStandardItemModel>
 
+#include "objectitem.h"
 #include "g2g_point.h"
 #include "objectrect.h"
 #include "panoramaviewer.h"
@@ -21,7 +22,7 @@ class EditView : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit EditView(QWidget *parent, ObjectRect* rect);
+    explicit EditView(QWidget *parent, ObjectRect* rect, ObjectItem* item, int mode = EditMode::Scene);
     ~EditView();
 
 private slots:
@@ -39,8 +40,13 @@ private:
 
     PanoramaViewer* pano;
     ObjectRect* ref_rect;
+    ObjectItem* item;
     PanoramaViewer* pano_parent;
     ObjectRect* rect_copy;
+    int mode;
+
+    void mergeEditedRect(ObjectRect* destination);
+    void mergeEditedItem(ObjectItem* destination);
 
 signals:
     void refreshLabels();

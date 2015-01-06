@@ -7,6 +7,7 @@
 #include <QDebug>
 
 #include "types.h"
+#include "etg_point.h"
 #include "g2g_point.h"
 
 class ObjectRect : public QGraphicsPolygonItem
@@ -72,6 +73,9 @@ public:
                                   float elevation,
                                   float aperture);
 
+    void setSourceImagePath(QString path);
+    QString getSourceImagePath();
+
     void setProjectionPoints();
     void setProjectionPoints(QPointF p1,
                              QPointF p2,
@@ -80,6 +84,7 @@ public:
 
     // Copy function
     ObjectRect* copy();
+    void mergeWith(ObjectRect* rect);
 
     // Point map function
     void mapTo(float width,
@@ -87,6 +92,16 @@ public:
                float azimuth,
                float elevation,
                float aperture);
+
+    void mapFromSpherical(float source_width,
+                          float source_height,
+                          float dest_width,
+                          float dest_height,
+                          float dest_azimuth,
+                          float dest_elevation,
+                          float dest_aperture,
+                          float dest_zoom_min,
+                          float dest_zoom_max);
 
     float proj_azimuth();
     float proj_elevation();
@@ -102,7 +117,9 @@ public:
 
     // Informations get/set
     int getType();
+    int getSubType();
     void setType(int value);
+    void setSubType(int value);
 
     bool isBlurred();
     bool isValidated();
@@ -115,6 +132,8 @@ public:
 
     void setResizeEnabled(bool value);
     bool isResizeEnabled();
+
+    QList<ObjectRect*> childrens;
 
 private:
 
@@ -161,11 +180,13 @@ private:
         float width;
         float height;
         QVector<QPointF> points;
+        QString source_image;
     } projection_parameters;
 
     // Projection parameters structure
     struct {
         int type;
+        int sub_type;
         bool blurred;
         bool validated;
         QString manual_status;

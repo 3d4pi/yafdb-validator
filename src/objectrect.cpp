@@ -35,6 +35,7 @@ ObjectRect::ObjectRect()
     this->info.blurred = false;
     this->info.validated = false;
     this->info.type = ObjectType::None;
+    this->info.sub_type = ObjectSubType::None;
 
     // Default contour setup
     this->contour_pen = new QPen(QColor(255, 255, 255, 255), 2);
@@ -91,6 +92,18 @@ void ObjectRect::setPoint3_Rigid(QPointF point)
     new_p2.setY( new_p3.y() );
     new_p4.setX( new_p3.x() );
 
+    if ( (new_p3.x() - new_p2.x()) < 1 )
+    {
+        new_p3.setX( new_p2.x() + 1 );
+        new_p4.setX( new_p3.x() );
+    }
+
+    if ( (new_p2.y() - new_p1.y()) < 1 )
+    {
+        new_p2.setY( new_p1.y() + 1 );
+        new_p3.setY( new_p2.y() );
+    }
+
     // Update positions
     this->setPoints( new_p1, new_p2, new_p3, new_p4 );
 
@@ -119,10 +132,34 @@ void ObjectRect::setPoint4(QPointF point)
 
 void ObjectRect::setPoints(QPointF p1, QPointF p2, QPointF p3, QPointF p4)
 {
-    this->setPoint1( p1 );
-    this->setPoint2( p2 );
-    this->setPoint3( p3 );
-    this->setPoint4( p4 );
+
+    if( p1.x() == 0 || p1.y() == 0 )
+    {
+        this->setPoint1( QPointF( p2.x(), p4.y() ) );
+    } else {
+        this->setPoint1( p1 );
+    }
+
+    if( p2.x() == 0 || p2.y() == 0 )
+    {
+        this->setPoint2( QPointF( p1.x(), p3.y() ) );
+    } else {
+        this->setPoint2( p2 );
+    }
+
+    if( p3.x() == 0 || p3.y() == 0 )
+    {
+        this->setPoint3( QPointF( p4.x(), p2.y() ) );
+    } else {
+        this->setPoint3( p3 );
+    }
+
+    if( p4.x() == 0 || p4.y() == 0 )
+    {
+        this->setPoint4( QPointF( p3.x(), p1.y() ) );
+    } else {
+        this->setPoint4( p4 );
+    }
 
     // Cal rendering procedure
     this->render();
@@ -372,6 +409,7 @@ void ObjectRect::render()
     this->resize_rect_polygon = QPolygonF( resize_rect_points );
     this->resize_rect->setPolygon( this->resize_rect_polygon );
 
+
     if(this->getSize().width() < 70 || this->getSize().height() < 70 )
     {
         this->pen->setWidth( 1 );
@@ -402,6 +440,16 @@ void ObjectRect::setProjectionParametters(float azimuth,
     this->projection_parameters.aperture = aperture;
     this->projection_parameters.width = width;
     this->projection_parameters.height = height;
+}
+
+void ObjectRect::setSourceImagePath(QString path)
+{
+    this->projection_parameters.source_image = path;
+}
+
+QString ObjectRect::getSourceImagePath()
+{
+    return this->projection_parameters.source_image;
 }
 
 void ObjectRect::setProjectionPoints()
@@ -467,6 +515,11 @@ int ObjectRect::getType()
     return this->info.type;
 }
 
+int ObjectRect::getSubType()
+{
+    return this->info.sub_type;
+}
+
 void ObjectRect::setType(int value)
 {
     this->info.type = value;
@@ -477,6 +530,11 @@ void ObjectRect::setType(int value)
         this->setObjectRectState( ObjectRectState::ToBlur );
         break;
     }
+}
+
+void ObjectRect::setSubType(int value)
+{
+    this->info.sub_type = value;
 }
 
 bool ObjectRect::isBlurred()
@@ -519,8 +577,9 @@ void ObjectRect::setAutomaticStatus(QString value)
 
 ObjectRect* ObjectRect::copy()
 {
-    ObjectRect* rect_copy = new ObjectRect();
+    ObjectRect* rect_copy = new ObjectRect;
     rect_copy->setObjectRectType( this->getObjectRectType() );
+    rect_copy->setType( this->getType() );
     rect_copy->setObjectRectState( this->getObjectRectState() );
     rect_copy->setManualStatus( this->getManualStatus() );
     rect_copy->setAutomaticStatus( this->getAutomaticStatus() );
@@ -543,16 +602,33 @@ ObjectRect* ObjectRect::copy()
     return rect_copy;
 }
 
+void ObjectRect::mergeWith(ObjectRect *rect)
+{
+    rect->mapTo(this->proj_width(),
+                           this->proj_height(),
+                           this->proj_azimuth(),
+                           this->proj_elevation(),
+                           this->proj_aperture()
+                          );
+
+    this->setProjectionPoints(rect->getPoint1(),
+                              rect->getPoint2(),
+                              rect->getPoint3(),
+                              rect->getPoint4());
+
+    this->setType( rect->getType() );
+    this->setSubType( rect->getSubType() );
+    this->setObjectRectState( rect->getObjectRectState() );
+
+    this->setManualStatus( rect->getManualStatus() );
+    this->setAutomaticStatus( rect->getAutomaticStatus() );
+
+    this->setBlurred( rect->isBlurred() );
+}
+
 void ObjectRect::mapTo(float width, float height, float azimuth, float elevation, float aperture)
 {
-    double p1_x = 0.0;
-    double p1_y = 0.0;
-    double p2_x = 0.0;
-    double p2_y = 0.0;
-    double p3_x = 0.0;
-    double p3_y = 0.0;
-    double p4_x = 0.0;
-    double p4_y = 0.0;
+    QPointF p1, p2, p3, p4;
 
     g2g_point(this->proj_width(),
               this->proj_height(),
@@ -567,8 +643,8 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
               azimuth,
               elevation,
               aperture,
-              &p1_x,
-              &p1_y);
+              &p1.rx(),
+              &p1.ry());
 
     g2g_point(this->proj_width(),
               this->proj_height(),
@@ -583,8 +659,8 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
               azimuth,
               elevation,
               aperture,
-              &p2_x,
-              &p2_y);
+              &p2.rx(),
+              &p2.ry());
 
     g2g_point(this->proj_width(),
               this->proj_height(),
@@ -599,8 +675,8 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
               azimuth,
               elevation,
               aperture,
-              &p3_x,
-              &p3_y);
+              &p3.rx(),
+              &p3.ry());
 
     g2g_point(this->proj_width(),
               this->proj_height(),
@@ -615,13 +691,92 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
               azimuth,
               elevation,
               aperture,
-              &p4_x,
-              &p4_y);
+              &p4.rx(),
+              &p4.ry());
 
-    this->setPoints(QPointF( p1_x, p1_y ),
-                    QPointF( p2_x, p2_y ),
-                    QPointF( p3_x, p3_y ),
-                    QPointF( p4_x, p4_y ));
+    this->setPoints( p1, p2, p3, p4 );
+}
+
+inline float clamp(float x, float a, float b)
+{
+    return x < a ? a : (x > b ? b : x);
+}
+
+
+void ObjectRect::mapFromSpherical(float source_width,
+                                  float source_height,
+                                  float dest_width,
+                                  float dest_height,
+                                  float dest_azimuth,
+                                  float dest_elevation,
+                                  float dest_aperture,
+                                  float dest_zoom_min,
+                                  float dest_zoom_max)
+{
+    QPointF p1, p3;
+
+    double p1_d_x = ((this->getPoint1().x() / LG_PI2) * source_width);
+    double p1_d_y = (((this->getPoint1().y()) + ( LG_PI / 2.0 )) / LG_PI ) * source_height;
+
+    double p3_d_x = ((this->getPoint3().x() / LG_PI2) * source_width);
+    double p3_d_y = (((this->getPoint3().y()) + ( LG_PI / 2.0 )) / LG_PI ) * source_height;
+
+    double width  = ( p3_d_x + p1_d_x );
+    double height = ( p3_d_y + p1_d_y );
+
+    float aperture = ( ( ( p3_d_x - p1_d_x ) / source_width ) * 30.0 );
+
+    aperture = aperture < dest_zoom_min ? dest_zoom_min : aperture;
+    aperture = aperture > dest_zoom_max ? dest_zoom_max : aperture;
+
+    double center_x = ( width / 2.0 );
+    double center_y = ( height / 2.0 );
+
+    float azimuth = ( ( center_x / source_width ) * LG_PI2 );
+    float elevation = ( ( - ( center_y / source_height ) + 0.5 ) * LG_PI );
+
+    etg_point(source_width,
+              source_height,
+              p1_d_x,
+              p1_d_y,
+              dest_width,
+              dest_height,
+              azimuth,
+              elevation,
+              aperture,
+              &p1.rx(),
+              &p1.ry());
+
+    etg_point(source_width,
+              source_height,
+              p3_d_x,
+              p3_d_y,
+              dest_width,
+              dest_height,
+              azimuth,
+              elevation,
+              aperture,
+              &p3.rx(),
+              &p3.ry());
+
+    this->setPoints(p1,
+                    QPointF(0.0, 0.0),
+                    p3,
+                    QPointF(0.0, 0.0));
+
+    this->setProjectionPoints();
+
+    this->setProjectionParametters(azimuth,
+            elevation,
+            aperture,
+            dest_width,
+            dest_height);
+
+    this->mapTo(dest_width,
+                dest_height,
+                dest_azimuth,
+                dest_elevation,
+                dest_aperture);
 
 }
 

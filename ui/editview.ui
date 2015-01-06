@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>942</width>
-    <height>414</height>
+    <height>497</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -34,7 +34,7 @@
         </property>
         <layout class="QGridLayout" name="gridLayout">
          <item row="0" column="0">
-          <widget class="QLabel" name="clannNameLabel">
+          <widget class="QLabel" name="classNameLabel">
            <property name="text">
             <string>Class name: </string>
            </property>
@@ -50,7 +50,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="subClassLabel">
            <property name="text">
-            <string>Sub classes: </string>
+            <string>Sub class name: </string>
            </property>
           </widget>
          </item>
@@ -84,7 +84,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
+         <item row="3" column="0">
           <widget class="QCheckBox" name="validCheckBox">
            <property name="text">
             <string>Object is valid ?</string>
@@ -103,7 +103,7 @@
              <string>Face</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../resources.qrc">
               <normaloff>:/resources/icons/Face.png</normaloff>:/resources/icons/Face.png</iconset>
             </property>
            </item>
@@ -112,7 +112,7 @@
              <string>NumberPlate</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../resources.qrc">
               <normaloff>:/resources/icons/Plate.png</normaloff>:/resources/icons/Plate.png</iconset>
             </property>
            </item>
@@ -121,17 +121,43 @@
              <string>To Blur</string>
             </property>
             <property name="icon">
-             <iconset resource="resources.qrc">
+             <iconset resource="../resources.qrc">
               <normaloff>:/resources/icons/Blur.png</normaloff>:/resources/icons/Blur.png</iconset>
             </property>
            </item>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="4" column="0">
           <widget class="QCheckBox" name="blurCheckBox">
            <property name="text">
             <string>Blur object ?</string>
            </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string>Sub type:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="subTypeList">
+           <item>
+            <property name="text">
+             <string>None</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Front</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Profile</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>
@@ -170,7 +196,7 @@
   </widget>
  </widget>
  <resources>
-  <include location="resources.qrc"/>
+  <include location="../resources.qrc"/>
  </resources>
  <connections/>
 </ui>

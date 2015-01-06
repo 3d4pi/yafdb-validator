@@ -33,8 +33,6 @@ public:
         QPointF p2;
     } area;
 
-    QString falsePositive;
-
     QString autoStatus;
     QString manualStatus;
 

@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //this->ui->horizontalSlider->setValue(this->pano->scale_factor * 100);
 
     // Load input image
-    this->pano->loadImage("/home/f0x/Bureau/Photo_RMLL_2014_panoramique,_WE_grand_public.jpeg");
+    this->pano->loadImage("/home/f0x/Bureau/result_1404640785_728013-0-25-1.jpeg");
 
     // Initialize labels
     emit refreshLabels();
@@ -488,7 +488,7 @@ void MainWindow::on_pushButton_4_clicked()
 {
     YMLParser parser;
     //QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/yml.yml" );
-    QList<ObjectRect*> loaded_rects = parser.loadYML( "/home/f0x/Bureau/yml2.yml", YMLType::Detector );
+    QList<ObjectRect*> loaded_rects = parser.loadYML( "/data/rmll/RMLL_Village_du_Libre/results/blurring/yml_configs/result_1404640785_728013.yml", YMLType::Detector );
 
     foreach(ObjectRect* rect, loaded_rects)
     {

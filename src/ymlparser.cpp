@@ -173,8 +173,7 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
     (*iterator)["autoStatus"] >> autoStatus;
 
     QString lowerAutoStatus = QString( autoStatus.c_str() ).toLower();
-
-    qDebug() << lowerAutoStatus;
+    lowerAutoStatus = lowerAutoStatus.length() > 0 ? lowerAutoStatus : "none";
 
     if(lowerAutoStatus != "none")
     {
@@ -216,10 +215,16 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
     object->setAutomaticStatus( (object->getAutomaticStatus().length() > 0 ? object->getAutomaticStatus() : "None") );
 
     // Parse manual status
+
     std::string manualStatus;
     (*iterator)["manualStatus"] >> manualStatus;
     object->setManualStatus( QString(manualStatus.c_str()) );
     object->setManualStatus( (object->getManualStatus().length() > 0 ? object->getManualStatus() : "None") );
+
+    if(lowerAutoStatus == "none")
+    {
+        object->setManualStatus("Valid");
+    }
 
     if(object->getType() == ObjectType::ToBlur)
     {

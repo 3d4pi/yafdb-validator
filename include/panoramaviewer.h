@@ -79,12 +79,7 @@ public:
         float old_height;
     } position;
 
-    struct image_info_struct{
-        QImage* image;
-        int width;
-        int height;
-        int channels;
-    } image_info;
+    image_info_struct image_info;
 
 public slots:
     void refreshLabels_slot();

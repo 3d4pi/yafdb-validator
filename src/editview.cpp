@@ -1,7 +1,7 @@
 #include "editview.h"
 #include "ui_editview.h"
 
-EditView::EditView(QWidget *parent, ObjectRect* rect, PanoramaViewer::image_info_struct image_info, ObjectItem* item, int mode) :
+EditView::EditView(QWidget *parent, ObjectRect* rect, image_info_struct image_info, ObjectItem* item, int mode) :
     QMainWindow(parent),
     ui(new Ui::EditView)
 {

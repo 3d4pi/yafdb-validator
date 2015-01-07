@@ -11,10 +11,12 @@ MainWindow::MainWindow(QWidget *parent, QString sourceImagePath, QString detecto
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    ui->setupUi(this);
+    this->initializeValidator(sourceImagePath, detectorYMLPath, destinationYMLPath);
+}
 
-    this->timer = new QElapsedTimer();
-    this->timer->start();
+void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYMLPath, QString destinationYMLPath)
+{
+    ui->setupUi(this);
 
     this->options.sourceImagePath = sourceImagePath.length() > 0 ? sourceImagePath : "";
     this->options.detectorYMLPath = detectorYMLPath.length() > 0 ? detectorYMLPath : "";
@@ -192,7 +194,6 @@ MainWindow::MainWindow(QWidget *parent, QString sourceImagePath, QString detecto
 
     // Initialize labels
     emit refreshLabels();
-
 }
 
 void MainWindow::refreshLabels()

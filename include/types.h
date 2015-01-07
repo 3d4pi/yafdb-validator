@@ -1,6 +1,14 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+struct ApplicationMode
+{
+    enum Type
+    {
+        Validator = 0, Exporter = 1
+    };
+};
+
 struct ObjectItemRectType
 {
     enum Type

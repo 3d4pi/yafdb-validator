@@ -8,7 +8,6 @@
 #include <QThread>
 #include <QLabel>
 #include <QPalette>
-#include <QElapsedTimer>
 
 #include "panoramaviewer.h"
 #include "batchview.h"
@@ -32,6 +31,8 @@ public:
     } options;
 
 private slots:
+
+    void initializeValidator(QString sourceImagePath, QString detectorYMLPath, QString destinationYMLPath);
 
     void onESC();
 
@@ -59,8 +60,6 @@ private:
 
     QString good_color;
     QString warn_color;
-
-    QElapsedTimer* timer;
 
     QString output_yml;
 };

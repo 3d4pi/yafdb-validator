@@ -342,7 +342,7 @@ void ObjectItem::mouseDoubleClickEvent(QMouseEvent *event)
     // Check presence of right click
     if(event->buttons() & Qt::RightButton)
     {
-        EditView* w = new EditView(this->parent_pano, this->rect, this, EditMode::Single);
+        EditView* w = new EditView(this->parent_pano, this->rect, this->parent_pano->image_info, this, EditMode::Single);
         w->setAttribute( Qt::WA_DeleteOnClose );
         w->show();
     }

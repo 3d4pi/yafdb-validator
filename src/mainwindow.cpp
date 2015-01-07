@@ -140,8 +140,8 @@ MainWindow::MainWindow(QWidget *parent, QString sourceImagePath, QString detecto
                 foreach(ObjectRect* rect, loaded_rects)
                 {
 
-                    rect->mapFromSpherical(this->pano->src_image.width(),
-                                           this->pano->src_image.height(),
+                    rect->mapFromSpherical(this->pano->image_info.width,
+                                           this->pano->image_info.height,
                                            this->pano->dest_image_map.width(),
                                            this->pano->dest_image_map.height(),
                                            this->pano->position.azimuth,
@@ -335,15 +335,17 @@ MainWindow::~MainWindow()
 void MainWindow::closeEvent (QCloseEvent *event)
 {
     QMessageBox::StandardButton resBtn = QMessageBox::question( this, "",
-                                                                tr("Exit and save changes?\n(You can resume later)"),
+                                                                tr("Do you want to save your work\n(You can resume later)"),
                                                                 QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
                                                                 QMessageBox::Yes);
-    if (resBtn != QMessageBox::Yes) {
+    if (resBtn == QMessageBox::Cancel) {
         event->ignore();
-    } else {
+    } else if( resBtn == QMessageBox::Yes ) {
         YMLParser parser;
         parser.writeYML( this->pano->rect_list, this->output_yml );
 
+        event->accept();
+    } else if(resBtn == QMessageBox::No) {
         event->accept();
     }
 }

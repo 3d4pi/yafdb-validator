@@ -29,7 +29,8 @@ SOURCES += src/main.cpp \
     src/g2g_point.cpp \
     src/objectrect.cpp \
     src/editview.cpp \
-    src/etg_point.cpp
+    src/etg_point.cpp \
+    src/utils.cpp
 
 HEADERS  += include/mainwindow.h \
     include/panoramaviewer.h \
@@ -42,7 +43,8 @@ HEADERS  += include/mainwindow.h \
     include/g2g_point.h \
     include/objectrect.h \
     include/editview.h \
-    include/etg_point.h
+    include/etg_point.h \
+    include/utils.h
 
 FORMS    += ui/mainwindow.ui \
     ui/batchview.ui \

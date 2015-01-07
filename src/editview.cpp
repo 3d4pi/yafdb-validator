@@ -1,7 +1,7 @@
 #include "editview.h"
 #include "ui_editview.h"
 
-EditView::EditView(QWidget *parent, ObjectRect* rect, ObjectItem* item, int mode) :
+EditView::EditView(QWidget *parent, ObjectRect* rect, PanoramaViewer::image_info_struct image_info, ObjectItem* item, int mode) :
     QMainWindow(parent),
     ui(new Ui::EditView)
 {
@@ -42,6 +42,9 @@ EditView::EditView(QWidget *parent, ObjectRect* rect, ObjectItem* item, int mode
     // Create panorama viewer
     this->pano = new PanoramaViewer(this);
 
+    // Set image settings
+    this->pano->image_info = image_info;
+
     // Add panorama viewer to current window
     this->ui->mainLayout->addWidget(this->pano);
 
@@ -72,9 +75,8 @@ EditView::EditView(QWidget *parent, ObjectRect* rect, ObjectItem* item, int mode
     }
 
     // Load input image
-    this->pano->loadImage( pano_parent->src_image );
 
-    qDebug() << this->pano->size();
+    this->pano->loadImage( *pano_parent->image_info.image );
 
     // Set-up labels
     this->ui->subClassLabel->setText("Sub classes: None");

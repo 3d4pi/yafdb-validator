@@ -14,6 +14,7 @@
 #include "g2g_point.h"
 #include "objectrect.h"
 #include "detectedobject.h"
+#include "utils.h"
 
 class PanoramaViewer : public QGraphicsView
 {
@@ -50,7 +51,6 @@ public:
 
     QList<ObjectRect*> rect_list;
 
-    QImage src_image;
     QString image_path;
 
     int threads_count;
@@ -79,6 +79,13 @@ public:
         float old_width;
         float old_height;
     } position;
+
+    struct image_info_struct{
+        QImage* image;
+        int width;
+        int height;
+        int channels;
+    } image_info;
 
 public slots:
     void refreshLabels_slot();

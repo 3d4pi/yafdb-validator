@@ -22,7 +22,8 @@ class EditView : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit EditView(QWidget *parent, ObjectRect* rect, ObjectItem* item, int mode = EditMode::Scene);
+
+    explicit EditView(QWidget *parent, ObjectRect* rect, PanoramaViewer::image_info_struct image_info, ObjectItem* item, int mode = EditMode::Scene);
     ~EditView();
 
 private slots:

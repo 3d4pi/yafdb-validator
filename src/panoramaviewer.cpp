@@ -33,6 +33,11 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->position.old_width = 0;
     this->position.old_height = 0;
 
+    // Intialize image info container
+    this->image_info.channels = 0;
+    this->image_info.height = 0;
+    this->image_info.image = NULL;
+
     // Initialize default mode
     this->mode = Mode::None;
 
@@ -74,8 +79,6 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels()));
 
     connect(this, SIGNAL(updateScaleSlider(int)), parent, SLOT(updateScaleSlider(int)));
-
-
 }
 
 inline float clamp(float x, float a, float b)
@@ -111,23 +114,33 @@ void PanoramaViewer::setup(int width, int height, float scale_factor, float zoom
 void PanoramaViewer::loadImage(QString path)
 {
     this->image_path = path;
-    this->src_image.load(path);
-    this->src_image_map = QPixmap::fromImage(this->src_image);
+
+
+    IplImage * temp_image = NULL;
+    temp_image = cvLoadImage( path.toStdString().c_str(), CV_LOAD_IMAGE_UNCHANGED );
+
+    this->image_info.channels = (temp_image->nChannels + 1);
+    this->image_info.width = temp_image->width;
+    this->image_info.height = temp_image->height;
+
+    this->image_info.image = IplImage2QImage( temp_image );
+
+    this->src_image_map = QPixmap::fromImage( *this->image_info.image );
 
     this->render();
-
 }
 
 void PanoramaViewer::loadImage(QImage image)
 {
-    this->src_image = image;
+    this->image_info.image = new QImage( image );
     this->src_image_map = QPixmap::fromImage(image);
-
     this->render();
 }
 
 void PanoramaViewer::updateScene(float azimuth, float elevation, float zoom)
 {
+    if( this->image_info.image == NULL )
+        return;
 
     int WIDTH = this->width();
     int HEIGHT = this->height();
@@ -145,21 +158,20 @@ void PanoramaViewer::updateScene(float azimuth, float elevation, float zoom)
 
     lg_etg_apperturep(
 
-        ( inter_C8_t * ) this->src_image.bits(),
-        this->src_image.width(),
-        this->src_image.height(),
-        CHANNELS_COUNT,
+        ( inter_C8_t * ) this->image_info.image->bits(),
+        this->image_info.width,
+        this->image_info.height,
+        this->image_info.channels,
         ( inter_C8_t * ) dest_image.bits(),
         DEST_WIDTH,
         DEST_HEIGHT,
-        CHANNELS_COUNT,
+        this->image_info.channels,
         AZIMUTH,
         ELEVATION,
         0.0,
         zoom,
         li_bilinearf,
         this->threads_count
-
     );
 
     this->dest_image_map = QPixmap::fromImage(this->dest_image);
@@ -416,7 +428,8 @@ void PanoramaViewer::mouseDoubleClickEvent(QMouseEvent *event)
                 this->render();
             } else if ( event->buttons() == Qt::LeftButton )
             {
-                EditView* w = new EditView(this, clicked_rect, NULL, EditMode::Scene);
+                EditView* w = new EditView(this, clicked_rect, this->image_info, NULL, EditMode::Scene);
+
                 w->setAttribute( Qt::WA_DeleteOnClose );
                 w->show();
             }
@@ -666,14 +679,14 @@ QImage PanoramaViewer::cropObject(ObjectRect* rect)
 
     lg_etg_apperturep(
 
-        ( inter_C8_t * ) this->src_image.bits(),
-        this->src_image.width(),
-        this->src_image.height(),
-        CHANNELS_COUNT,
+        ( inter_C8_t * ) this->image_info.image->bits(),
+        this->image_info.width,
+        this->image_info.height,
+        this->image_info.channels,
         ( inter_C8_t * ) temp_dest.bits(),
         this->width(),
         this->height(),
-        CHANNELS_COUNT,
+        this->image_info.channels,
         rect->proj_azimuth(),
         rect->proj_elevation(),
         0.0,

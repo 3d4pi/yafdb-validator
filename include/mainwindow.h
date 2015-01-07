@@ -32,6 +32,9 @@ public:
     } options;
 
 private slots:
+
+    void onESC();
+
     void refreshLabels();
     void updateScaleSlider(int value);
 
@@ -43,17 +46,13 @@ private slots:
 
     void on_preInvalidatedButton_clicked();
 
-    void on_pushButton_clicked();
-
     void on_horizontalSlider_sliderMoved(int position);
-
-    void on_pushButton_2_clicked();
 
     void on_toBlurButton_clicked();
 
-    void on_pushButton_3_clicked();
-
 private:
+
+    void closeEvent (QCloseEvent *event);
 
     Ui::MainWindow *ui;
     PanoramaViewer* pano;

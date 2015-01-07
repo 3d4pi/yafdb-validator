@@ -32,6 +32,8 @@ MainWindow::MainWindow(QWidget *parent, QString sourceImagePath, QString detecto
     this->good_color = good_color_string;
     this->warn_color = warn_color_string;
 
+    new QShortcut(QKeySequence("Esc"), this, SLOT(onESC()));
+
     // Remove margins
     this->setContentsMargins(-5, -5, -5, -5);
     //this->centralWidget()->layout()->setContentsMargins(50,50,50,50);
@@ -330,6 +332,27 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::closeEvent (QCloseEvent *event)
+{
+    QMessageBox::StandardButton resBtn = QMessageBox::question( this, "",
+                                                                tr("Exit and save changes?\n(You can resume later)"),
+                                                                QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+                                                                QMessageBox::Yes);
+    if (resBtn != QMessageBox::Yes) {
+        event->ignore();
+    } else {
+        YMLParser parser;
+        parser.writeYML( this->pano->rect_list, this->output_yml );
+
+        event->accept();
+    }
+}
+
+void MainWindow::onESC()
+{
+    this->close();
+}
+
 void MainWindow::on_untypedButton_clicked()
 {
     BatchView* w = new BatchView(this, this->pano, BatchMode::Manual, BatchViewMode::OnlyUntyped);
@@ -365,240 +388,9 @@ void MainWindow::on_toBlurButton_clicked()
     w->show();
 }
 
-void MainWindow::on_pushButton_clicked()
-{
-    srand( this->timer->nsecsElapsed() );
-
-    for (int x = 0; x < 5; x++)
-    {
-
-        // Create selection object
-        ObjectRect* rect = new ObjectRect();
-
-        //int randtype = (rand() % 4) + 1;
-        rect->setType( ObjectType::Face );
-
-        rect->setObjectRectState(ObjectRectState::None);
-
-        //int randstate = (rand() % 2);
-        rect->setObjectRectType( ObjectItemRectType::Valid );
-        rect->setAutomaticStatus( "Valid" );
-
-        rect->setBlurred(true);
-
-        rect->setId(this->pano->rect_list_index++);
-
-        float rect_size = 64.0;
-        float pos_x = ((float) (rand() % this->pano->dest_image_map.width() - rect_size));
-        float pos_y = ((float) (rand() % this->pano->dest_image_map.height() - rect_size));
-
-        rect->setPoints(QPointF(pos_x, pos_y),
-                        QPointF(pos_x, pos_y + rect_size),
-                        QPointF(pos_x + rect_size, pos_y + rect_size),
-                        QPointF(pos_x + rect_size, pos_y));
-
-        rect->setProjectionPoints();
-
-        rect->setProjectionParametters(this->pano->position.azimuth,
-                                       this->pano->position.elevation,
-                                       this->pano->position.aperture,
-                                       this->pano->dest_image.width(),
-                                       this->pano->dest_image.height());
-
-        // Add selection object to scene
-        this->pano->rect_list.append( rect );
-        this->pano->scene->addItem(rect);
-    }
-
-    for (int x = 0; x < 5; x++)
-    {
-
-        // Create selection object
-        ObjectRect* rect = new ObjectRect();
-
-        //int randtype = (rand() % 4) + 1;
-        rect->setType( ObjectType::Face );
-
-        rect->setObjectRectState(ObjectRectState::None);
-
-        //int randstate = (rand() % 2);
-        rect->setObjectRectType( ObjectItemRectType::Invalid );
-        rect->setAutomaticStatus( "Ratio" );
-
-        rect->setBlurred(true);
-
-        rect->setId(this->pano->rect_list_index++);
-
-        float rect_size = 64.0;
-        float pos_x = ((float) (rand() % this->pano->dest_image_map.width() - rect_size));
-        float pos_y = ((float) (rand() % this->pano->dest_image_map.height() - rect_size));
-
-        rect->setPoints(QPointF(pos_x, pos_y),
-                        QPointF(pos_x, pos_y + rect_size),
-                        QPointF(pos_x + rect_size, pos_y + rect_size),
-                        QPointF(pos_x + rect_size, pos_y));
-
-        rect->setProjectionPoints();
-
-        rect->setProjectionParametters(this->pano->position.azimuth,
-                                       this->pano->position.elevation,
-                                       this->pano->position.aperture,
-                                       this->pano->dest_image.width(),
-                                       this->pano->dest_image.height());
-
-        // Add selection object to scene
-        this->pano->rect_list.append( rect );
-        this->pano->scene->addItem(rect);
-    }
-
-    for (int x = 0; x < 5; x++)
-    {
-
-        // Create selection object
-        ObjectRect* rect = new ObjectRect();
-
-        //int randtype = (rand() % 4) + 1;
-        rect->setType( ObjectType::NumberPlate );
-
-        rect->setObjectRectState(ObjectRectState::None);
-
-        //int randstate = (rand() % 2);
-        rect->setObjectRectType( ObjectItemRectType::Valid );
-        rect->setAutomaticStatus( "Valid" );
-
-        rect->setBlurred(true);
-
-        rect->setId(this->pano->rect_list_index++);
-
-        float rect_size = 64.0;
-        float pos_x = ((float) (rand() % this->pano->dest_image_map.width() - rect_size));
-        float pos_y = ((float) (rand() % this->pano->dest_image_map.height() - rect_size));
-
-        rect->setPoints(QPointF(pos_x, pos_y),
-                        QPointF(pos_x, pos_y + rect_size),
-                        QPointF(pos_x + rect_size, pos_y + rect_size),
-                        QPointF(pos_x + rect_size, pos_y));
-
-        rect->setProjectionPoints();
-
-        rect->setProjectionParametters(this->pano->position.azimuth,
-                                       this->pano->position.elevation,
-                                       this->pano->position.aperture,
-                                       this->pano->dest_image.width(),
-                                       this->pano->dest_image.height());
-
-        // Add selection object to scene
-        this->pano->rect_list.append( rect );
-        this->pano->scene->addItem(rect);
-    }
-
-    /*
-    for (int x = 0; x < 100; x++)
-    {
-        // Create selection object
-        ObjectRect* rect = new ObjectRect();
-
-        rect->setObjectType(ObjectType::NumberPlate);
-        rect->setRectType(RectType::Auto);
-        rect->setAutomaticStatus("Valid");
-        rect->setBlurred(true);
-
-        rect->id = this->pano->rect_list.length();
-
-        normalization_struct norm_params;
-        norm_params.pano_height = this->pano->height();
-        norm_params.pano_width = this->pano->width();
-        norm_params.scale_factor = this->pano->scale_factor;
-
-        int rw = (rand() % (int)(this->pano->scene->width() - 1)) + 1;
-        int rh = (rand() % (int)(this->pano->scene->height() - 1)) + 1;
-
-        float norm_w = util::normalize(rw, norm_params);
-        float norm_h = util::normalize(rh, norm_params);
-
-        rect->setPos(QPointF(0.0, 0.0), QPointF(norm_w, norm_h), norm_params, RectMoveType::All);
-
-        // Save projection parameters to it
-        rect->projection_parameters.aperture  = this->pano->current_zoom_rad;
-        rect->projection_parameters.azimuth   = this->pano->position.azimuth;
-        rect->projection_parameters.elevation = this->pano->position.elevation;
-        rect->projection_parameters.scale_factor = this->pano->scale_factor;
-
-        // Add selection object to list
-        this->pano->rect_list.append(rect);
-
-        QGraphicsProxyWidget *proxyWidget = new QGraphicsProxyWidget();
-        proxyWidget->setWidget(rect);
-
-        // Add selection object to scene
-        this->pano->scene->addItem(proxyWidget);
-    }
-
-    for (int x = 0; x < 30; x++)
-    {
-        // Create selection object
-        ObjectRect* rect = new ObjectRect();
-
-        rect->setObjectType(ObjectType::Face);
-        rect->setRectType(RectType::Auto);
-        rect->setValidState(ObjectValidState::None);
-        rect->setAutomaticStatus("Ratio");
-        rect->setBlurred(false);
-
-        normalization_struct norm_params;
-        norm_params.pano_height = this->pano->height();
-        norm_params.pano_width = this->pano->width();
-        norm_params.scale_factor = this->pano->scale_factor;
-
-        int rw = (rand() % (int)(this->pano->scene->width() - 1)) + 1;
-        int rh = (rand() % (int)(this->pano->scene->height() - 1)) + 1;
-
-        float norm_w = util::normalize(rw, norm_params);
-        float norm_h = util::normalize(rh, norm_params);
-
-        rect->setPos(QPointF(0.0, 0.0), QPointF(norm_w, norm_h), norm_params, RectMoveType::All);
-
-        rect->id = this->pano->rect_list.length();
-
-        // Save projection parameters to it
-        rect->projection_parameters.aperture  = this->pano->current_zoom_rad;
-        rect->projection_parameters.azimuth   = this->pano->position.azimuth;
-        rect->projection_parameters.elevation = this->pano->position.elevation;
-        rect->projection_parameters.scale_factor = this->pano->scale_factor;
-
-        // Add selection object to list
-        this->pano->rect_list.append(rect);
-
-        QGraphicsProxyWidget *proxyWidget = new QGraphicsProxyWidget();
-        proxyWidget->setWidget(rect);
-
-        // Add selection object to scene
-        this->pano->scene->addItem(proxyWidget);
-    }*/
-
-    emit refreshLabels();
-}
-
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
     this->pano->backupPosition();
     this->pano->scale_factor = (position / 10.0);
     this->pano->render();
-}
-
-void MainWindow::on_pushButton_2_clicked()
-{
-    foreach(ObjectRect* rect, this->pano->rect_list)
-    {
-        this->pano->rect_list.removeOne( rect );
-        delete rect;
-    }
-
-    emit refreshLabels();
-}
-
-void MainWindow::on_pushButton_3_clicked()
-{
-    YMLParser parser;
-    parser.writeYML( this->pano->rect_list, this->output_yml );
 }

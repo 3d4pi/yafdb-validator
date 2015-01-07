@@ -77,6 +77,8 @@ private:
         bool CTRL;
     } pressed_keys;
 
+    int mode;
+
 protected:
     void wheelEvent(QWheelEvent* event);
     void keyPressEvent(QKeyEvent *event);

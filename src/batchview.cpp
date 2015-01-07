@@ -7,6 +7,8 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano, int batchmode, int b
 {
     ui->setupUi(this);
 
+    this->mode = BatchMode::Manual;
+
     this->pano = pano;
 
     this->MainLayout = new FlowLayout();
@@ -132,6 +134,8 @@ BatchView::~BatchView()
 
 void BatchView::setMode(int mode)
 {   
+    this->mode = mode;
+
     switch(mode)
     {
     case BatchMode::Manual:
@@ -302,6 +306,7 @@ void BatchView::on_ApplyButton_clicked()
 {
     bool replyMSG = true;
     bool haveNoClass = false;
+    bool haveNoSubClass = false;
     bool haveNoManualState = false;
 
     foreach(ObjectItem* item, this->elements)
@@ -310,6 +315,18 @@ void BatchView::on_ApplyButton_clicked()
         {
             haveNoClass = true;
             break;
+        }
+    }
+
+    foreach(ObjectItem* item, this->elements)
+    {
+        if(item->type == ObjectType::Face)
+        {
+            if(item->sub_type == ObjectSubType::None)
+            {
+                haveNoSubClass = true;
+                break;
+            }
         }
     }
 
@@ -341,6 +358,21 @@ void BatchView::on_ApplyButton_clicked()
     } else if(!haveNoClass && haveNoManualState) {
         QMessageBox::StandardButton reply;
         reply = QMessageBox::question(this, "Warning", "Not all objects have been validated, quit anyway?",
+                                      QMessageBox::Yes|QMessageBox::No);
+        if (reply == QMessageBox::No) {
+            replyMSG = false;
+        }
+
+        if(replyMSG)
+        {
+            this->mergeResults();
+            emit refreshLabels();
+            this->pano->render();
+            this->close();
+        }
+    } else if( haveNoSubClass && ( this->mode == BatchMode::Manual ) ) {
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Warning", "Not all objects have a sub type defined, quit anyway?",
                                       QMessageBox::Yes|QMessageBox::No);
         if (reply == QMessageBox::No) {
             replyMSG = false;

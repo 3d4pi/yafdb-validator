@@ -290,6 +290,7 @@ void ObjectItem::setRect(ObjectRect *src_rect)
     this->setId(src_rect->getId());
     this->setImage(this->parent_pano->cropObject(src_rect));
     this->setType(src_rect->getType());
+    this->setSubType( src_rect->getSubType() );
     this->setBlurred(src_rect->isBlurred());
     this->setValidState(src_rect->getObjectRectState());
     this->setManualStatus(src_rect->getManualStatus());

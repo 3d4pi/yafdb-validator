@@ -22,8 +22,14 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent, QStringList args);
+    explicit MainWindow(QWidget *parent, QString sourceImagePath, QString detectorYMLPath, QString destinationYMLPath);
     ~MainWindow();
+
+    struct Options_Container {
+        QString sourceImagePath;
+        QString detectorYMLPath;
+        QString destinationYMLPath;
+    } options;
 
 private slots:
     void refreshLabels();

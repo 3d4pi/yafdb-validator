@@ -7,7 +7,7 @@
 
 #include "ymlparser.h"
 
-MainWindow::MainWindow(QWidget *parent, QStringList args) :
+MainWindow::MainWindow(QWidget *parent, QString sourceImagePath, QString detectorYMLPath, QString destinationYMLPath) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -15,6 +15,10 @@ MainWindow::MainWindow(QWidget *parent, QStringList args) :
 
     this->timer = new QElapsedTimer();
     this->timer->start();
+
+    this->options.sourceImagePath = sourceImagePath.length() > 0 ? sourceImagePath : "";
+    this->options.detectorYMLPath = detectorYMLPath.length() > 0 ? detectorYMLPath : "";
+    this->options.destinationYMLPath = destinationYMLPath.length() > 0 ? destinationYMLPath : "";
 
     // Determine good labels colors based on system theme
     QString good_color_string = "rgb(%1, %2, %3)";
@@ -66,76 +70,123 @@ MainWindow::MainWindow(QWidget *parent, QStringList args) :
 
     //this->ui->horizontalSlider->setValue(this->pano->scale_factor * 100);
 
+    bool sourceImageFile_exists = false;
+    bool detectorYMLFile_exists = false;
+    bool destinationYMLFile_exists = false;
+
+    if( this->options.sourceImagePath.length() > 0 )
+    {
+        QFileInfo sourceImageFile( this->options.sourceImagePath );
+        sourceImageFile_exists = ( sourceImageFile.exists() && sourceImageFile.isFile( ));
+    }
+
+    if( this->options.detectorYMLPath.length() > 0 )
+    {
+        QFileInfo detectorYMLFile( this->options.detectorYMLPath );
+        detectorYMLFile_exists = ( detectorYMLFile.exists() && detectorYMLFile.isFile( ));
+    }
+
+    if( this->options.destinationYMLPath.length() > 0 )
+    {
+        QFileInfo destinationYMLFile( this->options.destinationYMLPath );
+        destinationYMLFile_exists = ( destinationYMLFile.exists() && destinationYMLFile.isFile( ));
+    }
+
+    if( !sourceImageFile_exists )
+    {
+        std::cout << "[ERROR] Invalid source image path: " << this->options.sourceImagePath.toStdString() << std::endl;
+        exit( 0 );
+    }
+
+    if( this->options.detectorYMLPath.length() > 0 && !detectorYMLFile_exists )
+    {
+        std::cout << "[ERROR] Invalid detector YML path: " << this->options.detectorYMLPath.toStdString() << std::endl;
+    }
+
     // Load input image
-    this->pano->loadImage( args.at( 0 ) );
+    this->pano->loadImage( this->options.sourceImagePath );
 
     YMLParser parser;
 
-    QFileInfo file1( args.at( 0 ) );
-    QFileInfo file2( args.at( 1 ) );
-    QFileInfo file3( args.at( 2 ) );
-
-    bool file1_exists = ( file1.exists() && file1.isFile( ));
-    bool file2_exists = ( file2.exists() && file2.isFile( ));
-
-    if( !file1_exists )
+    if( this->options.detectorYMLPath.length() > 0 )
     {
-        std::cout << "Invalid image path: " << args.at( 0 ).toStdString() << std::endl;
-    }
-
-    if( !file2_exists )
-    {
-        std::cout << "Invalid source YML path: " << args.at( 1 ).toStdString() << std::endl;
-    }
-
-    if( !file1_exists || !file2_exists)
-        exit( 0 );
-
-    if (file3.exists() && file3.isFile()) {
-        QList<ObjectRect*> loaded_rects = parser.loadYML( args.at( 2 ), YMLType::Validator );
-
-        foreach(ObjectRect* rect, loaded_rects)
+        if( detectorYMLFile_exists )
         {
+            if( destinationYMLFile_exists )
+            {
+                QList<ObjectRect*> loaded_rects = parser.loadYML( this->options.destinationYMLPath, YMLType::Validator );
 
-            rect->mapTo(this->pano->dest_image_map.width(),
-                        this->pano->dest_image_map.height(),
-                        this->pano->position.azimuth,
-                        this->pano->position.elevation,
-                        this->pano->position.aperture);
+                foreach(ObjectRect* rect, loaded_rects)
+                {
 
-            rect->setId( this->pano->rect_list_index++ );
-            this->pano->rect_list.append( rect );
-            this->pano->scene->addItem( rect );
+                    rect->mapTo(this->pano->dest_image_map.width(),
+                                this->pano->dest_image_map.height(),
+                                this->pano->position.azimuth,
+                                this->pano->position.elevation,
+                                this->pano->position.aperture);
 
-            if( !this->pano->isObjectVisible( rect ) )
-                rect->setVisible( false );
+                    rect->setId( this->pano->rect_list_index++ );
+                    this->pano->rect_list.append( rect );
+                    this->pano->scene->addItem( rect );
+
+                    if( !this->pano->isObjectVisible( rect ) )
+                        rect->setVisible( false );
+                }
+            } else {
+                QList<ObjectRect*> loaded_rects = parser.loadYML( this->options.detectorYMLPath, YMLType::Detector );
+
+                foreach(ObjectRect* rect, loaded_rects)
+                {
+
+                    rect->mapFromSpherical(this->pano->src_image.width(),
+                                           this->pano->src_image.height(),
+                                           this->pano->dest_image_map.width(),
+                                           this->pano->dest_image_map.height(),
+                                           this->pano->position.azimuth,
+                                           this->pano->position.elevation,
+                                           this->pano->position.aperture,
+                                           this->pano->zoom_min * ( LG_PI / 180.0 ),
+                                           this->pano->zoom_max * ( LG_PI / 180.0 ));
+
+                    rect->setId( this->pano->rect_list_index++ );
+                    this->pano->rect_list.append( rect );
+                    this->pano->scene->addItem( rect );
+
+                    if( !this->pano->isObjectVisible( rect ) )
+                        rect->setVisible( false );
+                }
+            }
         }
     } else {
-        QList<ObjectRect*> loaded_rects = parser.loadYML( args.at( 1 ), YMLType::Detector );
-
-        foreach(ObjectRect* rect, loaded_rects)
+        if( this->options.destinationYMLPath.length() > 0 )
         {
+            if( destinationYMLFile_exists )
+            {
+                QList<ObjectRect*> loaded_rects = parser.loadYML( this->options.destinationYMLPath, YMLType::Validator );
 
-            rect->mapFromSpherical(this->pano->src_image.width(),
-                                   this->pano->src_image.height(),
-                                   this->pano->dest_image_map.width(),
-                                   this->pano->dest_image_map.height(),
-                                   this->pano->position.azimuth,
-                                   this->pano->position.elevation,
-                                   this->pano->position.aperture,
-                                   this->pano->zoom_min * ( LG_PI / 180.0 ),
-                                   this->pano->zoom_max * ( LG_PI / 180.0 ));
+                foreach(ObjectRect* rect, loaded_rects)
+                {
 
-            rect->setId( this->pano->rect_list_index++ );
-            this->pano->rect_list.append( rect );
-            this->pano->scene->addItem( rect );
+                    rect->mapTo(this->pano->dest_image_map.width(),
+                                this->pano->dest_image_map.height(),
+                                this->pano->position.azimuth,
+                                this->pano->position.elevation,
+                                this->pano->position.aperture);
 
-            if( !this->pano->isObjectVisible( rect ) )
-                rect->setVisible( false );
+                    rect->setId( this->pano->rect_list_index++ );
+                    this->pano->rect_list.append( rect );
+                    this->pano->scene->addItem( rect );
+
+                    if( !this->pano->isObjectVisible( rect ) )
+                        rect->setVisible( false );
+                }
+            }
+        } else {
+            exit( 0 );
         }
     }
 
-    this->output_yml = args.at( 2 );
+    this->output_yml = this->options.destinationYMLPath;
 
     // Initialize labels
     emit refreshLabels();

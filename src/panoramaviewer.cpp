@@ -1,4 +1,3 @@
-#include <QDebug>
 #include <QApplication>
 #include <QGraphicsProxyWidget>
 #include <QToolTip>
@@ -9,7 +8,7 @@
 
 #define CHANNELS_COUNT 4
 
-PanoramaViewer::PanoramaViewer(QWidget *parent) :
+PanoramaViewer::PanoramaViewer(QWidget *parent, bool connectSlots) :
     QGraphicsView(parent)
 {
 
@@ -76,9 +75,11 @@ PanoramaViewer::PanoramaViewer(QWidget *parent) :
     this->pressed_keys.CTRL = false;
 
     // Connect signal for labels refresh
-    connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels()));
-
-    connect(this, SIGNAL(updateScaleSlider(int)), parent, SLOT(updateScaleSlider(int)));
+    if( connectSlots )
+    {
+        connect(this, SIGNAL(refreshLabels()), parent, SLOT(refreshLabels()));
+        connect(this, SIGNAL(updateScaleSlider(int)), parent, SLOT(updateScaleSlider(int)));
+    }
 }
 
 inline float clamp(float x, float a, float b)
@@ -327,8 +328,6 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
 
         if(this->selected_rect)
         {
-
-            qDebug() << "Mode::MoveCreate";
             // Store base positions (Used to determine offset to move in panorama later)
             this->position.start_x = mouse_scene.x();
             this->position.start_y = mouse_scene.y();
@@ -381,8 +380,6 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
             // Check if mouse in in sight
             if(!this->isInSight( mouse_scene ))
                 return;
-
-            qDebug() << "Mode::Create";
 
             // Switch in creation mode
             this->mode = Mode::Create;
@@ -553,8 +550,6 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
 
         if(!this->isObjectInSight( points[0], points[1], points[2], points[3] ))
             return;
-
-        qDebug() << "Mode::MoveCreate";
 
         // Check that scene has not moved
         if( this->selected_rect->proj_azimuth() != this->position.azimuth ||

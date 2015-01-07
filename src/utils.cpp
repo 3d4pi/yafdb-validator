@@ -12,7 +12,11 @@ QImage*  IplImage2QImage(IplImage *iplImg)
     {
         for (int x = 0; x < w; x++)
         {
-            char r, g, b, a = 0;
+            char r = 0;
+            char g = 0;
+            char b = 0;
+            char a = 0;
+
             if (channels == 1)
             {
                 r = data[x * channels];

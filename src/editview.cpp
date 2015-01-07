@@ -40,7 +40,7 @@ EditView::EditView(QWidget *parent, ObjectRect* rect, PanoramaViewer::image_info
     this->showMaximized();
 
     // Create panorama viewer
-    this->pano = new PanoramaViewer(this);
+    this->pano = new PanoramaViewer(this, false);
 
     // Set image settings
     this->pano->image_info = image_info;

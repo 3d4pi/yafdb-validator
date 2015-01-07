@@ -20,7 +20,7 @@ class PanoramaViewer : public QGraphicsView
 {
     Q_OBJECT
 public:
-    explicit PanoramaViewer(QWidget *parent = 0);
+    explicit PanoramaViewer(QWidget *parent = 0, bool connectSlots = true);
 
     float scale_factor;
     int rect_list_index;

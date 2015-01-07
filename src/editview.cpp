@@ -74,10 +74,6 @@ EditView::EditView(QWidget *parent, ObjectRect* rect, PanoramaViewer::image_info
         this->ui->deleteButton->setEnabled( false );
     }
 
-    // Load input image
-
-    this->pano->loadImage( *pano_parent->image_info.image );
-
     // Set-up labels
     this->ui->subClassLabel->setText("Sub classes: None");
 

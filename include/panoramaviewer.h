@@ -32,7 +32,6 @@ public:
 
     void setup(int width, int height, float scale_factor, float zoom_min, float zoom_max, float zoom_def, int threads);
     void loadImage(QString path);
-    void loadImage(QImage image);
     void updateScene(float azimuth, float elevation, float zoom);
     void render();
     void setZoom(float zoom);

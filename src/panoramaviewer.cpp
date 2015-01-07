@@ -130,13 +130,6 @@ void PanoramaViewer::loadImage(QString path)
     this->render();
 }
 
-void PanoramaViewer::loadImage(QImage image)
-{
-    this->image_info.image = new QImage( image );
-    this->src_image_map = QPixmap::fromImage(image);
-    this->render();
-}
-
 void PanoramaViewer::updateScene(float azimuth, float elevation, float zoom)
 {
     if( this->image_info.image == NULL )

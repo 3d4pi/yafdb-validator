@@ -201,8 +201,8 @@ void PanoramaViewer::render()
     foreach(ObjectRect* rect, this->rect_list)
     {
 
-        if( rect->getSize().width() < 0.0 ||
-               rect->getSize().height() < 0.0 )
+        if( rect->getSize().width() < 1 ||
+               rect->getSize().height() < 1 )
         {
             this->rect_list.removeOne( rect );
             delete rect;

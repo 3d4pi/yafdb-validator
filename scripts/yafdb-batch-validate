@@ -9,6 +9,7 @@ import re
 import signal
 import sys
 
+import subprocess
 
 # Function to catch CTRL-C
 def signal_handler(_signal, _frame):
@@ -160,7 +161,7 @@ def main(argv):
             __HASH__ = HashFile("yml_configs/result_%s_v2.yml" % ts)
 
             # Start validation
-            os.system("yafdb-validate -i ../result_%s-0-25-1.jpeg -d yml_configs/result_%s.yml -o yml_configs/result_%s_v2.yml" % (ts, ts, ts))
+            subprocess.call("yafdb-validate -i ../result_%s-0-25-1.jpeg -d yml_configs/result_%s.yml -o yml_configs/result_%s_v2.yml" % (ts, ts, ts), shell=True)
 
             # Compare stored hash with new hash
             if not HashFile("yml_configs/result_%s_v2.yml" % ts) in __HASH__:
@@ -178,7 +179,7 @@ def main(argv):
             print("[Create] Processing image %d of %d (%s)" % (__INDEX__, len(__TIMESTAMPS_LEFT__), ts))
 
             # Start validation
-            os.system("yafdb-validate -i ../result_%s-0-25-1.jpeg -d yml_configs/result_%s.yml -o yml_configs/result_%s_v2.yml" % (ts, ts, ts))
+            subprocess.call("yafdb-validate -i ../result_%s-0-25-1.jpeg -d yml_configs/result_%s.yml -o yml_configs/result_%s_v2.yml" % (ts, ts, ts), shell=True)
 
             # Check if image yml file exists
             if os.path.isfile("yml_configs/result_%s_v2.yml" % ts):

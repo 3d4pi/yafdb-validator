@@ -171,6 +171,10 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
         {
             object->setObjectRectType( ObjectRectType::Valid );
             object->setAutomaticStatus( "Valid" );
+
+            if( ymltype == YMLType::Detector )
+            object->setBlurred( true );
+
         } else {
             object->setObjectRectType( ObjectRectType::Invalid );
 
@@ -242,12 +246,15 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
 
     }
 
-    std::string blurObject;
-    (*iterator)["blurObject"] >> blurObject;
+    if( ymltype == YMLType::Validator )
+    {
+        std::string blurObject;
+        (*iterator)["blurObject"] >> blurObject;
 
-    QString blurObject_lower = QString( blurObject.c_str() ).toLower();
+        QString blurObject_lower = QString( blurObject.c_str() ).toLower();
 
-    object->setBlurred( blurObject_lower == "yes" ? true : false );
+        object->setBlurred( blurObject_lower == "yes" ? true : false );
+    }
 
     cv::FileNode childNode = (*iterator)["childrens"];
     for (cv::FileNodeIterator child = childNode.begin(); child != childNode.end(); ++child) {

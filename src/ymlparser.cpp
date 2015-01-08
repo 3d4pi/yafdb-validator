@@ -59,6 +59,7 @@ void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
     // Write status tags
     fs << "autoStatus" << obj->getAutomaticStatus().toStdString();
     fs << "manualStatus" << obj->getManualStatus().toStdString();
+    fs << "blurObject" << (obj->isBlurred() ? "Yes" : "No");
 }
 
 ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
@@ -240,6 +241,13 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
         }
 
     }
+
+    std::string blurObject;
+    (*iterator)["blurObject"] >> blurObject;
+
+    QString blurObject_lower = QString( blurObject.c_str() ).toLower();
+
+    object->setBlurred( blurObject_lower == "yes" ? true : false );
 
     cv::FileNode childNode = (*iterator)["childrens"];
     for (cv::FileNodeIterator child = childNode.begin(); child != childNode.end(); ++child) {

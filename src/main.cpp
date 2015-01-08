@@ -96,6 +96,8 @@ int main(int argc, char *argv[])
             exit( 0 );
         }
 
+        std::cout << "Reading image..." << std::endl;
+
         IplImage * temp_image = NULL;
         temp_image = cvLoadImage( sourceImagePath.toStdString().c_str(), CV_LOAD_IMAGE_UNCHANGED );
 

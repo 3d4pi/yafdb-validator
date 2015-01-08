@@ -1,0 +1,194 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import getopt
+import glob
+import hashlib
+import os
+import re
+import signal
+import sys
+
+
+# Function to catch CTRL-C
+def signal_handler(_signal, _frame):
+    del _signal
+    del _frame
+    print("Interrupted!")
+    sys.exit(0)
+signal.signal(signal.SIGINT, signal_handler)
+
+# Compute SHA-256 hash of specified file
+def HashFile(File):
+    return hashlib.sha256(open(File, 'rb').read()).hexdigest()
+
+# Read validated timestamps from file
+def LoadState(File):
+
+    # Variables
+    List = []
+
+    # Open file and insert each entry into an array
+    with open(File, 'r') as f:
+        List = [line.rstrip('\n') for line in f]
+
+    # Return the result
+    return List
+
+# Write validated timestamps to a file
+def SaveState(File, List, ts):
+
+    # Insert timestamp into array if not present
+    if not ts in List:
+        List.append(ts)
+
+    # Save array to file
+    with open(File, 'w') as f:
+        for s in List:
+            f.write(s + '\n')
+
+# Ask user for y/n input
+def yn_choice(message, default='n'):
+
+    # Default choices
+    choices = 'y/N' if default.lower() in ('y', 'yes') else 'y/N'
+
+    # User input choice
+    choice = raw_input("%s (%s) " % (message, choices))
+
+    # Default values
+    values = ('y', 'yes', '') if default == 'y' else ('y', 'yes')
+
+    # Compare input and return result
+    return choice.strip().lower() in values
+
+# Prints usage
+def _usage():
+    print """
+    Usage: %s [OPTIONS]
+
+    -h --help           Prints this
+    -i --ignore         Ignore validated images
+    -c --convert        Write all yml files timestamps to state file
+    -d --dir            Base directory
+    -s --state          State file location (Default: validated.job)
+    """ % os.path.basename(sys.argv[0])
+    return
+
+# Program entry point function
+def main(argv):
+
+    # Variables
+    __STATE__            = []
+    __TIMESTAMPS__       = []
+    __TIMESTAMPS_LEFT__  = []
+    __INDEX__            = 1
+    __HASH__             = ""
+    __IGNORE_VALIDATED__ = 0
+    __STATE_FILE__       = "validated.job"
+
+    # Arguments parser
+    try:
+        opt, args = getopt.getopt(argv, "hicd:s:", ["help", "ignore", "convert", "dir=", "state="])
+    except getopt.GetoptError, err:
+        print str(err)
+        _usage()
+        sys.exit(2)
+    for o, a in opt:
+        if o in ("-h", "--help"):
+            _usage()
+            sys.exit()
+        if o in ("-c", "--convert"):
+
+            # Get timestamps
+            __TIMESTAMPS__ = [re.search(r"result_(\d+_\d+).*.yml", ts).group(1) for ts in glob.glob("yml_configs/*.yml")]
+
+            # Write timestamps to file
+            with open("validated.job", 'w') as f:
+                for s in __TIMESTAMPS__:
+                    f.write(s + '\n')
+
+            # Exit program
+            sys.exit()
+        elif o in ("-i", "--ignore"):
+            __IGNORE_VALIDATED__ = 1
+        elif o in ("-d", "--dir"):
+
+            # Check for base directories presence
+            if not os.path.isdir(a):
+                print("Error, directory '%s' does not exists" % a)
+                sys.exit(0)
+            else:
+                os.chdir(a)
+        elif o in ("-s", "--state"):
+            __STATE_FILE__ = a
+        else:
+            assert False, "unhandled option"
+
+    # Check for base directories presence
+    if not os.path.isdir("yml_configs"):
+        print("Directory yml_configs not found, are you in a 'blurring' yafdb directory ?")
+        sys.exit(0)
+
+    # Get all timestamps in images folder (results)
+    __TIMESTAMPS__ = [re.search(r"result_(\d+_\d+)\-0\-25\-1.jpeg", ts).group(1) for ts in glob.glob("../*.jpeg")]
+
+    # Check if state file exists, if exists load it
+    if os.path.isfile(__STATE_FILE__):
+        __STATE__ = LoadState(__STATE_FILE__)
+
+    # Build timestamps list with non-processed items
+    for ts in __TIMESTAMPS__:
+        if not ts in __STATE__:
+            __TIMESTAMPS_LEFT__.append(ts)
+        elif __IGNORE_VALIDATED__:
+            __TIMESTAMPS_LEFT__.append(ts)
+
+    # Verify number of items left
+    if len(__TIMESTAMPS_LEFT__) == 0:
+        print("No image(s) to process")
+        return
+
+    # Walk over timestamps
+    for ts in __TIMESTAMPS_LEFT__:
+
+        # Check if image yml file exists
+        if os.path.isfile("yml_configs/result_%s_v2.yml" % ts):
+            print("[Edit] Processing image %d of %d (%s)" % (__INDEX__, len(__TIMESTAMPS_LEFT__), ts))
+
+            # Hash file for future comparison
+            __HASH__ = HashFile("yml_configs/result_%s_v2.yml" % ts)
+
+            # Start validation
+            os.system("yafdb-validate -i ../result_%s-0-25-1.jpeg -d yml_configs/result_%s.yml -o yml_configs/result_%s_v2.yml" % (ts, ts, ts))
+
+            # Compare stored hash with new hash
+            if not HashFile("yml_configs/result_%s_v2.yml" % ts) in __HASH__:
+
+                # Save validated timestamps
+                SaveState(__STATE_FILE__, __STATE__, ts)
+            else:
+
+                # Ask user to save file when no modification has been performed
+                if(yn_choice("No changes detected, do you want to mark this image as processed ?")):
+
+                    # Save validated timestamps
+                    SaveState(__STATE_FILE__, __STATE__, ts)
+        else:
+            print("[Create] Processing image %d of %d (%s)" % (__INDEX__, len(__TIMESTAMPS_LEFT__), ts))
+
+            # Start validation
+            os.system("yafdb-validate -i ../result_%s-0-25-1.jpeg -d yml_configs/result_%s.yml -o yml_configs/result_%s_v2.yml" % (ts, ts, ts))
+
+            # Check if image yml file exists
+            if os.path.isfile("yml_configs/result_%s_v2.yml" % ts):
+
+                # Save validated timestamps
+                SaveState(__STATE_FILE__, __STATE__, ts)
+
+        # Increment file index
+        __INDEX__ += 1
+
+# Program entry point
+if __name__ == "__main__":
+    main(sys.argv[1:])

@@ -58,6 +58,7 @@ public:
 
     // Size getters
     QSizeF getSize();
+    QSizeF getSizeCurrent();
     float  getBorderWidth();
 
     // Id setter

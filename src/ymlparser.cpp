@@ -157,20 +157,6 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
     object->setProjectionParametters(azimuth, elevation, aperture, width, height);
     object->setProjectionPoints();
 
-    switch(ymltype)
-    {
-    case YMLType::Detector:
-        areaNode["p1"] >> pt_1;
-        areaNode["p2"] >> pt_3;
-        break;
-    case YMLType::Validator:
-        areaNode["p1"] >> pt_1;
-        areaNode["p2"] >> pt_2;
-        areaNode["p3"] >> pt_3;
-        areaNode["p4"] >> pt_4;
-        break;
-    }
-
     // Parse auto status
     std::string autoStatus;
     (*iterator)["autoStatus"] >> autoStatus;

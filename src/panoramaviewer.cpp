@@ -201,32 +201,40 @@ void PanoramaViewer::render()
     foreach(ObjectRect* rect, this->rect_list)
     {
 
-        // Check that scene has not moved
-        if(rect->getAutomaticStatus() == "None")
+        if( rect->getSize().width() < 0.0 ||
+               rect->getSize().height() < 0.0 )
         {
-            if( rect->proj_azimuth() != this->position.azimuth ||
-                    rect->proj_elevation() != this->position.elevation ||
-                    rect->proj_aperture() != this->position.aperture )
+            this->rect_list.removeOne( rect );
+            delete rect;
+            emit refreshLabels();
+        } else {
+            // Check that scene has not moved
+            if(rect->getAutomaticStatus() == "None")
             {
-                rect->setResizeEnabled( false );
+                if( rect->proj_azimuth() != this->position.azimuth ||
+                        rect->proj_elevation() != this->position.elevation ||
+                        rect->proj_aperture() != this->position.aperture )
+                {
+                    rect->setResizeEnabled( false );
+                } else {
+                    rect->setResizeEnabled( true );
+                }
             } else {
-                rect->setResizeEnabled( true );
+                rect->setResizeEnabled( false );
             }
-        } else {
-            rect->setResizeEnabled( false );
-        }
 
-        rect->mapTo(this->dest_image_map.width(),
-                    this->dest_image_map.height(),
-                    this->position.azimuth,
-                    this->position.elevation,
-                    this->position.aperture);
+            rect->mapTo(this->dest_image_map.width(),
+                        this->dest_image_map.height(),
+                        this->position.azimuth,
+                        this->position.elevation,
+                        this->position.aperture);
 
-        if( this->isObjectVisible( rect ) )
-        {
-            rect->setVisible( true );
-        } else {
-            rect->setVisible( false );
+            if( this->isObjectVisible( rect ) )
+            {
+                rect->setVisible( true );
+            } else {
+                rect->setVisible( false );
+            }
         }
     }
 }
@@ -534,8 +542,8 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
             );
 
             QToolTip::showText(event->globalPos(),
-                               QString::number( (int) (this->increation_rect.rect->getSize().width() / this->scale_factor) ) + "x" +
-                               QString::number( (int) (this->increation_rect.rect->getSize().height() / this->scale_factor )),
+                               QString::number( (int) (this->increation_rect.rect->getSizeCurrent().width() / this->scale_factor) ) + "x" +
+                               QString::number( (int) (this->increation_rect.rect->getSizeCurrent().height() / this->scale_factor )),
                                this, rect() );
 
         }

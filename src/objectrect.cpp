@@ -284,6 +284,20 @@ void ObjectRect::setSize(QSizeF size)
 
 QSizeF ObjectRect::getSize()
 {
+    QPointF p1 = this->proj_point_1();
+    QPointF p2 = this->proj_point_2();
+    QPointF p4 = this->proj_point_4();
+
+    QSizeF size;
+
+    size.setWidth( p4.x() -  p1.x());
+    size.setHeight( p2.y() -  p1.y());
+
+    return size;
+}
+
+QSizeF ObjectRect::getSizeCurrent()
+{
     QPointF p1 = this->points[0];
     QPointF p2 = this->points[1];
     QPointF p4 = this->points[3];
@@ -410,7 +424,7 @@ void ObjectRect::render()
     this->resize_rect->setPolygon( this->resize_rect_polygon );
 
 
-    if(this->getSize().width() < 70 || this->getSize().height() < 70 )
+    if(this->getSizeCurrent().width() < 70 || this->getSizeCurrent().height() < 70 )
     {
         this->pen->setWidth( 1 );
         this->contour_pen->setWidth( 1 );

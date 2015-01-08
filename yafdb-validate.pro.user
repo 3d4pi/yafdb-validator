@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 3.2.1, 2015-01-07T12:32:12. -->
+<!-- Written by QtCreator 3.2.1, 2015-01-08T12:17:08. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -237,7 +237,7 @@
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">yafdb-validate</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/home/f0x/Documents/QT/yafdb-validate/yafdb-validate.pro</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">-i ~/Bureau/RMLL_photo/result_1404655303_920436-0-25-1.jpeg -o ~/Bureau/test.yml -d ~/Bureau/Photo_RMLL_2014_panoramique\,_WE_grand_public.yml</value>
+    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments">-i /data/glusterfs/footage/1417789737/results_multiblend/result_1417789822_245346-0-25-1.jpeg -d /data/glusterfs/footage/1417789737/results_multiblend/blurring/yml_configs/result_1417789822_245346.yml -o /data/glusterfs/footage/1417789737/results_multiblend/blurring/yml_configs/result_1417789822_245346_v2.yml</value>
     <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">yafdb-validate.pro</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
     <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseTerminal">false</value>

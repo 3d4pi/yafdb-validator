@@ -141,6 +141,20 @@ int main(int argc, char *argv[])
                 break;
             }
 
+            if( rect->getManualStatus().toLower() == "valid" )
+            {
+                path += "Valid/";
+            } else if ( rect->getManualStatus().toLower() == "invalid" ){
+                path += "Invalid/";
+            } else {
+                if( rect->getAutomaticStatus().toLower() == "valid" )
+                {
+                    path += "Valid_Not_Validated/";
+                } else {
+                    path += "Invalid_Not_Validated/";
+                }
+            }
+
             if(!QDir( path ).exists())
             {
                 QDir().mkpath( path );

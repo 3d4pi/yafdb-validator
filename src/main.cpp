@@ -147,13 +147,7 @@ int main(int argc, char *argv[])
             }
 
             exportRect( rect, image_info, path +
-                        QString::number(rect->getPoint1().x()) +
-                        "-" +
-                        QString::number(rect->getPoint1().y()) +
-                        "_" +
-                        QString::number(rect->getPoint3().x()) +
-                        "-" +
-                        QString::number(rect->getPoint3().y()) +
+                        QString::number(rect->getId()) +
                         ".png",
                         export_zoom);
         }

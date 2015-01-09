@@ -129,7 +129,6 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
                                 this->pano->position.elevation,
                                 this->pano->position.aperture);
 
-                    rect->setId( this->pano->rect_list_index++ );
                     this->pano->rect_list.append( rect );
                     this->pano->scene->addItem( rect );
 
@@ -152,7 +151,6 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
                                            this->pano->zoom_min * ( LG_PI / 180.0 ),
                                            this->pano->zoom_max * ( LG_PI / 180.0 ));
 
-                    rect->setId( this->pano->rect_list_index++ );
                     this->pano->rect_list.append( rect );
                     this->pano->scene->addItem( rect );
 
@@ -177,7 +175,6 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
                                 this->pano->position.elevation,
                                 this->pano->position.aperture);
 
-                    rect->setId( this->pano->rect_list_index++ );
                     this->pano->rect_list.append( rect );
                     this->pano->scene->addItem( rect );
 

@@ -62,7 +62,7 @@ void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
     fs << "blurObject" << (obj->isBlurred() ? "Yes" : "No");
 }
 
-ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
+ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype, int parent_count)
 {
     // Initialize detected object
     ObjectRect* object = new ObjectRect;
@@ -258,6 +258,8 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
 
     cv::FileNode childNode = (*iterator)["childrens"];
     for (cv::FileNodeIterator child = childNode.begin(); child != childNode.end(); ++child) {
+        ObjectRect* childRect = this->readItem( child );
+        childRect->setId( parent_count + object->childrens.length() );
         object->childrens.append( this->readItem( child ) );
     }
 
@@ -325,12 +327,15 @@ QList<ObjectRect*> YMLParser::loadYML(QString path, int ymltype)
     for (cv::FileNodeIterator it = objectsNode.begin(); it != objectsNode.end(); ++it) {
 
         // Initialize detected object
-        ObjectRect* object = this->readItem(it, ymltype);
+        ObjectRect* object = this->readItem(it, ymltype, out_list.length());
 
         std::string source_image;
         fs["source_image"] >> source_image;
 
         object->setSourceImagePath( QString(source_image.c_str()) );
+
+        // Assign id
+        object->setId( out_list.length() + 1);
 
         // Append to list
         out_list.append(object);
@@ -340,7 +345,7 @@ QList<ObjectRect*> YMLParser::loadYML(QString path, int ymltype)
     for (cv::FileNodeIterator it = invalidObjectsNode.begin(); it != invalidObjectsNode.end(); ++it) {
 
         // Initialize detected object
-        ObjectRect* object = this->readItem(it, ymltype);
+        ObjectRect* object = this->readItem(it, ymltype, out_list.length());
 
         object->setObjectRectType( ObjectRectType::Invalid );
         object->setAutomaticStatus( (object->getAutomaticStatus().length() <= 0 || object->getAutomaticStatus() == "None") ? "MissingOption" : object->getAutomaticStatus() );
@@ -349,6 +354,9 @@ QList<ObjectRect*> YMLParser::loadYML(QString path, int ymltype)
         fs["source_image"] >> source_image;
 
         object->setSourceImagePath( QString(source_image.c_str()) );
+
+        // Assign id
+        object->setId( out_list.length() + 1 );
 
         // Append to list
         out_list.append(object);

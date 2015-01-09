@@ -25,7 +25,7 @@ public:
 
 private:
     void writeItem(cv::FileStorage &fs, ObjectRect* obj);
-    ObjectRect* readItem(cv::FileNodeIterator iterator, int ymltype = YMLType::Validator);
+    ObjectRect* readItem(cv::FileNodeIterator iterator, int ymltype = YMLType::Validator, int parent_count = 0);
 };
 
 #endif // YMLREADER_H

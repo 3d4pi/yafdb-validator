@@ -51,6 +51,7 @@ PanoramaViewer::PanoramaViewer(QWidget *parent, bool connectSlots) :
     this->position.old_aperture = this->position.aperture;
     this->threads_count = 1;
     this->pixmap_initialized = false;
+    this->vis_group = PanoramaViewerVisGroups::All;
 
     this->increation_rect.rect = NULL;
 
@@ -228,15 +229,10 @@ void PanoramaViewer::render()
                         this->position.azimuth,
                         this->position.elevation,
                         this->position.aperture);
-
-            if( this->isObjectVisible( rect ) )
-            {
-                rect->setVisible( true );
-            } else {
-                rect->setVisible( false );
-            }
         }
     }
+
+    this->applyVisGroup();
 }
 
 // Function to update zoom of current scene
@@ -528,6 +524,9 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
                 mouse_scene
             );
 
+            // Refresh vis groups
+            this->applyVisGroup();
+
             // Refresh main window labels
             emit refreshLabels();
 
@@ -766,6 +765,85 @@ bool PanoramaViewer::isObjectVisible(ObjectRect *rect)
         return false;
     } else {
         return true;
+    }
+}
+
+void PanoramaViewer::setVisGroup(int visgroup)
+{
+    this->vis_group = visgroup;
+    this->applyVisGroup();
+}
+
+void PanoramaViewer::applyVisGroup()
+{
+    switch (this->vis_group) {
+    case PanoramaViewerVisGroups::All:
+        foreach(ObjectRect* obj, this->rect_list)
+        {
+            if( this->isObjectVisible( obj ) ){
+                obj->setVisible( true );
+            } else {
+                obj->setVisible( false );
+            }
+        }
+        break;
+    case PanoramaViewerVisGroups::Automatic:
+        foreach(ObjectRect* obj, this->rect_list)
+        {
+            if( this->isObjectVisible( obj ) )
+            {
+                if( obj->getAutomaticStatus().toLower() != "none" )
+                {
+                    obj->setVisible( true );
+                } else {
+                    obj->setVisible( false );
+                }
+            } else {
+                obj->setVisible( false );
+            }
+        }
+        break;
+    case PanoramaViewerVisGroups::Manual:
+            foreach(ObjectRect* obj, this->rect_list)
+            {
+                if( this->isObjectVisible( obj ) )
+                {
+                    if( obj->getAutomaticStatus().toLower() == "none" )
+                    {
+                        obj->setVisible( true );
+                    } else {
+                        obj->setVisible( false );
+                    }
+                } else {
+                    obj->setVisible( false );
+                }
+            }
+        break;
+    case PanoramaViewerVisGroups::InCreation:
+        foreach(ObjectRect* obj, this->rect_list)
+        {
+             obj->setVisible( false );
+        }
+        if( this->increation_rect.rect != NULL )
+        {
+            if( this->isObjectVisible( this->increation_rect.rect ) )
+            {
+                this->increation_rect.rect->setVisible( true );
+            } else {
+                this->increation_rect.rect->setVisible( false );
+            }
+        } else {
+            if( this->rect_list.length() > 0 )
+            {
+                if( this->isObjectVisible( this->rect_list.last() ) )
+                {
+                    this->rect_list.last()->setVisible( true );
+                } else {
+                    this->rect_list.last()->setVisible( false );
+                }
+            }
+        }
+        break;
     }
 }
 

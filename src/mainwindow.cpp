@@ -394,3 +394,23 @@ void MainWindow::on_horizontalSlider_sliderMoved(int position)
     this->pano->scale_factor = (position / 10.0);
     this->pano->render();
 }
+
+void MainWindow::on_allVisRadio_clicked()
+{
+    this->pano->setVisGroup( PanoramaViewerVisGroups::All );
+}
+
+void MainWindow::on_autoVisRadio_clicked()
+{
+    this->pano->setVisGroup( PanoramaViewerVisGroups::Automatic );
+}
+
+void MainWindow::on_manualVisRadio_clicked()
+{
+    this->pano->setVisGroup( PanoramaViewerVisGroups::Manual );
+}
+
+void MainWindow::on_inCreationVisRadio_clicked()
+{
+    this->pano->setVisGroup( PanoramaViewerVisGroups::InCreation );
+}

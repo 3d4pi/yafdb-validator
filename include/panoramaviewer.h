@@ -16,6 +16,14 @@
 #include "detectedobject.h"
 #include "utils.h"
 
+struct PanoramaViewerVisGroups
+{
+    enum Type
+    {
+        All = 1, Automatic = 2, Manual = 3, InCreation = 4
+    };
+};
+
 class PanoramaViewer : public QGraphicsView
 {
     Q_OBJECT
@@ -47,6 +55,8 @@ public:
     void setEditEnabled(bool value);
 
     bool isObjectVisible(ObjectRect* rect);
+
+    void setVisGroup( int visgroup );
 
     QList<ObjectRect*> rect_list;
 
@@ -116,6 +126,8 @@ private:
     bool isInSight(QPointF pos, float tolerance = 0.0);
     bool isObjectInSight(QPointF p1, QPointF p2, QPointF p3, QPointF p4);
 
+    void applyVisGroup();
+
     int mode;
     int resizePoint;
     bool moveEnabled;
@@ -134,6 +146,8 @@ private:
     QGraphicsPixmapItem* last_pixmap;
     ObjectRect * selected_rect;
     QGraphicsRectItem* sight;
+
+    int vis_group;
 
     struct {
         int start_x;

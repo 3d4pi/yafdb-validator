@@ -51,6 +51,14 @@ private slots:
 
     void on_toBlurButton_clicked();
 
+    void on_allVisRadio_clicked();
+
+    void on_autoVisRadio_clicked();
+
+    void on_manualVisRadio_clicked();
+
+    void on_inCreationVisRadio_clicked();
+
 private:
 
     void closeEvent (QCloseEvent *event);

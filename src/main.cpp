@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
     QCommandLineOption modeOption(QStringList() << "m" << "mode",
             QCoreApplication::translate("main", "Application mode"),
-            QCoreApplication::translate("main", "validator(default) | exporter"));
+            QCoreApplication::translate("main", "validator(default) | exporter | ymlconverter"));
     parser.addOption(modeOption);
 
     QCommandLineOption sourceImagePathOption(QStringList() << "i" << "input-image",
@@ -129,7 +129,7 @@ int main(int argc, char *argv[])
                     path = (exportPath + "/Face/Profile/");
                     break;
                 case ObjectSubType::None:
-                    path = (exportPath + "/Face/");
+                    path = (exportPath + "/Face/None/");
                     break;
                 }
                 break;

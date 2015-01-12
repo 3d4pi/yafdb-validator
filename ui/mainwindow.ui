@@ -284,6 +284,46 @@
         </layout>
        </widget>
       </item>
+      <item row="3" column="6">
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="title">
+         <string>Visibility groups</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_6">
+         <item row="0" column="0">
+          <widget class="QRadioButton" name="allVisRadio">
+           <property name="text">
+            <string>All</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QRadioButton" name="manualVisRadio">
+           <property name="text">
+            <string>Manual objects</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QRadioButton" name="autoVisRadio">
+           <property name="text">
+            <string>Automatic objects</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QRadioButton" name="inCreationVisRadio">
+           <property name="text">
+            <string>In creation object</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>

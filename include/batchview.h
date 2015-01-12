@@ -1,6 +1,7 @@
 #ifndef BATCHVIEW_H
 #define BATCHVIEW_H
 
+/* Imports */
 #include <QMainWindow>
 #include <QDesktopWidget>
 #include <QShortcut>
@@ -9,82 +10,104 @@
 #include <QMouseEvent>
 
 #include "flowlayout.h"
-#include "panoramaviewer.h"
 #include "objectrect.h"
 #include "objectitem.h"
 #include "panoramaviewer.h"
 
+/* Default class container */
 namespace Ui {
 class BatchView;
 }
 
+/* Main class */
 class BatchView : public QMainWindow
 {
     Q_OBJECT
 
+/* Public functions / variables */
 public:
+
+    /* Constructor */
     explicit BatchView(QWidget *parent, PanoramaViewer* pano, int batchmode, int batchviewmode);
+
+    /* Destructor */
     ~BatchView();
 
-    FlowLayout * MainLayout;
-    QList<ObjectItem*> elements;
-    QList<int> toremove_ids;
-
+    /* Function to set the window mode (manual objects, auto objects, etc) */
     void setMode(int mode);
-    void insertItem(ObjectRect* rect);
 
-
+/* Private slots */
 private slots:
+
+    /* UI components signal functions */
     void on_horizontalSlider_sliderMoved(int position);
-
     void on_CancelButton_clicked();
-
     void on_NoBlurButton_clicked();
-
     void on_BlurButton_clicked();
+    void on_ValidateButton_clicked();
+    void on_InvalidateButton_clicked();
+    void on_setType_clicked();
+    void on_ApplyButton_clicked();
+    void on_selectAllButton_clicked();
+    void on_unSelectAllButton_clicked();
+    void on_invertSelectionButton_clicked();
+    void on_deleteButton_clicked();
+    void on_setSubType_clicked();
 
+    /* Local UI actions */
     void selectAll();
     void unSelectAll();
     void invertSelection();
 
-    void on_ValidateButton_clicked();
-
-    void on_InvalidateButton_clicked();
-
-    void on_setType_clicked();
-
-    void on_ApplyButton_clicked();
-
-    void on_selectAllButton_clicked();
-
-    void on_unSelectAllButton_clicked();
-
-    void on_invertSelectionButton_clicked();
-
-    void on_deleteButton_clicked();
-
-    void on_setSubType_clicked();
-
+/* Private functions / variables */
 private:
+
+    /* View mode container */
+    int mode;
+
+    /* Main UI container */
     Ui::BatchView *ui;
 
+    /* Main PanoramaViewer container */
     PanoramaViewer* pano;
 
-    void mergeResults();
-    void populate(int batchviewmode);
+    /* Main layout container to store/display tiles */
+    FlowLayout * MainLayout;
 
-    struct {
+    /* Main tiles list */
+    QList<ObjectItem*> elements;
+
+    /* List of id's to be removed */
+    QList<int> toremove_ids;
+
+    /* Key statuses container structure */
+    struct pressed_keys_struct{
         bool CTRL;
     } pressed_keys;
 
-    int mode;
+    /* Function to insert a specified tile into view */
+    void insertItem(ObjectRect* rect);
+
+    /* Function to merge tiles to parent PanoramaViewer */
+    void mergeResults();
+
+    /* Function to draw tiles */
+    void populate(int batchviewmode);
 
 protected:
+
+    /* Mouse wheel event handling function */
     void wheelEvent(QWheelEvent* event);
+
+    /* Key press event handling function */
     void keyPressEvent(QKeyEvent *event);
+
+    /* Key release event handling function */
     void keyReleaseEvent(QKeyEvent *event);
 
 signals:
+
+    /* Signal to refresh parent window status labels */
     void refreshLabels();
 
 };

@@ -2,7 +2,6 @@
 #define YMLREADER_H
 
 #include <opencv2/core/core.hpp>
-#include "detectedobject.h"
 #include "objectrect.h"
 #include <QString>
 #include <QList>

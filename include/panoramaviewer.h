@@ -13,7 +13,6 @@
 #include <gnomonic-all.h>
 #include "g2g_point.h"
 #include "objectrect.h"
-#include "detectedobject.h"
 #include "utils.h"
 
 struct PanoramaViewerVisGroups

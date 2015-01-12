@@ -30,7 +30,6 @@ INCLUDEPATH += $$PWD/include/ \
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
     src/panoramaviewer.cpp \
-    src/detectedobject.cpp \
     src/batchview.cpp \
     src/flowlayout.cpp \
     src/objectitem.cpp \
@@ -43,7 +42,6 @@ SOURCES += src/main.cpp \
 
 HEADERS  += include/mainwindow.h \
     include/panoramaviewer.h \
-    include/detectedobject.h \
     include/batchview.h \
     include/flowlayout.h \
     include/objectitem.h \

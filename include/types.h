@@ -5,7 +5,7 @@ struct ApplicationMode
 {
     enum Type
     {
-        Validator = 0, Exporter = 1
+        Validator = 0, Exporter = 1, YMLConverter = 2
     };
 };
 

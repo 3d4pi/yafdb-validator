@@ -60,6 +60,8 @@ int main(int argc, char *argv[])
             mode = ApplicationMode::Validator;
         } else if(mode_name == "exporter") {
             mode = ApplicationMode::Exporter;
+        } else if( mode_name == "ymlconverter" ) {
+            mode = ApplicationMode::YMLConverter;
         } else {
             std::cout << "[ERROR] Invalid mode: " << mode_name.toStdString() << std::endl;
             exit( 0 );
@@ -74,13 +76,33 @@ int main(int argc, char *argv[])
 
     float export_zoom = exportZoom.length() > 0 ? exportZoom.toFloat() : 1.0;
 
-    if( sourceImagePath.length() <= 0 || destinationYMLPath.length() <= 0 )
+    bool argcheck = true;
+
+    if( sourceImagePath.length() <= 0 )
+    {
+        std::cout << "Missing source image path." << std::endl;
+        argcheck = false;
+    }
+
+    if( destinationYMLPath.length() <= 0 )
+    {
+        std::cout << "Missing destination YML path." << std::endl;
+        argcheck = false;
+    }
+
+    if( !argcheck )
     {
         parser.showHelp();
         exit( 0 );
     }
 
     MainWindow* w = NULL;
+
+    YMLParser yml_parser;
+    image_info_struct image_info;
+    IplImage * temp_image = NULL;
+    QList<ObjectRect*> loaded_rects;
+    int out_id = 1;
 
     switch(mode)
     {
@@ -93,23 +115,21 @@ int main(int argc, char *argv[])
         if( exportPath.length() <= 0 )
         {
             std::cout << "Export path missing." << std::endl;
+            parser.showHelp();
             exit( 0 );
         }
 
+        // Read source image
         std::cout << "Reading image..." << std::endl;
 
-        IplImage * temp_image = NULL;
         temp_image = cvLoadImage( sourceImagePath.toStdString().c_str(), CV_LOAD_IMAGE_UNCHANGED );
 
-        image_info_struct image_info;
         image_info.channels = (temp_image->nChannels + 1);
         image_info.width = temp_image->width;
         image_info.height = temp_image->height;
         image_info.image = IplImage2QImage( temp_image );
 
-        YMLParser parser;
-
-        QList<ObjectRect*> loaded_rects = parser.loadYML( destinationYMLPath, YMLType::Validator );
+        loaded_rects = yml_parser.loadYML( destinationYMLPath, YMLType::Validator );
 
         std::cout << "Exporting " << loaded_rects.length() << " images..." << std::endl;
 
@@ -160,15 +180,67 @@ int main(int argc, char *argv[])
                 QDir().mkpath( path );
             }
 
-            exportRect( rect, image_info, path +
-                        QString::number(rect->getId()) +
-                        ".png",
-                        export_zoom);
+            QString outpath = path +
+                    QString::number( out_id ) +
+                    ".png";
+
+            while( QFile( outpath ).exists() )
+            {
+                out_id++;
+                outpath = path + QString::number( out_id ) + ".png";
+            }
+
+            exportRect( rect, image_info, outpath, export_zoom);
         }
 
         std::cout << "Done" << std::endl;
         exit( 0 );
+        break;
+    case ApplicationMode::YMLConverter:
 
+        if( detectorYMLPath.length() <= 0 )
+        {
+            std::cout << "Missing detector YML path." << std::endl;
+
+            parser.showHelp();
+            exit( 0 );
+        }
+
+        // Read source image
+        std::cout << "Reading image..." << std::endl;
+
+        temp_image = cvLoadImage( sourceImagePath.toStdString().c_str(), CV_LOAD_IMAGE_UNCHANGED );
+
+        image_info.channels = (temp_image->nChannels + 1);
+        image_info.width = temp_image->width;
+        image_info.height = temp_image->height;
+        image_info.image = IplImage2QImage( temp_image );
+
+        loaded_rects = yml_parser.loadYML( detectorYMLPath, YMLType::Detector );
+
+
+        std::cout << "Converting points..." << std::endl;
+
+        foreach(ObjectRect* rect, loaded_rects)
+        {
+            rect->mapFromSpherical(image_info.width,
+                                   image_info.height,
+                                   1920 / 2,
+                                   1080 / 2,
+                                   0.0,
+                                   0.0,
+                                   20.0 * (LG_PI / 180.0),
+                                   20.0 * (LG_PI / 180.0),
+                                   120.0 * (LG_PI / 180.0));
+        }
+
+        std::cout << "Writing YML." << std::endl;
+        yml_parser.writeYML( loaded_rects, destinationYMLPath );
+
+        std::cout << "Done." << std::endl;
+        exit( 0 );
+
+        break;
     }
 
     return app.exec();

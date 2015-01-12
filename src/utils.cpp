@@ -65,25 +65,29 @@ void exportRect(ObjectRect *rect, image_info_struct image_info, QString destinat
 
     QImage temp_dest(rect->proj_width(), rect->proj_height(), QImage::Format_RGB32);
 
-    lg_etg_apperturep(
+    if( rect->getSize().width() >= 1 &&
+           rect->getSize().height() >= 1 )
+    {
+        lg_etg_apperturep(
 
-        ( inter_C8_t * ) image_info.image->bits(),
-        image_info.width,
-        image_info.height,
-        image_info.channels,
-        ( inter_C8_t * ) temp_dest.bits(),
-        rect->proj_width(),
-        rect->proj_height(),
-        image_info.channels,
-        rect->proj_azimuth(),
-        rect->proj_elevation(),
-        0.0,
-        rect->proj_aperture() / zoom_level,
-        li_bilinearf,
-        4
-    );
+            ( inter_C8_t * ) image_info.image->bits(),
+            image_info.width,
+            image_info.height,
+            image_info.channels,
+            ( inter_C8_t * ) temp_dest.bits(),
+            rect->proj_width(),
+            rect->proj_height(),
+            image_info.channels,
+            rect->proj_azimuth(),
+            rect->proj_elevation(),
+            0.0,
+            rect->proj_aperture() / zoom_level,
+            li_bilinearf,
+            4
+        );
 
-    // Crop and return image
-    QImage element = temp_dest.copy(rect_sel);
-    element.save( destination );
+        // Crop and return image
+        QImage element = temp_dest.copy(rect_sel);
+        element.save( destination );
+    }
 }

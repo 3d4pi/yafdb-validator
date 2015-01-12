@@ -11,13 +11,22 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = yafdb-validate
 TEMPLATE = app
 
+# Libgnomonic settings
+libgnomonic.commands = make -j -C $$PWD/libs/libgnomonic/
+
+QMAKE_EXTRA_TARGETS += libgnomonic
+PRE_TARGETDEPS += libgnomonic
+
+# Add resources file
 RESOURCES += \
     resources.qrc
 
+# Include directories
 INCLUDEPATH += $$PWD/include/ \
     $$PWD/libs/libgnomonic/lib/libinter/src/ \
     $$PWD/libs/libgnomonic/src/
 
+# Source files
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
     src/panoramaviewer.cpp \
@@ -46,11 +55,13 @@ HEADERS  += include/mainwindow.h \
     include/etg_point.h \
     include/utils.h
 
+# Ui forms
 FORMS    += ui/mainwindow.ui \
     ui/batchview.ui \
     ui/objectitem.ui \
     ui/editview.ui
 
+# Libraries
 LIBS += $$PWD/libs/libgnomonic/lib/libinter/bin/libinter.a \
     $$PWD/libs/libgnomonic/bin/libgnomonic.a \
     -fopenmp \
@@ -72,5 +83,3 @@ LIBS += $$PWD/libs/libgnomonic/lib/libinter/bin/libinter.a \
     -lopencv_ts \
     -lopencv_video \
     -lopencv_videostab
-
-

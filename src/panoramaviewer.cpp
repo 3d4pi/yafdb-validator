@@ -917,4 +917,3 @@ void PanoramaViewer::keyReleaseEvent(QKeyEvent *)
 {
     this->pressed_keys.CTRL = false;
 }
-

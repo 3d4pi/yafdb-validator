@@ -64,6 +64,7 @@ void exportRect(ObjectRect *rect, image_info_struct image_info, QString destinat
     delete rect_mapped;
 
     QImage temp_dest(rect->proj_width(), rect->proj_height(), QImage::Format_RGB32);
+    int threads_count = QThread::idealThreadCount();
 
     if( rect->getSize().width() >= 1 &&
            rect->getSize().height() >= 1 )
@@ -83,7 +84,7 @@ void exportRect(ObjectRect *rect, image_info_struct image_info, QString destinat
             0.0,
             rect->proj_aperture() / zoom_level,
             li_bilinearf,
-            4
+            threads_count
         );
 
         // Crop and return image

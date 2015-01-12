@@ -8,6 +8,8 @@
 #include <gnomonic-all.h>
 #include "objectrect.h"
 
+#include <QThread>
+
 struct image_info_struct{
     QImage* image;
     int width;

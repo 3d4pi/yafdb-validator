@@ -158,6 +158,16 @@
              <string>Profile</string>
             </property>
            </item>
+           <item>
+            <property name="text">
+             <string>Back</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Eyes</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>

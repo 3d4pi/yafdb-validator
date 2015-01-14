@@ -45,7 +45,7 @@ struct ObjectSubType
 {
     enum Type
     {
-        None = 0, Front = 1, Profile = 2
+        None = 0, Front = 1, Profile = 2, Back = 3, Eyes = 4
     };
 };
 

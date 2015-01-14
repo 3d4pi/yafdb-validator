@@ -106,6 +106,12 @@ EditView::EditView(QWidget *parent, ObjectRect* rect, image_info_struct image_in
     case ObjectSubType::Profile:
          this->ui->subClassLabel->setText("Sub class name: Profile");
          break;
+    case ObjectSubType::Back:
+         this->ui->subClassLabel->setText("Sub class name: Back");
+         break;
+    case ObjectSubType::Eyes:
+         this->ui->subClassLabel->setText("Sub class name: Eyes");
+         break;
     }
 
     this->ui->widthLabel->setText("Width: " + QString::number( (int) this->ref_rect->getSize().width() ));
@@ -143,6 +149,12 @@ EditView::EditView(QWidget *parent, ObjectRect* rect, image_info_struct image_in
         break;
     case ObjectSubType::Profile:
         this->ui->subTypeList->setCurrentIndex( 2 );
+        break;
+    case ObjectSubType::Back:
+        this->ui->subTypeList->setCurrentIndex( 3 );
+        break;
+    case ObjectSubType::Eyes:
+        this->ui->subTypeList->setCurrentIndex( 4 );
         break;
     }
 
@@ -215,6 +227,12 @@ void EditView::mergeEditedRect(ObjectRect* destination)
         break;
     case 2:
         destination->setSubType( ObjectSubType::Profile );
+        break;
+    case 3:
+        destination->setSubType( ObjectSubType::Back );
+        break;
+    case 4:
+        destination->setSubType( ObjectSubType::Eyes );
         break;
     }
 }

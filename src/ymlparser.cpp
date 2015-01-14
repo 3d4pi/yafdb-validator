@@ -37,6 +37,12 @@ void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
     case ObjectSubType::Profile:
         fs << "subClassName" << "Profile";
         break;
+    case ObjectSubType::Back:
+        fs << "subClassName" << "Back";
+        break;
+    case ObjectSubType::Eyes:
+        fs << "subClassName" << "Eyes";
+        break;
     }
 
     // Write square area coodinates
@@ -107,6 +113,10 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype, int 
         object->setSubType( ObjectSubType::Front );
     } else if(lowerSubClassName == "profile") {
         object->setSubType( ObjectSubType::Profile );
+    } else if(lowerSubClassName == "back") {
+        object->setSubType( ObjectSubType::Back );
+    } else if(lowerSubClassName == "eyes") {
+        object->setSubType( ObjectSubType::Eyes );
     }
 
     // Parse area points

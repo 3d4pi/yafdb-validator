@@ -142,14 +142,20 @@ int main(int argc, char *argv[])
             case ObjectType::Face:
                 switch(rect->getSubType())
                 {
+                case ObjectSubType::None:
+                    path = (exportPath + "/Face/None/");
+                    break;
                 case ObjectSubType::Front:
                     path = (exportPath + "/Face/Front/");
                     break;
                 case ObjectSubType::Profile:
                     path = (exportPath + "/Face/Profile/");
                     break;
-                case ObjectSubType::None:
-                    path = (exportPath + "/Face/None/");
+                case ObjectSubType::Back:
+                    path = (exportPath + "/Face/Back/");
+                    break;
+                case ObjectSubType::Eyes:
+                    path = (exportPath + "/Face/Eyes/");
                     break;
                 }
                 break;

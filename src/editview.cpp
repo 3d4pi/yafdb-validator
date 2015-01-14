@@ -263,6 +263,12 @@ void EditView::mergeEditedItem(ObjectItem* destination)
     case 2:
         destination->setSubType( ObjectSubType::Profile );
         break;
+    case 3:
+        destination->setSubType( ObjectSubType::Back );
+        break;
+    case 4:
+        destination->setSubType( ObjectSubType::Eyes );
+        break;
     }
 
     if(destination->type == ObjectType::ToBlur)

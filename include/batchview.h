@@ -62,11 +62,11 @@ private slots:
 /* Private functions / variables */
 private:
 
-    /* View mode container */
-    int mode;
-
     /* Main UI container */
     Ui::BatchView *ui;
+
+    /* View mode container */
+    int mode;
 
     /* Main PanoramaViewer container */
     PanoramaViewer* pano;

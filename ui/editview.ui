@@ -171,6 +171,12 @@
           </widget>
          </item>
         </layout>
+        <zorder>blurCheckBox</zorder>
+        <zorder>label</zorder>
+        <zorder>validCheckBox</zorder>
+        <zorder>typeList</zorder>
+        <zorder>label_2</zorder>
+        <zorder>subTypeList</zorder>
        </widget>
       </item>
       <item row="5" column="0">

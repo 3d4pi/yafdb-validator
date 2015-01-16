@@ -178,11 +178,21 @@ EditView::EditView(QWidget *parent, ObjectRect* rect, image_info_struct image_in
         this->ui->subClassLabel->setText("Sub class name: Back");
         break;
 
+    /* Top type */
+    case ObjectSubType::Top:
+
+        /* Set selected item */
+        this->ui->subTypeList->setCurrentIndex( 4 );
+
+        /* Set label text */
+        this->ui->subClassLabel->setText("Sub class name: Top");
+        break;
+
     /* Eye type */
     case ObjectSubType::Eyes:
 
         /* Set selected item */
-        this->ui->subTypeList->setCurrentIndex( 4 );
+        this->ui->subTypeList->setCurrentIndex( 5 );
 
         /* Set label text */
         this->ui->subClassLabel->setText("Sub class name: Eyes");
@@ -285,8 +295,15 @@ void EditView::mergeEditedRect(ObjectRect* destination)
         destination->setSubType( ObjectSubType::Back );
         break;
 
-    /* Eye type */
+    /* Top type */
     case 4:
+
+        /* Apply rect subtype */
+        destination->setSubType( ObjectSubType::Top );
+        break;
+
+    /* Eye type */
+    case 5:
 
         /* Apply rect subtype */
         destination->setSubType( ObjectSubType::Eyes );
@@ -356,8 +373,15 @@ void EditView::mergeEditedItem(ObjectItem* destination)
         destination->setSubType( ObjectSubType::Back );
         break;
 
-    /* Eye type */
+    /* Top type */
     case 4:
+
+        /* Apply item subtype */
+        destination->setSubType( ObjectSubType::Top );
+        break;
+
+    /* Eye type */
+    case 5:
 
         /* Apply item subtype */
         destination->setSubType( ObjectSubType::Eyes );

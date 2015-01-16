@@ -40,6 +40,9 @@ void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
     case ObjectSubType::Back:
         fs << "subClassName" << "Back";
         break;
+    case ObjectSubType::Top:
+        fs << "subClassName" << "Top";
+        break;
     case ObjectSubType::Eyes:
         fs << "subClassName" << "Eyes";
         break;
@@ -115,6 +118,8 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype, int 
         object->setSubType( ObjectSubType::Profile );
     } else if(lowerSubClassName == "back") {
         object->setSubType( ObjectSubType::Back );
+    } else if(lowerSubClassName == "top") {
+        object->setSubType( ObjectSubType::Top );
     } else if(lowerSubClassName == "eyes") {
         object->setSubType( ObjectSubType::Eyes );
     }

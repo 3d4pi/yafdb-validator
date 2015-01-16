@@ -154,6 +154,9 @@ int main(int argc, char *argv[])
                 case ObjectSubType::Back:
                     path = (exportPath + "/Face/Back/");
                     break;
+                case ObjectSubType::Top:
+                    path = (exportPath + "/Face/Top/");
+                    break;
                 case ObjectSubType::Eyes:
                     path = (exportPath + "/Face/Eyes/");
                     break;

@@ -18,11 +18,12 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
 {
     ui->setupUi(this);
 
+    /* Set-up options */
     this->options.sourceImagePath = sourceImagePath.length() > 0 ? sourceImagePath : "";
     this->options.detectorYMLPath = detectorYMLPath.length() > 0 ? detectorYMLPath : "";
     this->options.destinationYMLPath = destinationYMLPath.length() > 0 ? destinationYMLPath : "";
 
-    // Determine good labels colors based on system theme
+    /* Determine good labels colors based on system theme */
     QString good_color_string = "rgb(%1, %2, %3)";
     QColor  good_color_color = QApplication::palette().color(QPalette::Text);
     good_color_string = good_color_string.arg(good_color_color.red()).arg(good_color_color.green()).arg(good_color_color.blue());
@@ -34,13 +35,10 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
     this->good_color = good_color_string;
     this->warn_color = warn_color_string;
 
-    new QShortcut(QKeySequence("Esc"), this, SLOT(onESC()));
-
-    // Remove margins
+    /* Remove margins */
     this->setContentsMargins(-5, -5, -5, -5);
-    //this->centralWidget()->layout()->setContentsMargins(50,50,50,50);
 
-    // Center window on screen
+    /* Center window on screen */
     this->setGeometry(
         QStyle::alignedRect(
             Qt::LeftToRight,
@@ -49,19 +47,19 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
             qApp->desktop()->availableGeometry()
         ));
 
-    // Start window maximized
+    /* Start window maximized */
     this->showMaximized();
 
-    // Create panorama viewer
+    /* Create panorama viewer */
     this->pano = new PanoramaViewer(this);
 
-    // Add panorama viewer to current window
+    /* Add panorama viewer to current window */
     this->ui->gridLayout->addWidget(this->pano);
 
-    // Determine best multi-threading setup
+    /* Determine best multi-threading setup */
     int threads_count = QThread::idealThreadCount();
 
-    // Configure panorama viewer
+    /* Configure panorama viewer */
     this->pano->setup(
         this->size().width(), // Default width
         this->size().height(), // Default height
@@ -72,30 +70,33 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
         threads_count // Number of threads
     );
 
-    //this->ui->horizontalSlider->setValue(this->pano->scale_factor * 100);
-
+    /* Variables to store files presence */
     bool sourceImageFile_exists = false;
     bool detectorYMLFile_exists = false;
     bool destinationYMLFile_exists = false;
 
+    /* Check if source image exists */
     if( this->options.sourceImagePath.length() > 0 )
     {
         QFileInfo sourceImageFile( this->options.sourceImagePath );
         sourceImageFile_exists = ( sourceImageFile.exists() && sourceImageFile.isFile( ));
     }
 
+    /* Check if detector YML exists */
     if( this->options.detectorYMLPath.length() > 0 )
     {
         QFileInfo detectorYMLFile( this->options.detectorYMLPath );
         detectorYMLFile_exists = ( detectorYMLFile.exists() && detectorYMLFile.isFile( ));
     }
 
+    /* Check if destination YML exists */
     if( this->options.destinationYMLPath.length() > 0 )
     {
         QFileInfo destinationYMLFile( this->options.destinationYMLPath );
         destinationYMLFile_exists = ( destinationYMLFile.exists() && destinationYMLFile.isFile( ));
     }
 
+    /* Display proper messages */
     if( !sourceImageFile_exists )
     {
         std::cout << "[ERROR] Invalid source image path: " << this->options.sourceImagePath.toStdString() << std::endl;
@@ -107,10 +108,12 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
         std::cout << "[ERROR] Invalid detector YML path: " << this->options.detectorYMLPath.toStdString() << std::endl;
     }
 
-    // Load input image
+    /* Load input image */
     this->pano->loadImage( this->options.sourceImagePath );
 
+    /* Intialize YML parser */
     YMLParser parser;
+
 
     if( this->options.detectorYMLPath.length() > 0 )
     {
@@ -187,9 +190,10 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
         }
     }
 
-    this->output_yml = this->options.destinationYMLPath;
+    /* Bind ESC key to window close */
+    new QShortcut(QKeySequence("Esc"), this, SLOT(onESC()));
 
-    // Initialize labels
+    /* Initialize labels */
     emit refreshLabels();
 }
 
@@ -340,7 +344,7 @@ void MainWindow::closeEvent (QCloseEvent *event)
         event->ignore();
     } else if( resBtn == QMessageBox::Yes ) {
         YMLParser parser;
-        parser.writeYML( this->pano->rect_list, this->output_yml );
+        parser.writeYML( this->pano->rect_list, this->options.destinationYMLPath );
 
         event->accept();
     } else if(resBtn == QMessageBox::No) {

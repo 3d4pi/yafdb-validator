@@ -7,6 +7,7 @@
 
 #include "ymlparser.h"
 
+/* Constructor */
 MainWindow::MainWindow(QWidget *parent, QString sourceImagePath, QString detectorYMLPath, QString destinationYMLPath) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -14,6 +15,13 @@ MainWindow::MainWindow(QWidget *parent, QString sourceImagePath, QString detecto
     this->initializeValidator(sourceImagePath, detectorYMLPath, destinationYMLPath);
 }
 
+/* Destructor */
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+/* Initial setup function */
 void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYMLPath, QString destinationYMLPath)
 {
     ui->setupUi(this);
@@ -63,7 +71,7 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
     this->pano->setup(
         this->size().width(), // Default width
         this->size().height(), // Default height
-        0.6,   // Image scale factor
+        0.6,   // Default image scale factor
         20.0,  // Minimum zoom
         100.0, // Maximum zoom
         100.0, // Default zoom level
@@ -114,36 +122,47 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
     /* Intialize YML parser */
     YMLParser parser;
 
-
+    /* If detector YML path is specified */
     if( this->options.detectorYMLPath.length() > 0 )
     {
+        /* If detector YML file exists */
         if( detectorYMLFile_exists )
         {
+            /* If destination YML file exists */
             if( destinationYMLFile_exists )
             {
+                /* Load validator YML */
                 QList<ObjectRect*> loaded_rects = parser.loadYML( this->options.destinationYMLPath, YMLType::Validator );
 
+                /* Iterate over loaded rects */
                 foreach(ObjectRect* rect, loaded_rects)
                 {
-
+                    /* Map rect to current scene */
                     rect->mapTo(this->pano->dest_image_map.width(),
                                 this->pano->dest_image_map.height(),
                                 this->pano->position.azimuth,
                                 this->pano->position.elevation,
                                 this->pano->position.aperture);
 
+                    /* Append mapped rect to scene */
                     this->pano->rect_list.append( rect );
                     this->pano->scene->addItem( rect );
 
+                    /* Check object visibility */
                     if( !this->pano->isObjectVisible( rect ) )
                         rect->setVisible( false );
                 }
+
+            /* Destination YML not exists*/
             } else {
+
+                /* Load detector YML */
                 QList<ObjectRect*> loaded_rects = parser.loadYML( this->options.detectorYMLPath, YMLType::Detector );
 
+                /* Iterate over loaded rects */
                 foreach(ObjectRect* rect, loaded_rects)
                 {
-
+                    /* Map rect to current scene */
                     rect->mapFromSpherical(this->pano->image_info.width,
                                            this->pano->image_info.height,
                                            this->pano->dest_image_map.width(),
@@ -154,38 +173,53 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
                                            this->pano->zoom_min * ( LG_PI / 180.0 ),
                                            this->pano->zoom_max * ( LG_PI / 180.0 ));
 
+                    /* Append mapped rect to scene */
                     this->pano->rect_list.append( rect );
                     this->pano->scene->addItem( rect );
 
+                    /* Check object visibility */
                     if( !this->pano->isObjectVisible( rect ) )
                         rect->setVisible( false );
                 }
             }
         }
+
+    /* Detector YML path not specified */
     } else {
+
+        /* Check if destination YML path is specified */
         if( this->options.destinationYMLPath.length() > 0 )
         {
+            /* Check if destination YML file exists */
             if( destinationYMLFile_exists )
             {
+                /* Load validator YML */
                 QList<ObjectRect*> loaded_rects = parser.loadYML( this->options.destinationYMLPath, YMLType::Validator );
 
+                /* Iterate over loaded rects */
                 foreach(ObjectRect* rect, loaded_rects)
                 {
-
+                    /* Map rect to current scene */
                     rect->mapTo(this->pano->dest_image_map.width(),
                                 this->pano->dest_image_map.height(),
                                 this->pano->position.azimuth,
                                 this->pano->position.elevation,
                                 this->pano->position.aperture);
 
+                    /* Append mapped rect to scene */
                     this->pano->rect_list.append( rect );
                     this->pano->scene->addItem( rect );
 
+                    /* Check object visibility */
                     if( !this->pano->isObjectVisible( rect ) )
                         rect->setVisible( false );
                 }
             }
+
+        /* Destination YML path not specified */
         } else {
+
+            /* Exit program */
             exit( 0 );
         }
     }
@@ -197,8 +231,10 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
     emit refreshLabels();
 }
 
+/* (UI action) Refresh labels */
 void MainWindow::refreshLabels()
 {
+    /* Types / States counter variables */
     int untyped = 0;
 
     int facecount = 0;
@@ -212,51 +248,79 @@ void MainWindow::refreshLabels()
 
     int toblurcount = 0;
 
+    /* Iterate over PanoramaViewer rects */
     foreach(ObjectRect* rect, this->pano->rect_list)
     {
+        /* Rect type swith */
         switch(rect->getType())
         {
+
+        /* Untyped rect */
         case ObjectType::None:
+
+            /* Increment untyped items */
             untyped++;
             break;
+
+        /* Face */
         case ObjectType::Face:
 
+            /* If automatic status is valid or automatic status is None */
             if(rect->getAutomaticStatus() == "Valid" || rect->getAutomaticStatus() == "None")
+            {
+                /* Increment faces count */
                 facecount++;
+            }
 
+            /* If automatic status is valid or automatic status is None and manual status is not None */
             if( (rect->getAutomaticStatus() == "Valid" || rect->getAutomaticStatus() == "None")
                     && rect->getManualStatus() != "None")
             {
+                /* Increment validated faces count */
                 facesvalidated++;
             }
 
+            /* If automatic status is pre-filtered */
             if(rect->getAutomaticStatus() != "None" && rect->getAutomaticStatus() != "Valid")
             {
+                /* Increment pre-filtered items count */
                 preinvalidatedcount++;
             }
+
+            /* If automatic status is pre-filtered and manualy validated */
             if(rect->getAutomaticStatus() != "None" && rect->getAutomaticStatus() != "Valid" && rect->getManualStatus() != "None")
             {
+                /* Increment pre-filtered (manualy validated) items count */
                 preinvalidatedvalidated++;
             }
 
             break;
+
+        /* NumberPlate */
         case ObjectType::NumberPlate:
 
+            /* Increment NumberPlate items count */
             numberplatescount++;
 
+            /* If object is manualy validated */
             if(rect->getManualStatus() != "None")
             {
+                /* Increment NumberPlate (manualy validated) items count */
                 numberplatesvalidated++;
             }
 
             break;
+
+        /* "ToBlur" */
         case ObjectType::ToBlur:
 
+            /* Increment "ToBlur" objects count */
             toblurcount++;
             break;
         }
     }
 
+    /* Untyped items labels update */
     if(untyped > 0)
     {
         this->ui->untypedLabel->setStyleSheet("QLabel {color: " + this->warn_color + "; }");
@@ -266,6 +330,7 @@ void MainWindow::refreshLabels()
         this->ui->untypedButton->setEnabled(false);
     }
 
+    /* Face items labels update */
     if(facecount <= 0)
     {
         this->ui->facesButton->setEnabled(false);
@@ -273,6 +338,7 @@ void MainWindow::refreshLabels()
         this->ui->facesButton->setEnabled(true);
     }
 
+    /* NumberPlate items labels update */
     if(numberplatescount <= 0)
     {
         this->ui->platesButton->setEnabled(false);
@@ -280,6 +346,7 @@ void MainWindow::refreshLabels()
         this->ui->platesButton->setEnabled(true);
     }
 
+    /* Pre-invalidated items labels update */
     if(preinvalidatedcount <= 0)
     {
         this->ui->preInvalidatedButton->setEnabled(false);
@@ -287,6 +354,7 @@ void MainWindow::refreshLabels()
         this->ui->preInvalidatedButton->setEnabled(true);
     }
 
+    /* "ToBlur" items labels update */
     if(toblurcount <= 0)
     {
         this->ui->toBlurButton->setEnabled(false);
@@ -294,6 +362,7 @@ void MainWindow::refreshLabels()
         this->ui->toBlurButton->setEnabled(true);
     }
 
+    /* Assign proper label color if not all Faces are manualy vlidated */
     if(facesvalidated != facecount)
     {
         this->ui->facesLabel->setStyleSheet("QLabel {color: " + this->warn_color + "; }");
@@ -301,6 +370,7 @@ void MainWindow::refreshLabels()
         this->ui->facesLabel->setStyleSheet("QLabel {color: " + this->good_color + "; }");
     }
 
+    /* Assign proper label color if not all NumberPlates are manualy vlidated */
     if(numberplatesvalidated != numberplatescount)
     {
         this->ui->platesLabel->setStyleSheet("QLabel {color: " + this->warn_color + "; }");
@@ -308,6 +378,7 @@ void MainWindow::refreshLabels()
         this->ui->platesLabel->setStyleSheet("QLabel {color: " + this->good_color + "; }");
     }
 
+    /* Assign proper label color if not all pre-invalidated objects are manualy vlidated */
     if(preinvalidatedvalidated != preinvalidatedcount)
     {
         this->ui->preInvalidatedLabel->setStyleSheet("QLabel {color: " + this->warn_color + "; }");
@@ -315,106 +386,174 @@ void MainWindow::refreshLabels()
         this->ui->preInvalidatedLabel->setStyleSheet("QLabel {color: " + this->good_color + "; }");
     }
 
+    /* Update labels text */
+    /* Untyped items */
     this->ui->untypedLabel->setText("Untyped items: " + QString::number(untyped));
+
+    /* Faces */
     this->ui->facesLabel->setText("Faces: " + QString::number(facesvalidated) + "/" + QString::number(facecount));
+
+    /* NumberPlates */
     this->ui->platesLabel->setText("Number plates: " + QString::number(numberplatesvalidated) + "/" + QString::number(numberplatescount));
+
+    /* Pre-invalidated */
     this->ui->preInvalidatedLabel->setText("Pre-invalidated: " + QString::number(preinvalidatedvalidated) + "/" + QString::number(preinvalidatedcount));
+
+    /* "ToBlur" */
     this->ui->toBlurLabel->setText("To blur: " + QString::number(toblurcount));
 
 }
 
+/* (UI action) Update scale factor slider */
 void MainWindow::updateScaleSlider(int value)
 {
+    /* Assign valude */
     this->ui->horizontalSlider->setValue( value );
 }
 
-MainWindow::~MainWindow()
-{
-    //delete this->pano;
-    delete ui;
-}
-
+/* Window close event */
 void MainWindow::closeEvent (QCloseEvent *event)
 {
+    /* Warn user about exit and ask to save changes */
     QMessageBox::StandardButton resBtn = QMessageBox::question( this, "",
                                                                 tr("Do you want to save your work\n(You can resume later)"),
                                                                 QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
                                                                 QMessageBox::Yes);
+    /* Cancel */
     if (resBtn == QMessageBox::Cancel) {
+
+        /* Ignore action */
         event->ignore();
+
+    /* Yes */
     } else if( resBtn == QMessageBox::Yes ) {
+
+        /* Initialize YMLparser */
         YMLParser parser;
+
+        /* Save YML */
         parser.writeYML( this->pano->rect_list, this->options.destinationYMLPath );
 
+        /* Accept event */
         event->accept();
+
+    /* No */
     } else if(resBtn == QMessageBox::No) {
+
+        /* Accept event */
         event->accept();
     }
 }
 
+/* (Key signal) ESC key pressed */
 void MainWindow::onESC()
 {
+    /* CLose window */
     this->close();
 }
 
+/* (UI component signal) Untyped button clicked */
 void MainWindow::on_untypedButton_clicked()
 {
+    /* Initialize untyped items batch view */
     BatchView* w = new BatchView(this, this->pano, BatchMode::Manual, BatchViewMode::OnlyUntyped);
+
+    /* Set delete on close flag */
     w->setAttribute( Qt::WA_DeleteOnClose );
+
+    /* Show window */
     w->show();
 }
 
+/* (UI component signal) faces button clicked */
 void MainWindow::on_facesButton_clicked()
 {
+    /* Initialize faces batch view */
     BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyFaces);
+
+    /* Set delete on close flag */
     w->setAttribute( Qt::WA_DeleteOnClose );
+
+    /* Show window */
     w->show();
 }
 
+/* (UI component signal) Numberplates button clicked */
 void MainWindow::on_platesButton_clicked()
 {
+    /* Initialize NumberPlates batch view */
     BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyNumberPlates);
+
+    /* Set delete on close flag */
     w->setAttribute( Qt::WA_DeleteOnClose );
+
+    /* Show window */
     w->show();
 }
 
+/* (UI component signal) Pre-invalidated button clicked */
 void MainWindow::on_preInvalidatedButton_clicked()
 {
+    /* Initialize pre-invalidated batch view */
     BatchView* w = new BatchView(this, this->pano, BatchMode::Auto, BatchViewMode::OnlyPreInvalidated);
+
+    /* Set delete on close flag */
     w->setAttribute( Qt::WA_DeleteOnClose );
+
+    /* Show window */
     w->show();
 }
 
+/* (UI component signal) "ToBlur" button clicked */
 void MainWindow::on_toBlurButton_clicked()
 {
+    /* Initialize "ToBlur" batch view */
     BatchView* w = new BatchView(this, this->pano, BatchMode::ToBlur, BatchViewMode::OnlyToBlur);
+
+    /* Set delete on close flag */
     w->setAttribute( Qt::WA_DeleteOnClose );
+
+    /* Show window */
     w->show();
 }
 
+/* (UI component signal) Scale slider moved */
 void MainWindow::on_horizontalSlider_sliderMoved(int position)
 {
+    /* Save PanoramaViewer positions */
     this->pano->backupPosition();
+
+    /* Change scale factor */
     this->pano->scale_factor = (position / 10.0);
+
+    /* Render panorama */
     this->pano->render();
 }
 
+/* (UI component signal) "All" radio button checked */
 void MainWindow::on_allVisRadio_clicked()
 {
+    /* Update PanoramaViewer visibility group */
     this->pano->setVisGroup( PanoramaViewerVisGroups::All );
 }
 
+/* (UI component signal) "Auto" radio button checked */
 void MainWindow::on_autoVisRadio_clicked()
 {
+    /* Update PanoramaViewer visibility group */
     this->pano->setVisGroup( PanoramaViewerVisGroups::Automatic );
 }
 
+/* (UI component signal) "Manual" radio button checked */
 void MainWindow::on_manualVisRadio_clicked()
 {
+    /* Update PanoramaViewer visibility group */
     this->pano->setVisGroup( PanoramaViewerVisGroups::Manual );
 }
 
+/* (UI component signal) "In Creation" radio button checked */
 void MainWindow::on_inCreationVisRadio_clicked()
 {
+    /* Update PanoramaViewer visibility group */
     this->pano->setVisGroup( PanoramaViewerVisGroups::InCreation );
 }

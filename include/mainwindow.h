@@ -1,13 +1,14 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <iostream>
-
+/* Includes */
 #include <QMainWindow>
 #include <QDesktopWidget>
 #include <QThread>
 #include <QLabel>
 #include <QPalette>
+
+#include <iostream>
 
 #include "panoramaviewer.h"
 #include "batchview.h"

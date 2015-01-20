@@ -1,6 +1,6 @@
+#include "main.h"
 #include "mainwindow.h"
 #include "batchview.h"
-#include "types.h"
 #include "ymlparser.h"
 #include <QApplication>
 

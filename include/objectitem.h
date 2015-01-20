@@ -5,9 +5,24 @@
 #include <QImage>
 #include <QPixmap>
 #include <QMouseEvent>
-#include "types.h"
 #include "objectrect.h"
 #include "panoramaviewer.h"
+
+struct ObjectItemRectType
+{
+    enum Type
+    {
+        Valid = 1, Invalid = 2, Manual = 3
+    };
+};
+
+struct ObjectValidState
+{
+    enum Type
+    {
+        Valid = 1, Invalid = 2, None = 3
+    };
+};
 
 namespace Ui {
 class ObjectItem;

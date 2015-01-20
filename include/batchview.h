@@ -14,6 +14,53 @@
 #include "objectitem.h"
 #include "panoramaviewer.h"
 
+/* Batch modes struct */
+struct BatchMode
+{
+    enum Type
+    {
+        /* Show only manualy added objects */
+        Manual = 0,
+
+        /* Show only automaticaly detected objects */
+        Auto = 1,
+
+        /* Show only "ToBlur" class objects */
+        ToBlur = 3
+    };
+};
+
+/* Batch view modes struct */
+struct BatchViewMode
+{
+    enum Type
+    {
+        /* Show all objects */
+        All = 0,
+
+        /* Show only untyped objects */
+        OnlyUntyped = 1,
+
+        /* Show only Faces */
+        OnlyFaces = 2,
+
+        /* Show only unnaproved faces */
+        OnlyUnapprovedFaces = 3,
+
+        /* Show only numberplates */
+        OnlyNumberPlates = 4,
+
+        /* Shw only unnaproved numberplates */
+        OnlyUnapprovedNumberPlates = 5,
+
+        /* Show only pre-invalidated objects */
+        OnlyPreInvalidated = 6,
+
+        /* Show only "ToBlur" class objects */
+        OnlyToBlur = 7
+    };
+};
+
 /* Default class container */
 namespace Ui {
 class BatchView;

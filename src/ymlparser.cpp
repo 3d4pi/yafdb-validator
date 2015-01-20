@@ -184,14 +184,14 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype, int 
     {
         if(lowerAutoStatus == "valid")
         {
-            object->setObjectRectType( ObjectRectType::Valid );
+            object->setObjectAutomaticState( ObjectAutomaticState::Valid );
             object->setAutomaticStatus( "Valid" );
 
             if( ymltype == YMLType::Detector )
             object->setBlurred( true );
 
         } else {
-            object->setObjectRectType( ObjectRectType::Invalid );
+            object->setObjectAutomaticState( ObjectAutomaticState::Invalid );
 
             switch(ymltype)
             {
@@ -220,7 +220,7 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype, int 
             }
         }
     } else {
-        object->setObjectRectType( ObjectRectType::Manual );
+        object->setObjectAutomaticState( ObjectAutomaticState::Manual );
     }
 
     object->setAutomaticStatus( (object->getAutomaticStatus().length() > 0 ? object->getAutomaticStatus() : "None") );
@@ -244,19 +244,19 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype, int 
 
     if(object->getType() == ObjectType::ToBlur)
     {
-        object->setObjectRectState( ObjectRectState::ToBlur );
+        object->setObjectManualState( ObjectManualState::ToBlur );
     } else {
 
         if(object->getManualStatus() != "None")
         {
             if(object->getManualStatus() == "Valid")
             {
-                object->setObjectRectState( ObjectRectState::Valid );
+                object->setObjectManualState( ObjectManualState::Valid );
             } else {
-                object->setObjectRectState( ObjectRectState::Invalid );
+                object->setObjectManualState( ObjectManualState::Invalid );
             }
         } else {
-            object->setObjectRectState( ObjectRectState::None );
+            object->setObjectManualState( ObjectManualState::None );
         }
 
     }
@@ -362,7 +362,7 @@ QList<ObjectRect*> YMLParser::loadYML(QString path, int ymltype)
         // Initialize detected object
         ObjectRect* object = this->readItem(it, ymltype, out_list.length());
 
-        object->setObjectRectType( ObjectRectType::Invalid );
+        object->setObjectAutomaticState( ObjectAutomaticState::Invalid );
         object->setAutomaticStatus( (object->getAutomaticStatus().length() <= 0 || object->getAutomaticStatus() == "None") ? "MissingOption" : object->getAutomaticStatus() );
 
         std::string source_image;

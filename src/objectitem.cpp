@@ -250,25 +250,25 @@ void ObjectItem::setValidState(int state)
 
     switch(state)
     {
-    case ObjectRectState::Valid:
+    case ObjectManualState::Valid:
         this->ui->validFrame->setStyleSheet("background-color: rgba(0, 255, 0, 50);");
         this->valid = true;
         break;
-    case ObjectRectState::Invalid:
+    case ObjectManualState::Invalid:
         this->ui->validFrame->setStyleSheet("background-color: rgba(255, 0, 0, 50);");
         this->valid = false;
         break;
-    case ObjectRectState::None:
+    case ObjectManualState::None:
         this->ui->validFrame->setStyleSheet("background-color: rgba(0, 0, 0, 50);");
         this->valid = false;
         break;
-    case ObjectRectState::ToBlur:
+    case ObjectManualState::ToBlur:
         this->ui->validFrame->setStyleSheet("background-color: rgba(255, 255, 0, 50);");
         this->valid = false;
         break;
     }
 
-    this->rect->setObjectRectState( state );
+    this->rect->setObjectManualState( state );
 }
 
 void ObjectItem::setSelected(bool value)
@@ -292,7 +292,7 @@ void ObjectItem::setRect(ObjectRect *src_rect)
     this->setType(src_rect->getType());
     this->setSubType( src_rect->getSubType() );
     this->setBlurred(src_rect->isBlurred());
-    this->setValidState(src_rect->getObjectRectState());
+    this->setValidState(src_rect->getObjectManualState());
     this->setManualStatus(src_rect->getManualStatus());
     this->setAutomaticStatus(src_rect->getAutomaticStatus());
 

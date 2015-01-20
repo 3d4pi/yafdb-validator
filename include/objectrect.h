@@ -7,9 +7,61 @@
 #include <QPaintEvent>
 #include <QDebug>
 
-#include "types.h"
 #include "etg_point.h"
 #include "g2g_point.h"
+
+/* Automatic states struct */
+struct ObjectAutomaticState
+{
+    enum Type
+    {
+        /* Object is valid */
+        Valid = 1,
+
+        /* Object is invalid */
+        Invalid = 2,
+
+        /* Object has been manualy added */
+        Manual = 3
+    };
+};
+
+/* Manual states struct */
+struct ObjectManualState
+{
+    enum Type
+    {
+        /* Not validated */
+        None = 0,
+
+        /* Object is valid */
+        Valid = 1,
+
+        /* Object is invalid */
+        Invalid = 2,
+
+        /* Object is to be blured */
+        ToBlur = 3
+    };
+};
+
+/* Object types struct */
+struct ObjectType
+{
+    enum Type
+    {
+        None = 0, Face = 1, NumberPlate = 2, ToBlur = 3
+    };
+};
+
+/* Object sub-types struct */
+struct ObjectSubType
+{
+    enum Type
+    {
+        None = 0, Front = 1, Profile = 2, Back = 3, Top = 4, Eyes = 5
+    };
+};
 
 /* Main class */
 class ObjectRect : public QGraphicsPolygonItem
@@ -48,13 +100,13 @@ public:
     QSizeF getSizeCurrent();
 
     /* Object parameters setters */
-    void setObjectRectType(int type);
-    void setObjectRectState(int state);
+    void setObjectAutomaticState(int state);
+    void setObjectManualState(int state);
     void setObjectType(int type);
 
     /* Object parameters getters */
-    int getObjectRectType();
-    int getObjectRectState();
+    int getObjectAutomaticState();
+    int getObjectManualState();
     int getObjectType();
 
     /* Id setter/getter */
@@ -170,10 +222,10 @@ private:
     int id;
 
     /* State container */
-    int rect_state;
+    int manual_state;
 
     /* Type containers */
-    int rect_type;
+    int automatic_state;
     int type;
 
     /* Resize enabled state variable */

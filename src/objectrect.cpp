@@ -393,55 +393,65 @@ int ObjectRect::getId()
     return this->id;
 }
 
-void ObjectRect::setObjectRectType(int type)
+/* Function to set object rect type (Contour color & status ) */
+void ObjectRect::setObjectAutomaticState(int state)
 {
-    this->rect_type = type;
+    /* Assign value */
+    this->automatic_state = state;
 
-    switch(type)
+    /* Set proper color depending on rect type specified */
+    switch(state)
     {
-    case ObjectRectType::Manual:
+    case ObjectAutomaticState::Manual:
         this->pen->setColor( QColor(0, 255, 255, 255) );
         break;
-    case ObjectRectType::Valid:
+    case ObjectAutomaticState::Valid:
         this->pen->setColor( QColor(0, 255, 0, 255) );
         break;
-    case ObjectRectType::Invalid:
+    case ObjectAutomaticState::Invalid:
         this->pen->setColor( QColor(255, 0, 0, 255) );
         break;
     }
 
-    // Refresh pen
+    /* Refresh main contour */
     this->setPen( * this->pen );
     this->resize_rect->setPen( *this->pen );
 }
 
-int ObjectRect::getObjectRectType()
+/* Function to get object rect type (Contour color & status ) */
+int ObjectRect::getObjectAutomaticState()
 {
-    return this->rect_type;
+    /* Return result */
+    return this->automatic_state;
 }
 
-void ObjectRect::setObjectRectState(int state)
+void ObjectRect::setObjectManualState(int state)
 {
-    this->rect_state = state;
+    this->manual_state = state;
 
     switch(state)
     {
-    case ObjectRectState::None:
+    case ObjectManualState::None:
         this->brush->setColor( QColor(0, 0, 0, 0) );
         break;
-    case ObjectRectState::Valid:
+    case ObjectManualState::Valid:
         this->brush->setColor( QColor(0, 255, 0, 50) );
         break;
-    case ObjectRectState::Invalid:
+    case ObjectManualState::Invalid:
         this->brush->setColor( QColor(255, 0, 0, 50) );
         break;
-    case ObjectRectState::ToBlur:
+    case ObjectManualState::ToBlur:
         this->brush->setColor( QColor(255, 255, 0, 50) );
         break;
     }
 
     // Render brush
     this->setBrush( * this->brush );
+}
+
+int ObjectRect::getObjectManualState()
+{
+    return this->manual_state;
 }
 
 void ObjectRect::setObjectType(int type)
@@ -452,11 +462,6 @@ void ObjectRect::setObjectType(int type)
 int ObjectRect::getObjectType()
 {
     return this->type;
-}
-
-int ObjectRect::getObjectRectState()
-{
-    return this->rect_state;
 }
 
 void ObjectRect::render()
@@ -609,7 +614,7 @@ void ObjectRect::setType(int value)
     switch(value)
     {
     case ObjectType::ToBlur:
-        this->setObjectRectState( ObjectRectState::ToBlur );
+        this->setObjectManualState( ObjectManualState::ToBlur );
         break;
     }
 }
@@ -626,7 +631,7 @@ bool ObjectRect::isBlurred()
 
 bool ObjectRect::isValidated()
 {
-    return (this->rect_state == ObjectRectState::Valid);
+    return (this->manual_state == ObjectManualState::Valid);
 }
 
 void ObjectRect::setBlurred(bool value)
@@ -660,9 +665,9 @@ void ObjectRect::setAutomaticStatus(QString value)
 ObjectRect* ObjectRect::copy()
 {
     ObjectRect* rect_copy = new ObjectRect;
-    rect_copy->setObjectRectType( this->getObjectRectType() );
+    rect_copy->setObjectAutomaticState( this->getObjectAutomaticState() );
+    rect_copy->setObjectManualState( this->getObjectManualState() );
     rect_copy->setType( this->getType() );
-    rect_copy->setObjectRectState( this->getObjectRectState() );
     rect_copy->setManualStatus( this->getManualStatus() );
     rect_copy->setAutomaticStatus( this->getAutomaticStatus() );
     rect_copy->setBlurred( this->isBlurred() );
@@ -700,7 +705,7 @@ void ObjectRect::mergeWith(ObjectRect *rect)
 
     this->setType( rect->getType() );
     this->setSubType( rect->getSubType() );
-    this->setObjectRectState( rect->getObjectRectState() );
+    this->setObjectManualState( rect->getObjectManualState() );
 
     this->setManualStatus( rect->getManualStatus() );
     this->setAutomaticStatus( rect->getAutomaticStatus() );

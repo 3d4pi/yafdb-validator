@@ -497,9 +497,9 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
         if(this->increation_rect.rect == NULL)
         {
             this->increation_rect.rect = new ObjectRect();
-            this->increation_rect.rect->setObjectRectType(ObjectRectType::Manual);
+            this->increation_rect.rect->setObjectAutomaticState( ObjectAutomaticState::Manual );
             this->increation_rect.rect->setType(ObjectType::None);
-            this->increation_rect.rect->setObjectRectState(ObjectRectState::Valid);
+            this->increation_rect.rect->setObjectManualState( ObjectManualState::Valid );
             this->increation_rect.rect->setManualStatus("Valid");
             this->increation_rect.rect->setBlurred(true);
 

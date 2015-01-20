@@ -392,11 +392,11 @@ void EditView::mergeEditedItem(ObjectItem* destination)
     if(destination->type == ObjectType::ToBlur)
     {
         /* Set item valid state */
-        destination->setValidState( ObjectRectState::ToBlur );
+        destination->setValidState( ObjectManualState::ToBlur );
     } else {
 
         /* Set item valid state */
-        destination->setValidState( this->ui->validCheckBox->checkState() ? ObjectRectState::Valid : ObjectRectState::Invalid );
+        destination->setValidState( this->ui->validCheckBox->checkState() ? ObjectManualState::Valid : ObjectManualState::Invalid );
     }
 
     /* Set manual status */
@@ -505,7 +505,7 @@ void EditView::on_confirmButton_clicked()
 void EditView::on_validCheckBox_clicked()
 {
     /* Update rect state in current panorama viewer */
-    this->rect_copy->setObjectRectState( this->ui->validCheckBox->checkState() ? ObjectRectState::Valid : ObjectRectState::Invalid );
+    this->rect_copy->setObjectManualState( this->ui->validCheckBox->checkState() ? ObjectManualState::Valid : ObjectManualState::Invalid );
 }
 
 /* (UI signal) Blur checkbox checked */

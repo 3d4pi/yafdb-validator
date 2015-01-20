@@ -45,13 +45,13 @@ HEADERS  += include/mainwindow.h \
     include/batchview.h \
     include/flowlayout.h \
     include/objectitem.h \
-    include/types.h \
     include/ymlparser.h \
     include/g2g_point.h \
     include/objectrect.h \
     include/editview.h \
     include/etg_point.h \
-    include/utils.h
+    include/utils.h \
+    include/main.h
 
 # Ui forms
 FORMS    += ui/mainwindow.ui \

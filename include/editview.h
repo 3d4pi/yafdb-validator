@@ -10,7 +10,19 @@
 #include "g2g_point.h"
 #include "objectrect.h"
 #include "panoramaviewer.h"
-#include "types.h"
+
+/* Edit modes struct */
+struct EditMode
+{
+    enum Type
+    {
+        /* Edit one object */
+        Single = 1,
+
+        /* Edit parent PanoramaViewer object directly */
+        Scene = 2
+    };
+};
 
 /* Default class container */
 namespace Ui {

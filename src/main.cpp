@@ -1,8 +1,4 @@
 #include "main.h"
-#include "mainwindow.h"
-#include "batchview.h"
-#include "ymlparser.h"
-#include <QApplication>
 
 /* Program entry point */
 int main(int argc, char *argv[])

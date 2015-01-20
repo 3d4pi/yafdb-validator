@@ -7,7 +7,6 @@
 #include <QThread>
 #include <QLabel>
 #include <QPalette>
-
 #include <iostream>
 
 #include "panoramaviewer.h"

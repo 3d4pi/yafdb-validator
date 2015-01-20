@@ -239,10 +239,10 @@ void BatchView::mergeResults()
         foreach (ObjectRect* rect, this->pano->rect_list) {
 
             /* Check if object have the same id as parent object */
-            if(rect->getId() == item->id)
+            if(rect->getId() == item->getId())
             {
                 /* Merge object */
-                rect->mergeWith( item->rect );
+                rect->mergeWith( item->getParentRect() );
             }
         }
     }
@@ -254,7 +254,7 @@ void BatchView::mergeResults()
         foreach (ObjectRect* rect, this->pano->rect_list) {
 
             /* Check if object have the same id as parent object and need to be removed */
-            if(item->toBeRemoved && (item->id == rect->getId()))
+            if(item->toBeRemoved() && (item->getId() == rect->getId()))
             {
                 /* Delete object from parent PanoramaViewer */
                 this->pano->rect_list.removeOne( rect );
@@ -295,7 +295,7 @@ void BatchView::invertSelection()
     foreach(ObjectItem* item, this->elements )
     {
         /* Invert tile selection */
-        item->setSelected( !item->selected );
+        item->setSelected( !item->isSelected() );
     }
 }
 
@@ -324,7 +324,7 @@ void BatchView::on_BlurButton_clicked()
     foreach(ObjectItem* item, this->elements )
     {
         /* Check if item is selected */
-        if(item->selected)
+        if(item->isSelected())
         {
             /* Mark object as blurred */
             item->setBlurred(true);
@@ -339,7 +339,7 @@ void BatchView::on_NoBlurButton_clicked()
     foreach(ObjectItem* item, this->elements )
     {
         /* Check if item is selected */
-        if(item->selected)
+        if(item->isSelected())
         {
             /* Mark object as unblurred */
             item->setBlurred(false);
@@ -354,7 +354,7 @@ void BatchView::on_deleteButton_clicked()
     foreach(ObjectItem* item, this->elements )
     {
         /* Check if item is selected */
-        if(item->selected)
+        if(item->isSelected())
         {
             /* Remove object */
             item->remove( true );
@@ -369,10 +369,10 @@ void BatchView::on_ValidateButton_clicked()
     foreach(ObjectItem* item, this->elements )
     {
         /* Check if item is selected */
-        if(item->selected)
+        if(item->isSelected())
         {
             /* Mark object as valid */
-            item->setValidState(ObjectValidState::Valid);
+            item->setItemManualState( ObjectManualState::Valid );
             item->setManualStatus("Valid");
         }
     }
@@ -385,10 +385,10 @@ void BatchView::on_InvalidateButton_clicked()
     foreach(ObjectItem* item, this->elements )
     {
         /* Check if item is selected */
-        if(item->selected)
+        if(item->isSelected())
         {
             /* Mark object as invalid */
-            item->setValidState(ObjectValidState::Invalid);
+            item->setItemManualState( ObjectManualState::Invalid );
             item->setManualStatus("Invalid");
         }
     }
@@ -401,10 +401,10 @@ void BatchView::on_setType_clicked()
     foreach(ObjectItem* item, this->elements )
     {
         /* Check if item is selected */
-        if(item->selected)
+        if(item->isSelected())
         {
             /* Update type */
-            item->setType(this->ui->TypeList->currentIndex());
+            item->setItemType( this->ui->TypeList->currentIndex() );
         }
     }
 }
@@ -416,10 +416,10 @@ void BatchView::on_setSubType_clicked()
     foreach(ObjectItem* item, this->elements )
     {
         /* Check if item is selected */
-        if(item->selected)
+        if(item->isSelected())
         {
             /* Update sub type */
-            item->setSubType(this->ui->SubTypeList->currentIndex());
+            item->setItemSubType( this->ui->SubTypeList->currentIndex() );
         }
     }
 }
@@ -437,7 +437,7 @@ void BatchView::on_ApplyButton_clicked()
     foreach(ObjectItem* item, this->elements)
     {
         /* Check if object is untyped */
-        if(item->type == ObjectType::None)
+        if(item->getItemType() == ObjectType::None)
         {
             /* Assign flag */
             haveNoClass = true;
@@ -449,10 +449,10 @@ void BatchView::on_ApplyButton_clicked()
     foreach(ObjectItem* item, this->elements)
     {
         /* Check if object is a face */
-        if(item->type == ObjectType::Face)
+        if(item->getItemType() == ObjectType::Face)
         {
             /* Check if object sub type is untyped */
-            if(item->sub_type == ObjectSubType::None)
+            if(item->getItemSubType() == ObjectSubType::None)
             {
                 /* Assign flag */
                 haveNoSubClass = true;
@@ -465,7 +465,7 @@ void BatchView::on_ApplyButton_clicked()
     foreach(ObjectItem* item, this->elements)
     {
         /* Check if object is unnaproved */
-        if(item->manualStatus == "None")
+        if(item->getItemManualStatus() == "None")
         {
             /* Assign flag */
             haveNoManualState = true;

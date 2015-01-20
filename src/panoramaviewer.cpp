@@ -1,8 +1,3 @@
-#include <QApplication>
-#include <QGraphicsProxyWidget>
-#include <QToolTip>
-#include <QPushButton>
-
 #include "panoramaviewer.h"
 #include "editview.h"
 

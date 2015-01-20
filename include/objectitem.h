@@ -8,22 +8,6 @@
 #include "objectrect.h"
 #include "panoramaviewer.h"
 
-struct ObjectItemRectType
-{
-    enum Type
-    {
-        Valid = 1, Invalid = 2, Manual = 3
-    };
-};
-
-struct ObjectValidState
-{
-    enum Type
-    {
-        Valid = 1, Invalid = 2, None = 3
-    };
-};
-
 namespace Ui {
 class ObjectItem;
 }
@@ -40,40 +24,36 @@ public:
     bool setImage(QImage image);
 
     void setId(int id);
+    int  getId();
     void setSize(QSize size);
-    void setType(int type);
-    void setSubType(int sub_type);
+
+    void setItemType(int type);
+    int  getItemType();
+    void setItemSubType(int sub_type);
+    int  getItemSubType();
+
     void setBlurred(bool value);
     void setSelected(bool value);
+
     void setRect(ObjectRect* rect);
     void setPano(PanoramaViewer* pano);
+
     void remove(bool value);
 
-    void setValidState(int state);
-
-    void setRectType(int type);
+    void setItemManualState(int state);
+    QString getItemManualStatus();
+    void setItemAutomaticState(int state);
+    QString getItemAutomaticStatus();
 
     void setAutomaticStatus(QString value);
     void setManualStatus(QString value);
 
-    bool selected;
-    QImage image;
+    bool isValid();
+    bool isSelected();
+    bool isBlurred();
+    bool toBeRemoved();
 
-    QString manualStatus;
-    QString autoStatus;
-
-    int id;
-    int type;
-    int sub_type;
-    int recttype;
-    bool valid;
-    int validstate;
-    bool blurred;
-    ObjectRect* rect;
-    PanoramaViewer* parent_pano;
-    QList<ObjectItem*> parent_elements;
-    QList<int> parent_toremove_ids;
-    bool toBeRemoved;
+    ObjectRect* getParentRect();
 
     ~ObjectItem();
 
@@ -83,7 +63,29 @@ private:
     void mousePressEvent(QMouseEvent *ev);
     void mouseDoubleClickEvent ( QMouseEvent * event );
 
+    int id;
+    int item_type;
+    int item_sub_type;
+    int automatic_state;
+    int manual_state;
     int border_size;
+
+    bool selected;
+    bool valid;
+    bool blurred;
+    bool needs_removal;
+
+    QImage image;
+
+    QString manualStatus;
+    QString autoStatus;
+
+    ObjectRect* rect;
+
+    PanoramaViewer* parent_pano;
+
+    QList<ObjectItem*> parent_elements;
+    QList<int> parent_toremove_ids;
 
 };
 

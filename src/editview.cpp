@@ -323,21 +323,21 @@ void EditView::mergeEditedItem(ObjectItem* destination)
     case 1:
 
         /* Apply item type */
-        destination->setType( ObjectType::Face );
+        destination->setItemType( ObjectType::Face );
         break;
 
     /* Numberplate type */
     case 2:
 
         /* Apply item type */
-        destination->setType( ObjectType::NumberPlate );
+        destination->setItemType( ObjectType::NumberPlate );
         break;
 
     /* "ToBlur" type */
     case 3:
 
         /* Apply item type */
-        destination->setType( ObjectType::ToBlur );
+        destination->setItemType( ObjectType::ToBlur );
         break;
     }
 
@@ -349,54 +349,54 @@ void EditView::mergeEditedItem(ObjectItem* destination)
     case 0:
 
         /* Apply item subtype */
-        destination->setSubType( ObjectSubType::None );
+        destination->setItemSubType( ObjectSubType::None );
         break;
 
     /* Front type */
     case 1:
 
         /* Apply item subtype */
-        destination->setSubType( ObjectSubType::Front );
+        destination->setItemSubType( ObjectSubType::Front );
         break;
 
     /* Profile type */
     case 2:
 
         /* Apply item subtype */
-        destination->setSubType( ObjectSubType::Profile );
+        destination->setItemSubType( ObjectSubType::Profile );
         break;
 
     /* Back type */
     case 3:
 
         /* Apply item subtype */
-        destination->setSubType( ObjectSubType::Back );
+        destination->setItemSubType( ObjectSubType::Back );
         break;
 
     /* Top type */
     case 4:
 
         /* Apply item subtype */
-        destination->setSubType( ObjectSubType::Top );
+        destination->setItemSubType( ObjectSubType::Top );
         break;
 
     /* Eye type */
     case 5:
 
         /* Apply item subtype */
-        destination->setSubType( ObjectSubType::Eyes );
+        destination->setItemSubType( ObjectSubType::Eyes );
         break;
     }
 
     /* Check if item is tagged as "ToBlur" */
-    if(destination->type == ObjectType::ToBlur)
+    if(destination->getItemType() == ObjectType::ToBlur)
     {
         /* Set item valid state */
-        destination->setValidState( ObjectManualState::ToBlur );
+        destination->setItemManualState( ObjectManualState::ToBlur );
     } else {
 
         /* Set item valid state */
-        destination->setValidState( this->ui->validCheckBox->checkState() ? ObjectManualState::Valid : ObjectManualState::Invalid );
+        destination->setItemManualState( this->ui->validCheckBox->checkState() ? ObjectManualState::Valid : ObjectManualState::Invalid );
     }
 
     /* Set manual status */

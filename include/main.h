@@ -1,6 +1,12 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#include <QApplication>
+
+#include "mainwindow.h"
+#include "batchview.h"
+#include "ymlparser.h"
+
 /* Application working modes struct */
 struct ApplicationMode
 {

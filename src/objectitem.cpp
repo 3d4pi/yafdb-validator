@@ -1,7 +1,6 @@
 #include "objectitem.h"
 #include "ui_objectitem.h"
 #include "editview.h"
-#include <QDebug>
 
 ObjectItem::ObjectItem(QWidget *parent) :
     QWidget(parent),
@@ -19,7 +18,7 @@ ObjectItem::ObjectItem(QWidget *parent) :
 
     this->setSize(QSize(128, 128));
 
-    this->toBeRemoved = false;
+    this->needs_removal = false;
 }
 
 ObjectItem::ObjectItem(QWidget *parent, PanoramaViewer* pano, ObjectRect* rect) :
@@ -42,12 +41,12 @@ ObjectItem::ObjectItem(QWidget *parent, PanoramaViewer* pano, ObjectRect* rect) 
     this->setRect( rect );
     this->parent_elements = parent_elements;
 
-    this->toBeRemoved = false;
+    this->needs_removal = false;
 }
 
 void ObjectItem::remove(bool value)
 {
-    this->toBeRemoved = value;
+    this->needs_removal = value;
     this->setVisible( !value );
     this->setEnabled( !value );
 }
@@ -174,9 +173,9 @@ void ObjectItem::setSize(QSize size)
     this->setImage(this->image);
 }
 
-void ObjectItem::setType(int type)
+void ObjectItem::setItemType(int type)
 {
-    this->type = type;
+    this->item_type = type;
 
     switch(type)
     {
@@ -194,33 +193,33 @@ void ObjectItem::setType(int type)
     this->rect->setObjectType( type );
 }
 
-void ObjectItem::setSubType(int sub_type)
+void ObjectItem::setItemSubType(int sub_type)
 {
-    this->sub_type = sub_type;
+    this->item_sub_type = sub_type;
     this->rect->setObjectSubType( sub_type );
 }
 
-void ObjectItem::setRectType(int type)
+void ObjectItem::setItemAutomaticState(int state)
 {
-    this->recttype = type;
+    this->automatic_state = state;
 
-    switch(type)
+    switch(state)
     {
-    case ObjectItemRectType::Valid:
+    case ObjectAutomaticState::Valid:
         this->setStyleSheet(
             "QLabel#imageLabel{"
             "border: " + QString::number(this->border_size) + "px solid rgb(0, 255, 0);"
             "}"
         );
         break;
-    case ObjectItemRectType::Invalid:
+    case ObjectAutomaticState::Invalid:
         this->setStyleSheet(
             "QLabel#imageLabel{"
             "border: " + QString::number(this->border_size) + "px solid rgb(255, 0, 0);"
             "}"
         );
         break;
-    case ObjectItemRectType::Manual:
+    case ObjectAutomaticState::Manual:
         this->setStyleSheet(
             "QLabel#imageLabel{"
             "border: " + QString::number(this->border_size) + "px solid rgb(0, 255, 255);"
@@ -230,23 +229,9 @@ void ObjectItem::setRectType(int type)
     }
 }
 
-void ObjectItem::setBlurred(bool value)
+void ObjectItem::setItemManualState(int state)
 {
-    this->blurred = value;
-
-    if(value)
-    {
-        this->ui->blurLabel->setPixmap( QPixmap(":/resources/icons/Blur.png") );
-    } else {
-        this->ui->blurLabel->setPixmap( QPixmap() );
-    }
-
-    this->rect->setBlurred( value );
-}
-
-void ObjectItem::setValidState(int state)
-{
-    this->validstate = state;
+    this->manual_state = state;
 
     switch(state)
     {
@@ -271,6 +256,32 @@ void ObjectItem::setValidState(int state)
     this->rect->setObjectManualState( state );
 }
 
+void ObjectItem::setAutomaticStatus(QString value)
+{
+    this->autoStatus = value;
+    this->rect->setAutomaticStatus( value );
+}
+
+void ObjectItem::setManualStatus(QString value)
+{
+    this->manualStatus = value;
+    this->rect->setManualStatus( value );
+}
+
+void ObjectItem::setBlurred(bool value)
+{
+    this->blurred = value;
+
+    if(value)
+    {
+        this->ui->blurLabel->setPixmap( QPixmap(":/resources/icons/Blur.png") );
+    } else {
+        this->ui->blurLabel->setPixmap( QPixmap() );
+    }
+
+    this->rect->setBlurred( value );
+}
+
 void ObjectItem::setSelected(bool value)
 {
     if(value)
@@ -289,10 +300,10 @@ void ObjectItem::setRect(ObjectRect *src_rect)
 
     this->setId(src_rect->getId());
     this->setImage(this->parent_pano->cropObject(src_rect));
-    this->setType(src_rect->getObjectType());
-    this->setSubType( src_rect->getObjectSubType() );
+    this->setItemType(src_rect->getObjectType());
+    this->setItemSubType( src_rect->getObjectSubType() );
     this->setBlurred(src_rect->isBlurred());
-    this->setValidState(src_rect->getObjectManualState());
+    this->setItemManualState(src_rect->getObjectManualState());
     this->setManualStatus(src_rect->getManualStatus());
     this->setAutomaticStatus(src_rect->getAutomaticStatus());
 
@@ -300,12 +311,12 @@ void ObjectItem::setRect(ObjectRect *src_rect)
     {
         if(src_rect->getAutomaticStatus() == "Valid")
         {
-            this->setRectType(ObjectItemRectType::Valid);
+            this->setItemAutomaticState(ObjectAutomaticState::Valid);
         } else {
-            this->setRectType(ObjectItemRectType::Invalid);
+            this->setItemAutomaticState(ObjectAutomaticState::Invalid);
         }
     } else {
-        this->setRectType(ObjectItemRectType::Manual);
+        this->setItemAutomaticState(ObjectAutomaticState::Manual);
     }
 }
 
@@ -313,19 +324,6 @@ void ObjectItem::setPano(PanoramaViewer *pano)
 {
     this->parent_pano = pano;
 }
-
-void ObjectItem::setAutomaticStatus(QString value)
-{
-    this->autoStatus = value;
-    this->rect->setAutomaticStatus( value );
-}
-
-void ObjectItem::setManualStatus(QString value)
-{
-    this->manualStatus = value;
-    this->rect->setManualStatus( value );
-}
-
 
 void ObjectItem::mousePressEvent(QMouseEvent* event) {
 
@@ -347,6 +345,57 @@ void ObjectItem::mouseDoubleClickEvent(QMouseEvent *event)
         w->show();
     }
 }
+
+bool ObjectItem::isValid()
+{
+    return this->valid;
+}
+
+bool ObjectItem::isBlurred()
+{
+    return this->blurred;
+}
+
+bool ObjectItem::isSelected()
+{
+    return this->selected;
+}
+
+bool ObjectItem::toBeRemoved()
+{
+    return this->needs_removal;
+}
+
+int ObjectItem::getId()
+{
+    return this->id;
+}
+
+int ObjectItem::getItemType()
+{
+    return this->item_type;
+}
+
+int ObjectItem::getItemSubType()
+{
+    return this->item_sub_type;
+}
+
+QString ObjectItem::getItemManualStatus()
+{
+    return this->manualStatus;
+}
+
+QString ObjectItem::getItemAutomaticStatus()
+{
+    return this->autoStatus;
+}
+
+ObjectRect* ObjectItem::getParentRect()
+{
+    return this->rect;
+}
+
 
 ObjectItem::~ObjectItem()
 {

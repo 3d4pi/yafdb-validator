@@ -4,8 +4,6 @@
 /* Includes */
 #include <QGraphicsPolygonItem>
 #include <QPen>
-#include <QPaintEvent>
-#include <QDebug>
 
 #include "etg_point.h"
 #include "g2g_point.h"

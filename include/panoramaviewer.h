@@ -1,6 +1,10 @@
 #ifndef PANORAMAVIEWER_H
 #define PANORAMAVIEWER_H
 
+
+#include <QApplication>
+#include <QGraphicsProxyWidget>
+#include <QToolTip>
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QScrollBar>
@@ -11,6 +15,7 @@
 
 #include <inter-all.h>
 #include <gnomonic-all.h>
+
 #include "g2g_point.h"
 #include "objectrect.h"
 #include "utils.h"

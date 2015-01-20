@@ -427,8 +427,10 @@ int ObjectRect::getObjectAutomaticState()
 
 void ObjectRect::setObjectManualState(int state)
 {
+    /* Assign value */
     this->manual_state = state;
 
+    /* Set proper color depending on state specified */
     switch(state)
     {
     case ObjectManualState::None:
@@ -445,20 +447,27 @@ void ObjectRect::setObjectManualState(int state)
         break;
     }
 
-    // Render brush
+    /* Render contour */
     this->setBrush( * this->brush );
 }
 
+/* Function to get object manual state */
 int ObjectRect::getObjectManualState()
 {
+    /* Return result */
     return this->manual_state;
 }
 
+/* Function to (re)render object */
 void ObjectRect::render()
 {
+    /* Create polygon from points */
     this->polygon = QPolygonF( this->points );
 
-    // Draw contour
+    /* Update polygon */
+    this->setPolygon( this->polygon );
+
+    /* Draw first contour (automatic status) */
     QVector<QPointF> contour_points;
     float pen_width = this->contour_pen->width();
     contour_points.append( QPointF(this->points[0].x() - pen_width, this->points[0].y() - pen_width) );
@@ -468,6 +477,7 @@ void ObjectRect::render()
     QPolygonF contour_polygon( contour_points );
     this->contour->setPolygon( contour_polygon );
 
+    /* Draw shape (manual status) */
     QVector<QPointF> contour2_points;
     float pen2_width = this->contour2_pen->width();
     contour2_points.append( QPointF(contour_points[0].x() - pen2_width, contour_points[0].y() - pen2_width) );
@@ -477,7 +487,7 @@ void ObjectRect::render()
     QPolygonF contour2_polygon( contour2_points );
     this->contour2->setPolygon( contour2_polygon );
 
-    // Draw resize rect
+    /* Draw resizing rect */
     QVector<QPointF> resize_rect_points;
     resize_rect_points.append( QPointF(this->points[2].x() + 10, this->points[2].y() + 10) );
     resize_rect_points.append( QPointF(this->points[2].x() + 10, this->points[2].y()) );
@@ -486,26 +496,29 @@ void ObjectRect::render()
     this->resize_rect_polygon = QPolygonF( resize_rect_points );
     this->resize_rect->setPolygon( this->resize_rect_polygon );
 
-
+    /* Contour size condition */
     if(this->getSizeCurrent().width() < 70 || this->getSizeCurrent().height() < 70 )
     {
+        /* Update contour sizes */
         this->pen->setWidth( 1 );
         this->contour_pen->setWidth( 1 );
         this->contour2_pen->setWidth( 1 );
     } else {
+
+        /* Update contour sizes */
         this->pen->setWidth( 2 );
         this->contour_pen->setWidth( 2 );
         this->contour2_pen->setWidth( 2 );
     }
 
+    /* Update pens */
     this->setPen( *this->pen );
     this->resize_rect->setPen( *this->pen );
     this->contour->setPen( *this->contour_pen );
     this->contour2->setPen( *this->contour2_pen );
-
-    this->setPolygon( this->polygon );
 }
 
+/* Function to set/update initial projection parameters */
 void ObjectRect::setProjectionParametters(float azimuth,
         float elevation,
         float aperture,
@@ -519,21 +532,14 @@ void ObjectRect::setProjectionParametters(float azimuth,
     this->projection_parameters.height = height;
 }
 
-void ObjectRect::setSourceImagePath(QString path)
-{
-    this->projection_parameters.source_image = path;
-}
-
-QString ObjectRect::getSourceImagePath()
-{
-    return this->projection_parameters.source_image;
-}
-
+/* Function to set/update initial projection points based on current points */
 void ObjectRect::setProjectionPoints()
 {
+    /* Assign value */
     this->projection_parameters.points = this->points;
 }
 
+/* Function to set/update initial projection points */
 void ObjectRect::setProjectionPoints(QPointF p1, QPointF p2, QPointF p3, QPointF p4)
 {
     this->projection_parameters.points[0] = p1;
@@ -542,60 +548,97 @@ void ObjectRect::setProjectionPoints(QPointF p1, QPointF p2, QPointF p3, QPointF
     this->projection_parameters.points[3] = p4;
 }
 
+/* Function to set source image path */
+void ObjectRect::setSourceImagePath(QString path)
+{
+    /* Assign value */
+    this->projection_parameters.source_image = path;
+}
+
+/* Function to get source image path */
+QString ObjectRect::getSourceImagePath()
+{
+    /* Return result */
+    return this->projection_parameters.source_image;
+}
+
+/* Function to get projection azimuth */
 float ObjectRect::proj_azimuth()
 {
+    /* Return result */
     return this->projection_parameters.azimuth;
 }
 
+/* Function to get projection elevation */
 float ObjectRect::proj_elevation()
 {
+    /* Return result */
     return this->projection_parameters.elevation;
 }
 
+/* Function to get projection aperture */
 float ObjectRect::proj_aperture()
 {
+    /* Return result */
     return this->projection_parameters.aperture;
 }
 
+/* Function to get projection projection point 1 */
 QPointF ObjectRect::proj_point_1()
 {
+    /* Return result */
     return this->projection_parameters.points[0];
 }
 
+/* Function to get projection projection point 2 */
 QPointF ObjectRect::proj_point_2()
 {
+    /* Return result */
     return this->projection_parameters.points[1];
 }
 
+/* Function to get projection projection point 3 */
 QPointF ObjectRect::proj_point_3()
 {
+    /* Return result */
     return this->projection_parameters.points[2];
 }
 
+/* Function to get projection projection point 4 */
 QPointF ObjectRect::proj_point_4()
 {
+    /* Return result */
     return this->projection_parameters.points[3];
 }
 
+/* Function to get projection width */
 float ObjectRect::proj_width()
 {
+    /* Return result */
     return this->projection_parameters.width;
 }
 
+/* Function to get projection height */
 float ObjectRect::proj_height()
 {
+    /* Return result */
     return this->projection_parameters.height;
 }
 
+/* Function to get object type (See ObjectType struct) */
 int ObjectRect::getObjectType()
 {
+    /* Return result */
     return this->info.type;
 }
 
+/* Function to set object type (See ObjectType struct) */
 void ObjectRect::setObjectType(int value)
 {
+    /* Assign value */
     this->info.type = value;
 
+    /* Apply special types colors */
     switch(value)
     {
     case ObjectType::ToBlur:
@@ -604,57 +647,98 @@ void ObjectRect::setObjectType(int value)
     }
 }
 
-int ObjectRect::getSubType()
+/* Function to get object sub-type (See ObjectSubType) */
+int ObjectRect::getObjectSubType()
 {
+    /* Return result */
     return this->info.sub_type;
 }
 
-void ObjectRect::setSubType(int value)
+/* Function to set object sub-type (See ObjectSubType) */
+void ObjectRect::setObjectSubType(int value)
 {
+    /* Assign value */
     this->info.sub_type = value;
 }
 
+/* Function to determine if object is marked for bluring */
 bool ObjectRect::isBlurred()
 {
+    /* Return result */
     return this->info.blurred;
 }
 
-bool ObjectRect::isValidated()
-{
-    return (this->manual_state == ObjectManualState::Valid);
-}
-
+/* Function to mark object for blurring or not */
 void ObjectRect::setBlurred(bool value)
 {
+    /* Assign value */
     this->info.blurred = value;
 }
 
+/* Function to determine if object is validated */
+bool ObjectRect::isValidated()
+{
+    /* Return result */
+    return (this->manual_state == ObjectManualState::Valid);
+}
+
+/* Function to get manual status */
 QString ObjectRect::getManualStatus()
 {
+    /* Return result */
     return this->info.manual_status;
 }
 
-QString ObjectRect::getAutomaticStatus()
-{
-    return this->info.automatic_status;
-}
-
+/* Function to set manual status */
 void ObjectRect::setManualStatus(QString value)
 {
+    /* Assign value */
     this->info.manual_status = value;
 }
 
+/* Function to get automatic status */
+QString ObjectRect::getAutomaticStatus()
+{
+    /* Return result */
+    return this->info.automatic_status;
+}
+
+/* Function to set automatic status */
 void ObjectRect::setAutomaticStatus(QString value)
 {
+    /* Assign value */
     this->info.automatic_status = value;
 
+    /* If object is automatic disable resizing */
     if(value != "None")
         this->setResizeEnabled( false );
 }
 
+/* Function to toggle resizing */
+void ObjectRect::setResizeEnabled(bool value)
+{
+    /* Assign value */
+    this->resizeEnabled = value;
+
+    /* Show/hide resize rect */
+    this->resize_rect->setVisible( value );
+}
+
+/* Function to determine if resizing is enabled */
+bool ObjectRect::isResizeEnabled()
+{
+    /* Return result */
+    return this->resizeEnabled;
+}
+
+
+/* Function to copy object */
 ObjectRect* ObjectRect::copy()
 {
+    /* Create a new ObjectRect instance */
     ObjectRect* rect_copy = new ObjectRect;
+
+    /* Restore tags/values */
     rect_copy->setObjectAutomaticState( this->getObjectAutomaticState() );
     rect_copy->setObjectManualState( this->getObjectManualState() );
     rect_copy->setObjectType( this->getObjectType() );
@@ -663,50 +747,58 @@ ObjectRect* ObjectRect::copy()
     rect_copy->setBlurred( this->isBlurred() );
     rect_copy->setId( this->getId() );
 
+    /* Restore projection parameters */
     rect_copy->setProjectionParametters(this->proj_azimuth(),
                                         this->proj_elevation(),
                                         this->proj_aperture(),
                                         this->proj_width(),
                                         this->proj_height());
 
+    /* Restore points */
     rect_copy->setPoints(this->proj_point_1(),
                          this->proj_point_2(),
                          this->proj_point_3(),
                          this->proj_point_4());
 
+    /* Set projection points */
     rect_copy->setProjectionPoints();
 
+    /* Return result */
     return rect_copy;
 }
 
+/* Function to merge object with another */
 void ObjectRect::mergeWith(ObjectRect *rect)
 {
+    /* Map source object to current scene projection parameters */
     rect->mapTo(this->proj_width(),
-                           this->proj_height(),
-                           this->proj_azimuth(),
-                           this->proj_elevation(),
-                           this->proj_aperture()
-                          );
+                this->proj_height(),
+                this->proj_azimuth(),
+                this->proj_elevation(),
+                this->proj_aperture());
 
+    /* Update projection points */
     this->setProjectionPoints(rect->getPoint1(),
                               rect->getPoint2(),
                               rect->getPoint3(),
                               rect->getPoint4());
 
+    /* Update tags/values */
     this->setObjectType( rect->getObjectType() );
-    this->setSubType( rect->getSubType() );
+    this->setObjectSubType( rect->getObjectSubType() );
     this->setObjectManualState( rect->getObjectManualState() );
-
     this->setManualStatus( rect->getManualStatus() );
     this->setAutomaticStatus( rect->getAutomaticStatus() );
-
     this->setBlurred( rect->isBlurred() );
 }
 
+/* Function to map current object to specific projection parameters */
 void ObjectRect::mapTo(float width, float height, float azimuth, float elevation, float aperture)
 {
+    /* Destination points containers */
     QPointF p1, p2, p3, p4;
 
+    /* Map point 1 */
     g2g_point(this->proj_width(),
               this->proj_height(),
               this->proj_azimuth(),
@@ -723,6 +815,7 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
               &p1.rx(),
               &p1.ry());
 
+    /* Map point 2 */
     g2g_point(this->proj_width(),
               this->proj_height(),
               this->proj_azimuth(),
@@ -739,6 +832,7 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
               &p2.rx(),
               &p2.ry());
 
+    /* Map point 3 */
     g2g_point(this->proj_width(),
               this->proj_height(),
               this->proj_azimuth(),
@@ -755,6 +849,7 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
               &p3.rx(),
               &p3.ry());
 
+    /* Map point 4 */
     g2g_point(this->proj_width(),
               this->proj_height(),
               this->proj_azimuth(),
@@ -771,15 +866,11 @@ void ObjectRect::mapTo(float width, float height, float azimuth, float elevation
               &p4.rx(),
               &p4.ry());
 
+    /* Update current object points */
     this->setPoints( p1, p2, p3, p4 );
 }
 
-inline float clamp(float x, float a, float b)
-{
-    return x < a ? a : (x > b ? b : x);
-}
-
-
+/* Function to convert spherical coordinates system to gnomonic */
 void ObjectRect::mapFromSpherical(float source_width,
                                   float source_height,
                                   float dest_width,
@@ -790,28 +881,37 @@ void ObjectRect::mapFromSpherical(float source_width,
                                   float dest_zoom_min,
                                   float dest_zoom_max)
 {
+    /* Declare point containers */
     QPointF p1, p3;
 
+    /* Denormalize point 1 */
     double p1_d_x = ((this->getPoint1().x() / LG_PI2) * source_width);
     double p1_d_y = (((this->getPoint1().y()) + ( LG_PI / 2.0 )) / LG_PI ) * source_height;
 
+    /* Denormalize point 2 */
     double p3_d_x = ((this->getPoint3().x() / LG_PI2) * source_width);
     double p3_d_y = (((this->getPoint3().y()) + ( LG_PI / 2.0 )) / LG_PI ) * source_height;
 
+    /* Determine width/height */
     double width  = ( p3_d_x + p1_d_x );
     double height = ( p3_d_y + p1_d_y );
 
+    /* Determine best aperture */
     float aperture = ( ( ( p3_d_x - p1_d_x ) / source_width ) * 30.0 );
 
+    /* Clamp aperture */
     aperture = aperture < dest_zoom_min ? dest_zoom_min : aperture;
     aperture = aperture > dest_zoom_max ? dest_zoom_max : aperture;
 
+    /* Determine center */
     double center_x = ( width / 2.0 );
     double center_y = ( height / 2.0 );
 
+    /* Determine azimuth/elevation */
     float azimuth = ( ( center_x / source_width ) * LG_PI2 );
     float elevation = ( ( - ( center_y / source_height ) + 0.5 ) * LG_PI );
 
+    /* Convert point 1 */
     etg_point(source_width,
               source_height,
               p1_d_x,
@@ -824,6 +924,7 @@ void ObjectRect::mapFromSpherical(float source_width,
               &p1.rx(),
               &p1.ry());
 
+    /* Convert point 2 */
     etg_point(source_width,
               source_height,
               p3_d_x,
@@ -836,19 +937,23 @@ void ObjectRect::mapFromSpherical(float source_width,
               &p3.rx(),
               &p3.ry());
 
+    /* Update points */
     this->setPoints(p1,
                     QPointF(0.0, 0.0),
                     p3,
                     QPointF(0.0, 0.0));
 
+    /* Update projection points */
     this->setProjectionPoints();
 
+    /* Update projection parameters */
     this->setProjectionParametters(azimuth,
             elevation,
             aperture,
             dest_width,
             dest_height);
 
+    /* Map points */
     this->mapTo(dest_width,
                 dest_height,
                 dest_azimuth,
@@ -856,15 +961,3 @@ void ObjectRect::mapFromSpherical(float source_width,
                 dest_aperture);
 
 }
-
-void ObjectRect::setResizeEnabled(bool value)
-{
-    this->resizeEnabled = value;
-    this->resize_rect->setVisible( value );
-}
-
-bool ObjectRect::isResizeEnabled()
-{
-    return this->resizeEnabled;
-}
-

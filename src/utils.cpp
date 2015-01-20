@@ -92,3 +92,22 @@ void exportRect(ObjectRect *rect, image_info_struct image_info, QString destinat
         element.save( destination );
     }
 }
+
+float clamp(float x, float a, float b)
+{
+    return x < a ? a : (x > b ? b : x);
+}
+
+float clampRad(float x, float a, float b)
+{
+    if(x > b)
+    {
+        float delta = (x - b);
+        return (a + delta);
+    } else if (x < a) {
+        float delta = (a - x);
+        return (b - delta);
+    } else {
+        return x;
+    }
+}

@@ -83,25 +83,6 @@ PanoramaViewer::PanoramaViewer(QWidget *parent, bool connectSlots) :
     }
 }
 
-inline float clamp(float x, float a, float b)
-{
-    return x < a ? a : (x > b ? b : x);
-}
-
-float clampRad(float x, float a, float b)
-{
-    if(x > b)
-    {
-        float delta = (x - b);
-        return (a + delta);
-    } else if (x < a) {
-        float delta = (a - x);
-        return (b - delta);
-    } else {
-        return x;
-    }
-}
-
 void PanoramaViewer::setup(int width, int height, float scale_factor, float zoom_min, float zoom_max, float zoom_def, int threads)
 {
     this->scale_factor = scale_factor;

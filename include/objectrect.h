@@ -110,8 +110,8 @@ public:
     int getObjectType();
 
     /* SubType setter/getter */
-    void setSubType(int value);
-    int getSubType();
+    void setObjectSubType(int value);
+    int getObjectSubType();
 
     /* Id setter/getter */
     void setId(int id);
@@ -211,9 +211,6 @@ public:
 /* Private functions / variables */
 private:
 
-    /* Function to render object */
-    void render();
-
     /* Id container */
     int id;
 
@@ -269,6 +266,9 @@ private:
         QString manual_status;
         QString automatic_status;
     } info;
+
+    /* Function to render object */
+    void render();
 
 };
 

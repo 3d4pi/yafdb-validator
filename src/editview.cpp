@@ -135,7 +135,7 @@ EditView::EditView(QWidget *parent, ObjectRect* rect, image_info_struct image_in
     }
 
     /* Set-up subtype combobox value and subtype label */
-    switch(this->ref_rect->getSubType())
+    switch(this->ref_rect->getObjectSubType())
     {
 
     /* None type */
@@ -271,42 +271,42 @@ void EditView::mergeEditedRect(ObjectRect* destination)
     case 0:
 
         /* Apply rect subtype */
-        destination->setSubType( ObjectSubType::None );
+        destination->setObjectSubType( ObjectSubType::None );
         break;
 
     /* Front type */
     case 1:
 
         /* Apply rect subtype */
-        destination->setSubType( ObjectSubType::Front );
+        destination->setObjectSubType( ObjectSubType::Front );
         break;
 
     /* Profile type */
     case 2:
 
         /* Apply rect subtype */
-        destination->setSubType( ObjectSubType::Profile );
+        destination->setObjectSubType( ObjectSubType::Profile );
         break;
 
     /* Back type */
     case 3:
 
         /* Apply rect subtype */
-        destination->setSubType( ObjectSubType::Back );
+        destination->setObjectSubType( ObjectSubType::Back );
         break;
 
     /* Top type */
     case 4:
 
         /* Apply rect subtype */
-        destination->setSubType( ObjectSubType::Top );
+        destination->setObjectSubType( ObjectSubType::Top );
         break;
 
     /* Eye type */
     case 5:
 
         /* Apply rect subtype */
-        destination->setSubType( ObjectSubType::Eyes );
+        destination->setObjectSubType( ObjectSubType::Eyes );
         break;
     }
 }

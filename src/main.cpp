@@ -213,7 +213,7 @@ int main(int argc, char *argv[])
             case ObjectType::Face:
 
                 /* Rect subtype switch */
-                switch(rect->getSubType())
+                switch(rect->getObjectSubType())
                 {
 
                 /* Undefined subtype */

@@ -26,7 +26,7 @@ void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
     }
 
     // Write class name
-    switch(obj->getSubType())
+    switch(obj->getObjectSubType())
     {
     case ObjectSubType::None:
         fs << "subClassName" << "None";
@@ -97,10 +97,10 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
         object->setObjectType( ObjectType::Face );
     } else if (lowerClassName == "front" || lowerClassName == "front:profile"){
         object->setObjectType( ObjectType::Face );
-        object->setSubType( ObjectSubType::Front );
+        object->setObjectSubType( ObjectSubType::Front );
     } else if (lowerClassName == "profile"){
         object->setObjectType( ObjectType::Face );
-        object->setSubType( ObjectSubType::Profile );
+        object->setObjectSubType( ObjectSubType::Profile );
     } else if(lowerClassName == "numberplate") {
         object->setObjectType( ObjectType::NumberPlate );
     } else if(lowerClassName == "toblur") {
@@ -111,17 +111,17 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
 
     if(lowerSubClassName == "none")
     {
-        object->setSubType( ObjectSubType::None );
+        object->setObjectSubType( ObjectSubType::None );
     } else if(lowerSubClassName == "front") {
-        object->setSubType( ObjectSubType::Front );
+        object->setObjectSubType( ObjectSubType::Front );
     } else if(lowerSubClassName == "profile") {
-        object->setSubType( ObjectSubType::Profile );
+        object->setObjectSubType( ObjectSubType::Profile );
     } else if(lowerSubClassName == "back") {
-        object->setSubType( ObjectSubType::Back );
+        object->setObjectSubType( ObjectSubType::Back );
     } else if(lowerSubClassName == "top") {
-        object->setSubType( ObjectSubType::Top );
+        object->setObjectSubType( ObjectSubType::Top );
     } else if(lowerSubClassName == "eyes") {
-        object->setSubType( ObjectSubType::Eyes );
+        object->setObjectSubType( ObjectSubType::Eyes );
     }
 
     // Parse area points

@@ -20,4 +20,7 @@ struct image_info_struct{
 QImage*  IplImage2QImage(IplImage *iplImg);
 void exportRect(ObjectRect* rect, image_info_struct image_info, QString destination, float zoom_level = 1.5);
 
+float clamp(float x, float a, float b);
+float clampRad(float x, float a, float b);
+
 #endif // UTILS_H

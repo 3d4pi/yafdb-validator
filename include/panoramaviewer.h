@@ -30,7 +30,6 @@ public:
     explicit PanoramaViewer(QWidget *parent = 0, bool connectSlots = true);
 
     float scale_factor;
-    int rect_list_index;
 
     QGraphicsScene* scene;
 
@@ -58,6 +57,7 @@ public:
     void setVisGroup( int visgroup );
 
     QList<ObjectRect*> rect_list;
+    int rect_list_id_index;
 
     QString image_path;
 

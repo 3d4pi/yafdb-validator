@@ -20,6 +20,8 @@ PanoramaViewer::PanoramaViewer(QWidget *parent, bool connectSlots) :
 
     this->resizePoint = Point::None;
 
+    this->rect_list_id_index = 1;
+
     // Initialize position container
     this->position.start_x = 0;
     this->position.start_y = 0;
@@ -39,8 +41,6 @@ PanoramaViewer::PanoramaViewer(QWidget *parent, bool connectSlots) :
 
     // Initialize default mode
     this->mode = Mode::None;
-
-    this->rect_list_index = 0;
 
     // Configure default settings
     this->scale_factor = 1.0;
@@ -498,12 +498,12 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
         {
             this->increation_rect.rect = new ObjectRect();
             this->increation_rect.rect->setObjectAutomaticState( ObjectAutomaticState::Manual );
-            this->increation_rect.rect->setType(ObjectType::None);
+            this->increation_rect.rect->setObjectType(ObjectType::None);
             this->increation_rect.rect->setObjectManualState( ObjectManualState::Valid );
             this->increation_rect.rect->setManualStatus("Valid");
             this->increation_rect.rect->setBlurred(true);
 
-            this->increation_rect.rect->setId( this->rect_list_index++ );
+            this->increation_rect.rect->setId( this->rect_list_id_index++ );
 
             this->rect_list.append( this->increation_rect.rect );
             this->scene->addItem( this->increation_rect.rect );

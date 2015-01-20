@@ -86,7 +86,7 @@ EditView::EditView(QWidget *parent, ObjectRect* rect, image_info_struct image_in
 
 
     /* Set-up type combobox value and type label */
-    switch(this->ref_rect->getType())
+    switch(this->ref_rect->getObjectType())
     {
 
     /* None type */
@@ -245,21 +245,21 @@ void EditView::mergeEditedRect(ObjectRect* destination)
     case 1:
 
         /* Apply rect type */
-        destination->setType( ObjectType::Face );
+        destination->setObjectType( ObjectType::Face );
         break;
 
     /* Numberplate type */
     case 2:
 
         /* Apply rect type */
-        destination->setType( ObjectType::NumberPlate );
+        destination->setObjectType( ObjectType::NumberPlate );
         break;
 
     /* "ToBlur" type */
     case 3:
 
         /* Apply rect type */
-        destination->setType( ObjectType::ToBlur );
+        destination->setObjectType( ObjectType::ToBlur );
         break;
     }
 

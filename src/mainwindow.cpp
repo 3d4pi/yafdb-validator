@@ -145,6 +145,14 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
                                 this->pano->position.aperture);
 
                     /* Append mapped rect to scene */
+                    rect->setId( this->pano->rect_list_id_index++ );
+
+                    /* Assign childrens ID's */
+                    foreach(ObjectRect* child, rect->childrens)
+                    {
+                        child->setId( this->pano->rect_list_id_index++ );
+                    }
+
                     this->pano->rect_list.append( rect );
                     this->pano->scene->addItem( rect );
 
@@ -174,6 +182,14 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
                                            this->pano->zoom_max * ( LG_PI / 180.0 ));
 
                     /* Append mapped rect to scene */
+                    rect->setId( this->pano->rect_list_id_index++ );
+
+                    /* Assign childrens ID's */
+                    foreach(ObjectRect* child, rect->childrens)
+                    {
+                        child->setId( this->pano->rect_list_id_index++ );
+                    }
+
                     this->pano->rect_list.append( rect );
                     this->pano->scene->addItem( rect );
 
@@ -199,6 +215,7 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
                 /* Iterate over loaded rects */
                 foreach(ObjectRect* rect, loaded_rects)
                 {
+
                     /* Map rect to current scene */
                     rect->mapTo(this->pano->dest_image_map.width(),
                                 this->pano->dest_image_map.height(),
@@ -207,6 +224,14 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
                                 this->pano->position.aperture);
 
                     /* Append mapped rect to scene */
+                    rect->setId( this->pano->rect_list_id_index++ );
+
+                    /* Assign childrens ID's */
+                    foreach(ObjectRect* child, rect->childrens)
+                    {
+                        child->setId( this->pano->rect_list_id_index++ );
+                    }
+
                     this->pano->rect_list.append( rect );
                     this->pano->scene->addItem( rect );
 
@@ -252,7 +277,7 @@ void MainWindow::refreshLabels()
     foreach(ObjectRect* rect, this->pano->rect_list)
     {
         /* Rect type swith */
-        switch(rect->getType())
+        switch(rect->getObjectType())
         {
 
         /* Untyped rect */

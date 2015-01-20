@@ -87,7 +87,7 @@ void BatchView::populate(int batchviewmode)
         case BatchViewMode::OnlyUntyped:
 
             /* Check if rect type is untyped */
-            if(rect->getType() == ObjectType::None)
+            if(rect->getObjectType() == ObjectType::None)
             {
                 /* Insert tile */
                 this->insertItem(rect);
@@ -98,7 +98,7 @@ void BatchView::populate(int batchviewmode)
         case BatchViewMode::OnlyFaces:
 
             /* Check if rect is a valid face */
-            if(rect->getType() == ObjectType::Face &&
+            if(rect->getObjectType() == ObjectType::Face &&
                     (rect->getAutomaticStatus() == "Valid" || rect->getAutomaticStatus() == "None"))
             {
                 /* Insert tile */
@@ -110,7 +110,7 @@ void BatchView::populate(int batchviewmode)
         case BatchViewMode::OnlyUnapprovedFaces:
 
             /* Check if rect is unnaproved */
-            if(rect->getType() == ObjectType::Face
+            if(rect->getObjectType() == ObjectType::Face
                     && rect->getManualStatus() == "None"
                     && rect->getAutomaticStatus() == "Valid")
             {
@@ -123,7 +123,7 @@ void BatchView::populate(int batchviewmode)
         case BatchViewMode::OnlyNumberPlates:
 
             /* Check if rect is a numberplate */
-            if(rect->getType() == ObjectType::NumberPlate)
+            if(rect->getObjectType() == ObjectType::NumberPlate)
             {
                 /* Insert tile */
                 this->insertItem(rect);
@@ -134,7 +134,7 @@ void BatchView::populate(int batchviewmode)
         case BatchViewMode::OnlyUnapprovedNumberPlates:
 
             /* Check if rect is an unnaproved numberplate */
-            if(rect->getType() == ObjectType::NumberPlate
+            if(rect->getObjectType() == ObjectType::NumberPlate
                     && rect->getManualStatus() == "None"
                     && rect->getAutomaticStatus() == "Valid")
             {
@@ -147,7 +147,7 @@ void BatchView::populate(int batchviewmode)
         case BatchViewMode::OnlyPreInvalidated:
 
             /* Check if rect is pre-invalidated */
-            if(rect->getType() != ObjectType::None
+            if(rect->getObjectType() != ObjectType::None
                     && rect->getAutomaticStatus() != "Valid"
                     && rect->getAutomaticStatus() != "None")
             {
@@ -160,7 +160,7 @@ void BatchView::populate(int batchviewmode)
         case BatchViewMode::OnlyToBlur:
 
             /* Check if rect is a "to-blur" object */
-            if(rect->getType() == ObjectType::ToBlur)
+            if(rect->getObjectType() == ObjectType::ToBlur)
             {
                 /* Insert tile */
                 this->insertItem(rect);

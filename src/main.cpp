@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
             QString path;
 
             /* Rect type switch */
-            switch(rect->getType())
+            switch(rect->getObjectType())
             {
 
             /* Face */

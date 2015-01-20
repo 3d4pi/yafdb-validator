@@ -9,7 +9,7 @@ YMLParser::YMLParser()
 void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
 {
     // Write class name
-    switch(obj->getType())
+    switch(obj->getObjectType())
     {
     case ObjectType::Face:
         fs << "className" << "Face";
@@ -71,7 +71,7 @@ void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
     fs << "blurObject" << (obj->isBlurred() ? "Yes" : "No");
 }
 
-ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype, int parent_count)
+ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
 {
     // Initialize detected object
     ObjectRect* object = new ObjectRect;
@@ -94,19 +94,19 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype, int 
 
     if(lowerClassName == "face")
     {
-        object->setType( ObjectType::Face );
+        object->setObjectType( ObjectType::Face );
     } else if (lowerClassName == "front" || lowerClassName == "front:profile"){
-        object->setType( ObjectType::Face );
+        object->setObjectType( ObjectType::Face );
         object->setSubType( ObjectSubType::Front );
     } else if (lowerClassName == "profile"){
-        object->setType( ObjectType::Face );
+        object->setObjectType( ObjectType::Face );
         object->setSubType( ObjectSubType::Profile );
     } else if(lowerClassName == "numberplate") {
-        object->setType( ObjectType::NumberPlate );
+        object->setObjectType( ObjectType::NumberPlate );
     } else if(lowerClassName == "toblur") {
-        object->setType( ObjectType::ToBlur );
+        object->setObjectType( ObjectType::ToBlur );
     } else if(lowerClassName == "none") {
-        object->setType( ObjectType::None );
+        object->setObjectType( ObjectType::None );
     }
 
     if(lowerSubClassName == "none")
@@ -242,7 +242,7 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype, int 
         object->setManualStatus("Invalid");
     }
 
-    if(object->getType() == ObjectType::ToBlur)
+    if(object->getObjectType() == ObjectType::ToBlur)
     {
         object->setObjectManualState( ObjectManualState::ToBlur );
     } else {
@@ -273,8 +273,6 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype, int 
 
     cv::FileNode childNode = (*iterator)["childrens"];
     for (cv::FileNodeIterator child = childNode.begin(); child != childNode.end(); ++child) {
-        ObjectRect* childRect = this->readItem( child );
-        childRect->setId( parent_count + object->childrens.length() );
         object->childrens.append( this->readItem( child ) );
     }
 
@@ -342,15 +340,12 @@ QList<ObjectRect*> YMLParser::loadYML(QString path, int ymltype)
     for (cv::FileNodeIterator it = objectsNode.begin(); it != objectsNode.end(); ++it) {
 
         // Initialize detected object
-        ObjectRect* object = this->readItem(it, ymltype, out_list.length());
+        ObjectRect* object = this->readItem(it, ymltype);
 
         std::string source_image;
         fs["source_image"] >> source_image;
 
         object->setSourceImagePath( QString(source_image.c_str()) );
-
-        // Assign id
-        object->setId( out_list.length() + 1);
 
         // Append to list
         out_list.append(object);
@@ -360,7 +355,7 @@ QList<ObjectRect*> YMLParser::loadYML(QString path, int ymltype)
     for (cv::FileNodeIterator it = invalidObjectsNode.begin(); it != invalidObjectsNode.end(); ++it) {
 
         // Initialize detected object
-        ObjectRect* object = this->readItem(it, ymltype, out_list.length());
+        ObjectRect* object = this->readItem(it, ymltype);
 
         object->setObjectAutomaticState( ObjectAutomaticState::Invalid );
         object->setAutomaticStatus( (object->getAutomaticStatus().length() <= 0 || object->getAutomaticStatus() == "None") ? "MissingOption" : object->getAutomaticStatus() );
@@ -369,9 +364,6 @@ QList<ObjectRect*> YMLParser::loadYML(QString path, int ymltype)
         fs["source_image"] >> source_image;
 
         object->setSourceImagePath( QString(source_image.c_str()) );
-
-        // Assign id
-        object->setId( out_list.length() + 1 );
 
         // Append to list
         out_list.append(object);

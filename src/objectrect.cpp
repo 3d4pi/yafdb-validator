@@ -454,16 +454,6 @@ int ObjectRect::getObjectManualState()
     return this->manual_state;
 }
 
-void ObjectRect::setObjectType(int type)
-{
-    this->type = type;
-}
-
-int ObjectRect::getObjectType()
-{
-    return this->type;
-}
-
 void ObjectRect::render()
 {
     this->polygon = QPolygonF( this->points );
@@ -597,17 +587,12 @@ float ObjectRect::proj_height()
     return this->projection_parameters.height;
 }
 
-int ObjectRect::getType()
+int ObjectRect::getObjectType()
 {
     return this->info.type;
 }
 
-int ObjectRect::getSubType()
-{
-    return this->info.sub_type;
-}
-
-void ObjectRect::setType(int value)
+void ObjectRect::setObjectType(int value)
 {
     this->info.type = value;
 
@@ -617,6 +602,11 @@ void ObjectRect::setType(int value)
         this->setObjectManualState( ObjectManualState::ToBlur );
         break;
     }
+}
+
+int ObjectRect::getSubType()
+{
+    return this->info.sub_type;
 }
 
 void ObjectRect::setSubType(int value)
@@ -667,7 +657,7 @@ ObjectRect* ObjectRect::copy()
     ObjectRect* rect_copy = new ObjectRect;
     rect_copy->setObjectAutomaticState( this->getObjectAutomaticState() );
     rect_copy->setObjectManualState( this->getObjectManualState() );
-    rect_copy->setType( this->getType() );
+    rect_copy->setObjectType( this->getObjectType() );
     rect_copy->setManualStatus( this->getManualStatus() );
     rect_copy->setAutomaticStatus( this->getAutomaticStatus() );
     rect_copy->setBlurred( this->isBlurred() );
@@ -703,7 +693,7 @@ void ObjectRect::mergeWith(ObjectRect *rect)
                               rect->getPoint3(),
                               rect->getPoint4());
 
-    this->setType( rect->getType() );
+    this->setObjectType( rect->getObjectType() );
     this->setSubType( rect->getSubType() );
     this->setObjectManualState( rect->getObjectManualState() );
 

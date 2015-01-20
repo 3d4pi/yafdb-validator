@@ -102,12 +102,16 @@ public:
     /* Object parameters setters */
     void setObjectAutomaticState(int state);
     void setObjectManualState(int state);
-    void setObjectType(int type);
+    void setObjectType(int value);
 
     /* Object parameters getters */
     int getObjectAutomaticState();
     int getObjectManualState();
     int getObjectType();
+
+    /* SubType setter/getter */
+    void setSubType(int value);
+    int getSubType();
 
     /* Id setter/getter */
     void setId(int id);
@@ -187,14 +191,6 @@ public:
 
     /* Function to determine if object is valid */
     bool isValidated();
-
-    /* Type setter/getter */
-    void setType(int value);
-    int getType();
-
-    /* SubType setter/getter */
-    void setSubType(int value);
-    int getSubType();
 
     /* Blur setter/getter */
     void setBlurred(bool value);

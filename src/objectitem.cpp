@@ -191,7 +191,7 @@ void ObjectItem::setType(int type)
         break;
     }
 
-    this->rect->setType( type );
+    this->rect->setObjectType( type );
 }
 
 void ObjectItem::setSubType(int sub_type)
@@ -289,7 +289,7 @@ void ObjectItem::setRect(ObjectRect *src_rect)
 
     this->setId(src_rect->getId());
     this->setImage(this->parent_pano->cropObject(src_rect));
-    this->setType(src_rect->getType());
+    this->setType(src_rect->getObjectType());
     this->setSubType( src_rect->getSubType() );
     this->setBlurred(src_rect->isBlurred());
     this->setValidState(src_rect->getObjectManualState());

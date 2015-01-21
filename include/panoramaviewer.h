@@ -1,15 +1,15 @@
 #ifndef PANORAMAVIEWER_H
 #define PANORAMAVIEWER_H
 
-
+/* Includes */
 #include <QApplication>
-#include <QGraphicsProxyWidget>
 #include <QToolTip>
-#include <QGraphicsView>
-#include <QGraphicsScene>
 #include <QScrollBar>
 #include <QImage>
 #include <QPixmap>
+#include <QGraphicsView>
+#include <QGraphicsScene>
+#include <QGraphicsProxyWidget>
 #include <QWheelEvent>
 #include <QMouseEvent>
 
@@ -20,6 +20,7 @@
 #include "objectrect.h"
 #include "utils.h"
 
+/* Visibility groups struct */
 struct PanoramaViewerVisGroups
 {
     enum Type
@@ -28,144 +29,252 @@ struct PanoramaViewerVisGroups
     };
 };
 
+/* Panorama viewer working mode struct */
+struct PanoramaViewerMode
+{
+    enum Type
+    {
+        None = 0, Move = 1, Create = 2, MoveCreate = 3, MoveResize = 4
+    };
+};
+
+/* Main class */
 class PanoramaViewer : public QGraphicsView
 {
     Q_OBJECT
+
+/* Public functions / variables */
 public:
+
+    /* Constructor */
     explicit PanoramaViewer(QWidget *parent = 0, bool connectSlots = true);
 
-    float scale_factor;
-
+    /* Main PanoramaViewer scene */
     QGraphicsScene* scene;
 
-    QImage dest_image;
-    QPixmap dest_image_map;
+    /* Variable to store all image informations */
+    image_info_struct image_info;
 
-    void setup(int width, int height, float scale_factor, float zoom_min, float zoom_max, float zoom_def, int threads);
-    void loadImage(QString path);
-    void updateScene(float azimuth, float elevation, float zoom);
-    void render();
-    void setZoom(float zoom);
-    void setView(float azimuth, float elevation);
-    QImage cropObject(ObjectRect* rect);
-
-    void updateLabels();
-    void backupPosition();
-
-    void setMoveEnabled(bool value);
-    void setZoomEnabled(bool value);
-    void setCreateEnabled(bool value);
-    void setEditEnabled(bool value);
-
-    bool isObjectVisible(ObjectRect* rect);
-
-    void setVisGroup( int visgroup );
-
-    QList<ObjectRect*> rect_list;
-    int rect_list_id_index;
-
+    /* Main image path */
     QString image_path;
 
+    /* Destination image to be shown */
+    QImage dest_image;
+
+    /* Destination image to be shown in pixmap format */
+    QPixmap dest_image_map;
+
+    /* Main ObjectRect list */
+    QList<ObjectRect*> rect_list;
+
+    /* Main ObjectRect id indexes */
+    int rect_list_id_index;
+
+    /* Main threads count */
     int threads_count;
+
+    /* Zoom settings */
     float zoom_min;
     float zoom_max;
 
-    struct {
+    /* Scale factor setting */
+    float scale_factor;
+
+    /* Struture to store all movement values */
+    struct position_struct{
+
+        /* Start position storage for mooving */
         int start_x;
         int start_y;
 
+        /* Start angles storage for mooving */
+        float start_azimuth;
+        float start_elevation;
+
+        /* Previous angles storage */
+        float old_aperture;
+        float old_azimuth;
+        float old_elevation;
+
+        /* Previous image sizes storage */
+        float old_width;
+        float old_height;
+
+        /* Clicking offsets for object mooving */
         QPointF offset_1;
         QPointF offset_2;
         QPointF offset_3;
         QPointF offset_4;
 
-        float start_azimuth;
-        float start_elevation;
+        /* Angles storage */
         float azimuth;
         float elevation;
+
+        /* Aperture (zoom) storage */
         float aperture;
+
+        /* Aperture delta (mouse scroll value) storage */
         float aperture_delta;
 
-        float old_aperture;
-        float old_azimuth;
-        float old_elevation;
-        float old_width;
-        float old_height;
     } position;
 
-    image_info_struct image_info;
+    /* Main setup function */
+    void setup(int width,
+               int height,
+               float scale_factor,
+               float zoom_min,
+               float zoom_max,
+               float zoom_def,
+               int threads);
 
+    /* Function to load specified image */
+    void loadImage(QString path);
+
+    /* Function to set zoom level */
+    void setZoom(float zoom);
+
+    /* FUnction to set panorama view orientation */
+    void setView(float azimuth,
+                 float elevation);
+
+
+    /* Function to update main window labels */
+    void updateLabels();
+
+    /* Function to backup current postion (used for projection) */
+    void backupPosition();
+
+    /* Function to toggle mooving */
+    void setMoveEnabled(bool value);
+
+    /* Function to toggle zooming */
+    void setZoomEnabled(bool value);
+
+    /* Function to toggle object creation */
+    void setCreateEnabled(bool value);
+
+    /* Function to toggle object edition */
+    void setEditEnabled(bool value);
+
+    /* Function to determine if an object is visible or not */
+    bool isObjectVisible(ObjectRect* rect);
+
+    void setVisGroup( int visgroup );
+
+    /* Function to update scene (viewer) */
+    void updateScene(float azimuth,
+                     float elevation,
+                     float zoom);
+
+    /* Function to render panorama and all objects */
+    void render();
+
+    /* Function to crop an object and return its tile */
+    QImage cropObject(ObjectRect* rect);
+
+/* Public slots */
 public slots:
+
+    /* Slot for main window labels refresh */
     void refreshLabels_slot();
+
+    /* Slot for main window scale slider update */
     void updateScaleSlider_slot(int value);
 
+/* Private functions / variables */
 private:
 
-    struct Mode
-    {
-        enum Type
-        {
-            None = 0, Move = 1, Create = 2, MoveCreate = 3, MoveResize = 4
-        };
-    };
-
-    struct Point
-    {
-        enum Type
-        {
-            None = 0, Point1 = 1, Point2 = 2, Point3 = 3, Point4 = 4
-        };
-    };
-
-    void wheelEvent(QWheelEvent* event);
-    void mouseMoveEvent(QMouseEvent* event);
-    void mousePressEvent(QMouseEvent* event);
-    void mouseReleaseEvent(QMouseEvent *releaseEvent);
-    void resizeEvent(QResizeEvent *);
-    void mouseDoubleClickEvent ( QMouseEvent * event );
-
-    void keyPressEvent(QKeyEvent *event);
-    void keyReleaseEvent(QKeyEvent *event);
-
-    bool isInSight(QPointF pos, float tolerance = 0.0);
-    bool isObjectInSight(QPointF p1, QPointF p2, QPointF p3, QPointF p4);
-
-    void applyVisGroup();
-
+    /* PanoramaViewer working mode */
     int mode;
-    int resizePoint;
+
+    /* PanoramaViewer properties */
     bool moveEnabled;
     bool zoomEnabled;
     bool createEnabled;
     bool editEnabled;
 
-    int previous_height;
-    int previous_width;
+    /* Main pixmap initialized value storage */
     bool pixmap_initialized;
 
+    /* Variables to store previous sizes on window resize */
+    int previous_height;
+    int previous_width;
+
+    /* Sight width */
     int sight_width;
 
-    QPixmap src_image_map;
-
-    QGraphicsPixmapItem* last_pixmap;
-    ObjectRect * selected_rect;
-    QGraphicsRectItem* sight;
-
+    /* Current visibility group */
     int vis_group;
 
-    struct {
+    /* Last rendered pixmap */
+    QGraphicsPixmapItem* last_pixmap;
+
+    /* Main sight container */
+    QGraphicsRectItem* sight;
+
+    /* Current selected rect container */
+    ObjectRect * selected_rect;
+
+    /* In creation rect parameters */
+    struct increation_rect_struct{
         int start_x;
         int start_y;
         ObjectRect * rect;
     } increation_rect;
 
-    struct {
+    /* Pressed keys container */
+    struct pressed_keys_struct{
         bool CTRL;
     } pressed_keys;
 
+    /* Function to determine if a point is in sight */
+    bool isInSight(QPointF pos,
+                   float tolerance = 0.0);
+
+    /* Function to determine if a polygon is in sight */
+    bool isObjectInSight(QPointF p1,
+                         QPointF p2,
+                         QPointF p3,
+                         QPointF p4);
+
+    /* Function to apply visibility groups */
+    void applyVisGroup();
+
+/* Signals */
 signals:
+
+    /* Function to refresh main window labels */
     void refreshLabels();
+
+    /* Function to update main window scale slider */
     void updateScaleSlider(int value);
+
+/* Protected functions / variables */
+protected:
+
+    /* Mouse wheel event */
+    void wheelEvent(QWheelEvent* event);
+
+    /* Mouse move event */
+    void mouseMoveEvent(QMouseEvent* event);
+
+    /* Mouse press event */
+    void mousePressEvent(QMouseEvent* event);
+
+    /* Mouse release event */
+    void mouseReleaseEvent(QMouseEvent *releaseEvent);
+
+    /* Mouse double click event */
+    void mouseDoubleClickEvent ( QMouseEvent * event );
+
+    /* Key press event */
+    void keyPressEvent(QKeyEvent *event);
+
+    /* Key release event */
+    void keyReleaseEvent(QKeyEvent *event);
+
+    /* Main window resize event */
+    void resizeEvent(QResizeEvent *);
 
 };
 

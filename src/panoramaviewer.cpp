@@ -13,8 +13,6 @@ PanoramaViewer::PanoramaViewer(QWidget *parent, bool connectSlots) :
     this->horizontalScrollBar()->blockSignals(true);
     this->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    this->resizePoint = Point::None;
-
     this->rect_list_id_index = 1;
 
     // Initialize position container
@@ -35,7 +33,7 @@ PanoramaViewer::PanoramaViewer(QWidget *parent, bool connectSlots) :
     this->image_info.image = NULL;
 
     // Initialize default mode
-    this->mode = Mode::None;
+    this->mode = PanoramaViewerMode::None;
 
     // Configure default settings
     this->scale_factor = 1.0;
@@ -102,8 +100,6 @@ void PanoramaViewer::loadImage(QString path)
     this->image_info.height = temp_image->height;
 
     this->image_info.image = IplImage2QImage( temp_image );
-
-    this->src_image_map = QPixmap::fromImage( *this->image_info.image );
 
     cvReleaseImage( &temp_image );
 
@@ -280,7 +276,7 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
         this->setMouseTracking(true);
 
         // Switch in mooving mode
-        this->mode = Mode::Move;
+        this->mode = PanoramaViewerMode::Move;
 
         // Store base positions (Used to determine offset to move in panorama later)
         this->position.start_x = mouse_scene.x();
@@ -343,11 +339,10 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
 
             if( (this->position.offset_3.x() > 0) && (this->position.offset_3.y() > 0) )
             {
-                this->resizePoint = Point::Point3;
-                this->mode = Mode::MoveResize;
+                this->mode = PanoramaViewerMode::MoveResize;
             } else {
                 // Switch in creation mode
-                this->mode = Mode::MoveCreate;
+                this->mode = PanoramaViewerMode::MoveCreate;
             }
 
             // Enable mouse tracking
@@ -364,7 +359,7 @@ void PanoramaViewer::mousePressEvent(QMouseEvent* event)
                 return;
 
             // Switch in creation mode
-            this->mode = Mode::Create;
+            this->mode = PanoramaViewerMode::Create;
 
             // Enable mouse tracking
             this->setMouseTracking(true);
@@ -413,7 +408,7 @@ void PanoramaViewer::mouseDoubleClickEvent(QMouseEvent *event)
 void PanoramaViewer::mouseReleaseEvent(QMouseEvent *)
 {
     // Reset mode
-    this->mode = Mode::None;
+    this->mode = PanoramaViewerMode::None;
 
     // Reset temporary object
     if( this->increation_rect.rect )
@@ -438,11 +433,11 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
     int MouseY = mouse_scene.y();
 
     // Moving mouse section (move in panorama)
-    if(this->mode == Mode::None)
+    if(this->mode == PanoramaViewerMode::None)
     {
 
     }
-    else if(this->mode == Mode::Move)
+    else if(this->mode == PanoramaViewerMode::Move)
     {
 
         // Determine the displacement delta
@@ -464,7 +459,7 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
 
     }
     // Section creation section (create a new object)
-    else if (this->mode == Mode::Create)
+    else if (this->mode == PanoramaViewerMode::Create)
     {
 
         // Check if mouse in in sight
@@ -524,7 +519,7 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
                                this, rect() );
 
         }
-    } else if(this->mode == Mode::MoveCreate)
+    } else if(this->mode == PanoramaViewerMode::MoveCreate)
     {
         // Check if mouse and rect are in in sight
         QVector<QPointF> points = this->selected_rect->simulate_moveObject(mouse_scene,
@@ -557,7 +552,7 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
                 this->dest_image.height());
 
         this->selected_rect->setProjectionPoints();
-    } else if(this->mode == Mode::MoveResize)
+    } else if(this->mode == PanoramaViewerMode::MoveResize)
     {
         // Check if mouse and rect are in in sight
         if(!this->isObjectInSight( this->selected_rect->getPoint1(),
@@ -578,16 +573,10 @@ void PanoramaViewer::mouseMoveEvent(QMouseEvent* event)
         float mouse_y = clamp(mouse_scene.y(), this->selected_rect->getPoint1().y() + 4.0, this->height());
 
         // Move selection object to mouse coords
-        switch(this->resizePoint)
-        {
-        case Point::Point3:
-            this->selected_rect->setPoint3_Rigid(
-                QPointF(mouse_x, mouse_y),
-                this->position.offset_3
-            );
-            break;
-
-        }
+        this->selected_rect->setPoint3_Rigid(
+            QPointF(mouse_x, mouse_y),
+            this->position.offset_3
+        );
 
         this->selected_rect->setProjectionParametters(this->position.azimuth,
                 this->position.elevation,

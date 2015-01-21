@@ -29,15 +29,6 @@ struct PanoramaViewerVisGroups
     };
 };
 
-/* Panorama viewer working mode struct */
-struct PanoramaViewerMode
-{
-    enum Type
-    {
-        None = 0, Move = 1, Create = 2, MoveCreate = 3, MoveResize = 4
-    };
-};
-
 /* Main class */
 class PanoramaViewer : public QGraphicsView
 {
@@ -73,7 +64,7 @@ public:
     /* Function to set zoom level */
     void setZoom(float zoom);
 
-    /* FUnction to set panorama view orientation */
+    /* Function to set panorama view orientation */
     void setView(float azimuth,
                  float elevation);
 
@@ -115,16 +106,28 @@ public:
     /* Function to get current scene */
     QGraphicsScene* getScene();
 
+    /* Function to get minimal zoom value */
     float minZoom();
+
+    /* Function to get maximal zoom value */
     float maxZoom();
 
+    /* Function to get number of threads */
     int threads();
 
+    /* Function to get current image scale factor */
     float getScaleFactor();
+
+    /* Function to set image scale factor */
     void setScaleFactor(float value);
 
+    /* Function to get current azimuth */
     float azimuth();
+
+    /* Function to get current elevation */
     float elevation();
+
+    /* Function to get current aperture */
     float aperture();
 
 /* Public slots */
@@ -138,6 +141,15 @@ public slots:
 
 /* Private functions / variables */
 private:
+
+    /* Panorama viewer working mode struct */
+    struct PanoramaViewerMode
+    {
+        enum Type
+        {
+            None = 0, Move = 1, ObjectCreate = 2, ObjectMove = 3, ObjectResize = 4
+        };
+    };
 
     /* Main PanoramaViewer scene */
     QGraphicsScene* scene;

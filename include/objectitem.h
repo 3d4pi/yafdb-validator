@@ -66,19 +66,19 @@ public:
     /* Function to remove item */
     void remove(bool value);
 
-    /* Manual state setter/getter */
+    /* Manual state setter */
     void setItemManualState(int state);
-    QString getItemManualStatus();
 
-    /* Automatic state setter/getter */
+    /* Automatic state setter */
     void setItemAutomaticState(int state);
-    QString getItemAutomaticStatus();
 
-    /* Automatic status setter */
+    /* Automatic status setter/getter */
     void setAutomaticStatus(QString value);
+    QString getAutomaticStatus();
 
-    /* Manual status setter */
+    /* Manual status setter/getter */
     void setManualStatus(QString value);
+    QString getManualStatus();
 
     /* Function to determine if object is valid */
     bool isValid();

@@ -476,7 +476,7 @@ void BatchView::on_ApplyButton_clicked()
     foreach(ObjectItem* item, this->elements)
     {
         /* Check if object is unnaproved */
-        if(item->getItemManualStatus() == "None")
+        if(item->getManualStatus() == "None")
         {
             /* Assign flag */
             haveNoManualState = true;

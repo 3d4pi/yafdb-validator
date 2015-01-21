@@ -127,6 +127,9 @@ private:
     /* List of id's to be removed */
     QList<int> toremove_ids;
 
+    /* List of allocated tiles */
+    QList<ObjectItem*> item_list;
+
     /* Key statuses container structure */
     struct pressed_keys_struct{
         bool CTRL;

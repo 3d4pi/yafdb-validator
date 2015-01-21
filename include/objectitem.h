@@ -1,6 +1,7 @@
 #ifndef OBJECTITEM_H
 #define OBJECTITEM_H
 
+/* Includes */
 #include <QWidget>
 #include <QImage>
 #include <QPixmap>
@@ -12,15 +13,22 @@ namespace Ui {
 class ObjectItem;
 }
 
+/* Main class */
 class ObjectItem : public QWidget
 {
     Q_OBJECT
 
+/* Public functions / variables */
 public:
+
+    /* Constructors */
     explicit ObjectItem(QWidget *parent = 0);
     explicit ObjectItem(QWidget *parent, PanoramaViewer* pano, ObjectRect* rect);
 
-    bool LoadImage(QString path);
+    /* Destructor */
+    ~ObjectItem();
+
+    /* Set source image */
     bool setImage(QImage image);
 
     void setId(int id);
@@ -54,8 +62,6 @@ public:
     bool toBeRemoved();
 
     ObjectRect* getParentRect();
-
-    ~ObjectItem();
 
 private:
     Ui::ObjectItem *ui;

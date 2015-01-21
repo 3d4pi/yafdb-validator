@@ -44,6 +44,16 @@ ObjectItem::ObjectItem(QWidget *parent, PanoramaViewer* pano, ObjectRect* rect) 
     this->needs_removal = false;
 }
 
+/* Destructor */
+ObjectItem::~ObjectItem()
+{
+    /* Delete copied rect */
+    delete this->rect;
+
+    /* Delete main UI */
+    delete ui;
+}
+
 void ObjectItem::remove(bool value)
 {
     this->needs_removal = value;
@@ -96,51 +106,6 @@ bool ObjectItem::setImage(QImage image)
     float pos_x = (this->width() - corr_pixmap_w) / 2;
     float pos_y = (this->height() - corr_pixmap_h) / 2;
     this->ui->validFrame->move(pos_x, pos_y);
-
-    return true;
-}
-
-bool ObjectItem::LoadImage(QString path)
-{
-    this->image = QImage(path);
-
-    QPixmap pixmap(path);
-
-    if (pixmap.isNull()) return false;
-
-    int source_w = pixmap.width();
-    int source_h = pixmap.height();
-
-    if(source_w < this->maximumWidth())
-        source_w = this->maximumWidth();
-
-    if(source_h < this->maximumHeight())
-        source_h = this->maximumHeight();
-
-    int w = std::min(source_h, this->maximumWidth());
-    int h = std::min(source_w, this->maximumHeight());
-
-    pixmap = pixmap.scaled(QSize(w, h), Qt::KeepAspectRatio, Qt::SmoothTransformation);
-
-    int corr_pixmap_w = pixmap.width();
-    int corr_pixmap_h = pixmap.height();
-
-    if(corr_pixmap_w >= (this->width() - this->border_size))
-    {
-        corr_pixmap_w = corr_pixmap_w - (this->border_size * 2);
-    }
-
-    if(corr_pixmap_h >= (this->height() - this->border_size))
-    {
-        corr_pixmap_h = corr_pixmap_h - (this->border_size * 2);
-    }
-
-    this->ui->validFrame->resize(corr_pixmap_w, corr_pixmap_h);
-    float pos_x = (this->width() - corr_pixmap_w) / 2;
-    float pos_y = (this->height() - corr_pixmap_h) / 2;
-    this->ui->validFrame->move(pos_x, pos_y);
-
-    this->ui->imageLabel->setPixmap(pixmap);
 
     return true;
 }
@@ -394,10 +359,4 @@ QString ObjectItem::getItemAutomaticStatus()
 ObjectRect* ObjectItem::getParentRect()
 {
     return this->rect;
-}
-
-
-ObjectItem::~ObjectItem()
-{
-    delete ui;
 }

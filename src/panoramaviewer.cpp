@@ -105,6 +105,8 @@ void PanoramaViewer::loadImage(QString path)
 
     this->src_image_map = QPixmap::fromImage( *this->image_info.image );
 
+    cvReleaseImage( &temp_image );
+
     this->render();
 }
 

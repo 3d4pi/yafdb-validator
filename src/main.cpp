@@ -189,6 +189,9 @@ int main(int argc, char *argv[])
         image_info.height = temp_image->height;
         image_info.image = IplImage2QImage( temp_image );
 
+        /* Unload temporary image */
+        cvReleaseImage( &temp_image );
+
         /* Load YML */
         loaded_rects = yml_parser.loadYML( destinationYMLPath, YMLType::Validator );
 
@@ -350,6 +353,9 @@ int main(int argc, char *argv[])
         image_info.width = temp_image->width;
         image_info.height = temp_image->height;
         image_info.image = IplImage2QImage( temp_image );
+
+        /* Unload temporary image */
+        cvReleaseImage( &temp_image );
 
         /* Load rects from YML */
         loaded_rects = yml_parser.loadYML( detectorYMLPath, YMLType::Detector );

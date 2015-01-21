@@ -64,6 +64,14 @@ BatchView::BatchView(QWidget *parent, PanoramaViewer* pano, int batchmode, int b
 /* Destructor */
 BatchView::~BatchView()
 {
+    /* Iterate over allocated tiles */
+    foreach(ObjectItem* item, this->item_list)
+    {
+        /* Remove tile */
+        this->item_list.removeOne( item );
+        delete item;
+    }
+
     delete ui;
 }
 
@@ -180,6 +188,9 @@ void BatchView::insertItem(ObjectRect *rect)
 
     /* Adjust tile size */
     object->setSize( QSize(this->ui->horizontalSlider->value(), this->ui->horizontalSlider->value()) );
+
+    /* Append to list */
+    this->item_list.append( object );
 
     /* Insert tile */
     this->MainLayout->addWidget(object);

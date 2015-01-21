@@ -38,8 +38,7 @@ ObjectItem::ObjectItem(QWidget *parent, PanoramaViewer* pano, ObjectRect* rect) 
     this->setSize(QSize(128, 128));
 
     this->setPano( pano );
-    this->setRect( rect );
-    this->parent_elements = parent_elements;
+    this->setParentRect( rect );
 
     this->needs_removal = false;
 }
@@ -48,7 +47,7 @@ ObjectItem::ObjectItem(QWidget *parent, PanoramaViewer* pano, ObjectRect* rect) 
 ObjectItem::~ObjectItem()
 {
     /* Delete copied rect */
-    delete this->rect;
+    delete this->parent_rect_copy;
 
     /* Delete main UI */
     delete ui;
@@ -155,13 +154,13 @@ void ObjectItem::setItemType(int type)
         break;
     }
 
-    this->rect->setObjectType( type );
+    this->parent_rect_copy->setObjectType( type );
 }
 
 void ObjectItem::setItemSubType(int sub_type)
 {
     this->item_sub_type = sub_type;
-    this->rect->setObjectSubType( sub_type );
+    this->parent_rect_copy->setObjectSubType( sub_type );
 }
 
 void ObjectItem::setItemAutomaticState(int state)
@@ -218,19 +217,19 @@ void ObjectItem::setItemManualState(int state)
         break;
     }
 
-    this->rect->setObjectManualState( state );
+    this->parent_rect_copy->setObjectManualState( state );
 }
 
 void ObjectItem::setAutomaticStatus(QString value)
 {
     this->autoStatus = value;
-    this->rect->setAutomaticStatus( value );
+    this->parent_rect_copy->setAutomaticStatus( value );
 }
 
 void ObjectItem::setManualStatus(QString value)
 {
     this->manualStatus = value;
-    this->rect->setManualStatus( value );
+    this->parent_rect_copy->setManualStatus( value );
 }
 
 void ObjectItem::setBlurred(bool value)
@@ -244,7 +243,7 @@ void ObjectItem::setBlurred(bool value)
         this->ui->blurLabel->setPixmap( QPixmap() );
     }
 
-    this->rect->setBlurred( value );
+    this->parent_rect_copy->setBlurred( value );
 }
 
 void ObjectItem::setSelected(bool value)
@@ -259,9 +258,9 @@ void ObjectItem::setSelected(bool value)
     }
 }
 
-void ObjectItem::setRect(ObjectRect *src_rect)
+void ObjectItem::setParentRect(ObjectRect *src_rect)
 {
-    this->rect = src_rect->copy();
+    this->parent_rect_copy = src_rect->copy();
 
     this->setId(src_rect->getId());
     this->setImage(this->parent_pano->cropObject(src_rect));
@@ -305,7 +304,7 @@ void ObjectItem::mouseDoubleClickEvent(QMouseEvent *event)
     // Check presence of right click
     if(event->buttons() & Qt::RightButton)
     {
-        EditView* w = new EditView(this->parent_pano, this->rect, this->parent_pano->image_info, this, EditMode::Single);
+        EditView* w = new EditView(this->parent_pano, this->parent_rect_copy, this->parent_pano->image_info, this, EditMode::Single);
         w->setAttribute( Qt::WA_DeleteOnClose );
         w->show();
     }
@@ -358,5 +357,5 @@ QString ObjectItem::getItemAutomaticStatus()
 
 ObjectRect* ObjectItem::getParentRect()
 {
-    return this->rect;
+    return this->parent_rect_copy;
 }

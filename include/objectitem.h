@@ -31,67 +31,120 @@ public:
     /* Set source image */
     bool setImage(QImage image);
 
+    /* ID setter/getter */
     void setId(int id);
     int  getId();
+
+    /* Function to change the tile size */
     void setSize(QSize size);
 
+    /* Item type setter/getter */
     void setItemType(int type);
     int  getItemType();
+
+    /* Item sub-type setter/getter */
     void setItemSubType(int sub_type);
     int  getItemSubType();
 
+    /* Blurred flag setter/getter */
     void setBlurred(bool value);
-    void setSelected(bool value);
+    bool isBlurred();
 
-    void setRect(ObjectRect* rect);
+    /* Selected flag setter/getter */
+    void setSelected(bool value);
+    bool isSelected();
+
+    /* Function to assign a parent ObjectRect to item */
+    void setParentRect(ObjectRect* rect);
+
+    /* Function to get parent ObjectRect */
+    ObjectRect* getParentRect();
+
+    /* Function to assign parent PanoramaViewer */
     void setPano(PanoramaViewer* pano);
 
+    /* Function to remove item */
     void remove(bool value);
 
+    /* Manual state setter/getter */
     void setItemManualState(int state);
     QString getItemManualStatus();
+
+    /* Automatic state setter/getter */
     void setItemAutomaticState(int state);
     QString getItemAutomaticStatus();
 
+    /* Automatic status setter */
     void setAutomaticStatus(QString value);
+
+    /* Manual status setter */
     void setManualStatus(QString value);
 
+    /* Function to determine if object is valid */
     bool isValid();
-    bool isSelected();
-    bool isBlurred();
+
+    /* Function to determine if object is marked for removal */
     bool toBeRemoved();
 
-    ObjectRect* getParentRect();
-
+/* Private functions / variables */
 private:
+
+    /* Main UI container */
     Ui::ObjectItem *ui;
 
-    void mousePressEvent(QMouseEvent *ev);
-    void mouseDoubleClickEvent ( QMouseEvent * event );
-
+    /* Item ID container */
     int id;
+
+    /* Item type container */
     int item_type;
+
+    /* Item sub-type container */
     int item_sub_type;
+
+    /* Item automatic state container */
     int automatic_state;
+
+    /* Item manual state container */
     int manual_state;
+
+    /* Item border size container */
     int border_size;
 
+    /* Selected status container */
     bool selected;
+
+    /* Valid status container */
     bool valid;
+
+    /* Blurred status container */
     bool blurred;
+
+    /* "Tagged for removal ?" status container */
     bool needs_removal;
 
+    /* Item tile image */
     QImage image;
 
+    /* Manual status container */
     QString manualStatus;
+
+    /* Automatic status container */
     QString autoStatus;
 
-    ObjectRect* rect;
+    /* Parent rect copy container */
+    ObjectRect* parent_rect_copy;
 
+    /* Parent PanoramaViewer container */
     PanoramaViewer* parent_pano;
 
-    QList<ObjectItem*> parent_elements;
-    QList<int> parent_toremove_ids;
+/* Protected elements */
+protected:
+
+    /* Mouse press event */
+    void mousePressEvent(QMouseEvent *ev);
+
+    /* Mouse double click event */
+    void mouseDoubleClickEvent ( QMouseEvent * event );
 
 };
 

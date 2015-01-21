@@ -138,11 +138,11 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
                 foreach(ObjectRect* rect, loaded_rects)
                 {
                     /* Map rect to current scene */
-                    rect->mapTo(this->pano->dest_image_map.width(),
-                                this->pano->dest_image_map.height(),
-                                this->pano->position.azimuth,
-                                this->pano->position.elevation,
-                                this->pano->position.aperture);
+                    rect->mapTo(this->pano->getScene()->width(),
+                                this->pano->getScene()->height(),
+                                this->pano->azimuth(),
+                                this->pano->elevation(),
+                                this->pano->aperture());
 
                     /* Append mapped rect to scene */
                     rect->setId( this->pano->rect_list_id_index++ );
@@ -154,7 +154,7 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
                     }
 
                     this->pano->rect_list.append( rect );
-                    this->pano->scene->addItem( rect );
+                    this->pano->getScene()->addItem( rect );
 
                     /* Check object visibility */
                     if( !this->pano->isObjectVisible( rect ) )
@@ -173,13 +173,13 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
                     /* Map rect to current scene */
                     rect->mapFromSpherical(this->pano->image_info.width,
                                            this->pano->image_info.height,
-                                           this->pano->dest_image_map.width(),
-                                           this->pano->dest_image_map.height(),
-                                           this->pano->position.azimuth,
-                                           this->pano->position.elevation,
-                                           this->pano->position.aperture,
-                                           this->pano->zoom_min * ( LG_PI / 180.0 ),
-                                           this->pano->zoom_max * ( LG_PI / 180.0 ));
+                                           this->pano->getScene()->width(),
+                                           this->pano->getScene()->height(),
+                                           this->pano->azimuth(),
+                                           this->pano->elevation(),
+                                           this->pano->aperture(),
+                                           this->pano->minZoom() * ( LG_PI / 180.0 ),
+                                           this->pano->maxZoom() * ( LG_PI / 180.0 ));
 
                     /* Append mapped rect to scene */
                     rect->setId( this->pano->rect_list_id_index++ );
@@ -191,7 +191,7 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
                     }
 
                     this->pano->rect_list.append( rect );
-                    this->pano->scene->addItem( rect );
+                    this->pano->getScene()->addItem( rect );
 
                     /* Check object visibility */
                     if( !this->pano->isObjectVisible( rect ) )
@@ -217,11 +217,11 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
                 {
 
                     /* Map rect to current scene */
-                    rect->mapTo(this->pano->dest_image_map.width(),
-                                this->pano->dest_image_map.height(),
-                                this->pano->position.azimuth,
-                                this->pano->position.elevation,
-                                this->pano->position.aperture);
+                    rect->mapTo(this->pano->getScene()->width(),
+                                this->pano->getScene()->height(),
+                                this->pano->azimuth(),
+                                this->pano->elevation(),
+                                this->pano->aperture());
 
                     /* Append mapped rect to scene */
                     rect->setId( this->pano->rect_list_id_index++ );
@@ -233,7 +233,7 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
                     }
 
                     this->pano->rect_list.append( rect );
-                    this->pano->scene->addItem( rect );
+                    this->pano->getScene()->addItem( rect );
 
                     /* Check object visibility */
                     if( !this->pano->isObjectVisible( rect ) )
@@ -549,7 +549,7 @@ void MainWindow::on_horizontalSlider_sliderMoved(int position)
     this->pano->backupPosition();
 
     /* Change scale factor */
-    this->pano->scale_factor = (position / 10.0);
+    this->pano->setScaleFactor( (position / 10.0) );
 
     /* Render panorama */
     this->pano->render();

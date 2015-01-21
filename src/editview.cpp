@@ -58,11 +58,11 @@ EditView::EditView(QWidget *parent, ObjectRect* rect, image_info_struct image_in
     this->pano->setup(
         this->size().width(), // Default width
         this->size().height(), // Default height
-        pano_parent->scale_factor,   // Image scale factor
-        pano_parent->zoom_min,  // Minimum zoom
-        pano_parent->zoom_max, // Maximum zoom
+        pano_parent->getScaleFactor(),   // Image scale factor
+        pano_parent->minZoom(),  // Minimum zoom
+        pano_parent->maxZoom(), // Maximum zoom
         100.0, // Default zoom level
-        pano_parent->threads_count // Number of threads
+        pano_parent->threads() // Number of threads
     );
 
     /* Setup panorama view with rect parameters */
@@ -214,15 +214,15 @@ EditView::EditView(QWidget *parent, ObjectRect* rect, image_info_struct image_in
     this->rect_copy = this->ref_rect->copy();
 
     /* Map copied rect to current panorama viewer */
-    this->rect_copy->mapTo(this->pano->dest_image_map.width(),
-                           this->pano->dest_image_map.height(),
+    this->rect_copy->mapTo(this->pano->getScene()->width(),
+                           this->pano->getScene()->height(),
                            this->rect_copy->proj_azimuth(),
                            this->rect_copy->proj_elevation(),
                            this->rect_copy->proj_aperture());
 
     /* Add copied rect to panorama viewer */
     this->pano->rect_list.append( this->rect_copy );
-    this->pano->scene->addItem( this->rect_copy );
+    this->pano->getScene()->addItem( this->rect_copy );
 
 }
 

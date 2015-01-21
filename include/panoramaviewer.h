@@ -49,74 +49,14 @@ public:
     /* Constructor */
     explicit PanoramaViewer(QWidget *parent = 0, bool connectSlots = true);
 
-    /* Main PanoramaViewer scene */
-    QGraphicsScene* scene;
-
     /* Variable to store all image informations */
     image_info_struct image_info;
-
-    /* Main image path */
-    QString image_path;
-
-    /* Destination image to be shown */
-    QImage dest_image;
-
-    /* Destination image to be shown in pixmap format */
-    QPixmap dest_image_map;
 
     /* Main ObjectRect list */
     QList<ObjectRect*> rect_list;
 
     /* Main ObjectRect id indexes */
     int rect_list_id_index;
-
-    /* Main threads count */
-    int threads_count;
-
-    /* Zoom settings */
-    float zoom_min;
-    float zoom_max;
-
-    /* Scale factor setting */
-    float scale_factor;
-
-    /* Struture to store all movement values */
-    struct position_struct{
-
-        /* Start position storage for mooving */
-        int start_x;
-        int start_y;
-
-        /* Start angles storage for mooving */
-        float start_azimuth;
-        float start_elevation;
-
-        /* Previous angles storage */
-        float old_aperture;
-        float old_azimuth;
-        float old_elevation;
-
-        /* Previous image sizes storage */
-        float old_width;
-        float old_height;
-
-        /* Clicking offsets for object mooving */
-        QPointF offset_1;
-        QPointF offset_2;
-        QPointF offset_3;
-        QPointF offset_4;
-
-        /* Angles storage */
-        float azimuth;
-        float elevation;
-
-        /* Aperture (zoom) storage */
-        float aperture;
-
-        /* Aperture delta (mouse scroll value) storage */
-        float aperture_delta;
-
-    } position;
 
     /* Main setup function */
     void setup(int width,
@@ -172,6 +112,21 @@ public:
     /* Function to crop an object and return its tile */
     QImage cropObject(ObjectRect* rect);
 
+    /* Function to get current scene */
+    QGraphicsScene* getScene();
+
+    float minZoom();
+    float maxZoom();
+
+    int threads();
+
+    float getScaleFactor();
+    void setScaleFactor(float value);
+
+    float azimuth();
+    float elevation();
+    float aperture();
+
 /* Public slots */
 public slots:
 
@@ -183,6 +138,28 @@ public slots:
 
 /* Private functions / variables */
 private:
+
+    /* Main PanoramaViewer scene */
+    QGraphicsScene* scene;
+
+    /* Destination image to be shown */
+    QImage dest_image;
+
+    /* Destination image to be shown in pixmap format */
+    QPixmap dest_image_map;
+
+    /* Main image path */
+    QString image_path;
+
+    /* Main threads count */
+    int threads_count;
+
+    /* Zoom settings */
+    float zoom_min;
+    float zoom_max;
+
+    /* Scale factor setting */
+    float scale_factor;
 
     /* PanoramaViewer working mode */
     int mode;
@@ -214,6 +191,44 @@ private:
 
     /* Current selected rect container */
     ObjectRect * selected_rect;
+
+    /* Struture to store all movement values */
+    struct position_struct{
+
+        /* Start position storage for mooving */
+        int start_x;
+        int start_y;
+
+        /* Start angles storage for mooving */
+        float start_azimuth;
+        float start_elevation;
+
+        /* Previous angles storage */
+        float old_aperture;
+        float old_azimuth;
+        float old_elevation;
+
+        /* Previous image sizes storage */
+        float old_width;
+        float old_height;
+
+        /* Clicking offsets for object mooving */
+        QPointF offset_1;
+        QPointF offset_2;
+        QPointF offset_3;
+        QPointF offset_4;
+
+        /* Angles storage */
+        float azimuth;
+        float elevation;
+
+        /* Aperture (zoom) storage */
+        float aperture;
+
+        /* Aperture delta (mouse scroll value) storage */
+        float aperture_delta;
+
+    } position;
 
     /* In creation rect parameters */
     struct increation_rect_struct{

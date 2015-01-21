@@ -662,6 +662,51 @@ QImage PanoramaViewer::cropObject(ObjectRect* rect)
 
 }
 
+QGraphicsScene* PanoramaViewer::getScene()
+{
+    return this->scene;
+}
+
+float PanoramaViewer::minZoom()
+{
+    return this->zoom_min;
+}
+
+float PanoramaViewer::maxZoom()
+{
+    return this->zoom_max;
+}
+
+int PanoramaViewer::threads()
+{
+    return this->threads_count;
+}
+
+float PanoramaViewer::getScaleFactor()
+{
+    return this->scale_factor;
+}
+
+void PanoramaViewer::setScaleFactor(float value)
+{
+    this->scale_factor = value;
+}
+
+float PanoramaViewer::azimuth()
+{
+    return this->position.azimuth;
+}
+
+float PanoramaViewer::elevation()
+{
+    return this->position.elevation;
+}
+
+float PanoramaViewer::aperture()
+{
+    return this->position.aperture;
+}
+
 void PanoramaViewer::backupPosition()
 {
     this->position.old_azimuth = this->position.azimuth;

@@ -90,6 +90,7 @@ public:
     /* Function to determine if an object is visible or not */
     bool isObjectVisible(ObjectRect* rect);
 
+    /* Function to set the visibility group */
     void setVisGroup( int visgroup );
 
     /* Function to update scene (viewer) */

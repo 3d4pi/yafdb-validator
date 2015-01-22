@@ -1,14 +1,109 @@
+/* Includes */
 #include "ymlparser.h"
-#include <QDebug>
 
+/* Constructor */
 YMLParser::YMLParser()
 {
 }
 
+/* Function to write ObjectRect list to YML file on disk */
+void YMLParser::writeYML(QList<ObjectRect*> objects, QString path)
+{
+    /* Open storage for writing */
+    cv::FileStorage fs(path.toStdString(), cv::FileStorage::WRITE);
 
+    /* Write source file path */
+    fs << "source_image" << objects.first()->getSourceImagePath().toStdString();
+
+    /* Write objects */
+    fs << "objects" << "[";
+
+    /* Iterate over objects */
+    foreach (ObjectRect* obj, objects) {
+
+        /* Open array element */
+        fs << "{";
+
+        /* Write object */
+        this->writeItem(fs, obj);
+
+        /* Write childrens if present */
+        if(obj->childrens.length() > 0)
+        {
+            fs << "childrens" << "[";
+            foreach (ObjectRect* child, obj->childrens) {
+                fs << "{";
+                    this->writeItem(fs, child);
+                fs << "}";
+            }
+            fs << "]";
+        }
+
+        /* Close array element */
+        fs << "}";
+    }
+
+    /* Close array */
+    fs << "]";
+}
+
+/* Function load ObjectRect list from YML file on disk */
+QList<ObjectRect*> YMLParser::loadYML(QString path, int ymltype)
+{
+    /* Init output list */
+    QList<ObjectRect*> out_list;
+
+    /* Read YML file */
+    cv::FileStorage fs(path.toStdString(), cv::FileStorage::READ);
+
+    /* Retrieve objects node */
+    cv::FileNode objectsNode = fs["objects"];
+
+    /* Retrieve invalid objects node */
+    cv::FileNode invalidObjectsNode = fs["invalidObjects"];
+
+    /* Iterate over objects */
+    for (cv::FileNodeIterator it = objectsNode.begin(); it != objectsNode.end(); ++it) {
+
+        /* Initialize detected object */
+        ObjectRect* object = this->readItem(it, ymltype);
+
+        /* Assign source image path */
+        std::string source_image;
+        fs["source_image"] >> source_image;
+        object->setSourceImagePath( QString(source_image.c_str()) );
+
+        /* Append to list */
+        out_list.append(object);
+    }
+
+    /* Iterate over objects */
+    for (cv::FileNodeIterator it = invalidObjectsNode.begin(); it != invalidObjectsNode.end(); ++it) {
+
+        /* Initialize detected object */
+        ObjectRect* object = this->readItem(it, ymltype);
+
+        /* Assign object automatic state / status */
+        object->setObjectAutomaticState( ObjectAutomaticState::Invalid );
+        object->setAutomaticStatus( (object->getAutomaticStatus().length() <= 0 || object->getAutomaticStatus() == "None") ? "MissingOption" : object->getAutomaticStatus() );
+
+        /* Assign source image path */
+        std::string source_image;
+        fs["source_image"] >> source_image;
+        object->setSourceImagePath( QString(source_image.c_str()) );
+
+        /* Append to list */
+        out_list.append(object);
+    }
+
+    /* Return results */
+    return out_list;
+}
+
+/* Function to write specific ObjectRect into YML file */
 void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
 {
-    // Write class name
+    /* Write type */
     switch(obj->getObjectType())
     {
     case ObjectType::Face:
@@ -25,7 +120,7 @@ void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
         break;
     }
 
-    // Write class name
+    /* Write sub-type */
     switch(obj->getObjectSubType())
     {
     case ObjectSubType::None:
@@ -48,7 +143,7 @@ void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
         break;
     }
 
-    // Write square area coodinates
+    /* Write square area coodinates */
     fs << "area" << "{";
         fs << "p1" << cv::Point2d(obj->proj_point_1().x(), obj->proj_point_1().y());
         fs << "p2" << cv::Point2d(obj->proj_point_2().x(), obj->proj_point_2().y());
@@ -56,7 +151,7 @@ void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
         fs << "p4" << cv::Point2d(obj->proj_point_4().x(), obj->proj_point_4().y());
     fs << "}";
 
-    // Write params
+    /* Write projection parameters */
     fs << "params" << "{";
         fs << "azimuth" << obj->proj_azimuth();
         fs << "elevation" << obj->proj_elevation();
@@ -65,33 +160,36 @@ void YMLParser::writeItem(cv::FileStorage &fs, ObjectRect* obj)
         fs << "height" << obj->proj_height();
     fs << "}";
 
-    // Write status tags
+    /* Write status tags */
     fs << "autoStatus" << obj->getAutomaticStatus().toStdString();
     fs << "manualStatus" << obj->getManualStatus().toStdString();
     fs << "blurObject" << (obj->isBlurred() ? "Yes" : "No");
 }
 
+/* Function to read specific ObjectRect from YML file */
 ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
 {
-    // Initialize detected object
+    /* Initialize detected object */
     ObjectRect* object = new ObjectRect;
 
-    // Parse falsePositive tag
+    /* Parse falsePositive tag */
     std::string falsePositive;
     (*iterator)["falsePositive"] >> falsePositive;
     QString lowerFalsePositive = QString( falsePositive.c_str() ).toLower();
 
-    // Parse class name
+    /* Parse class name */
     std::string className;
     (*iterator)["className"] >> className;
 
-    // Parse sub class name
+    /* Parse sub class name */
     std::string subClassName;
     (*iterator)["subClassName"] >> subClassName;
 
+    /* Convert values to lower case */
     QString lowerClassName = QString( className.c_str() ).toLower();
     QString lowerSubClassName = QString( subClassName.c_str() ).toLower();
 
+    /* Assign object type */
     if(lowerClassName == "face")
     {
         object->setObjectType( ObjectType::Face );
@@ -109,6 +207,7 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
         object->setObjectType( ObjectType::None );
     }
 
+    /* Assign object sub-type */
     if(lowerSubClassName == "none")
     {
         object->setObjectSubType( ObjectSubType::None );
@@ -124,20 +223,25 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
         object->setObjectSubType( ObjectSubType::Eyes );
     }
 
-    // Parse area points
+    /* Parse area points */
     cv::FileNode areaNode = (*iterator)["area"];
     cv::Point2d pt_1;
     cv::Point2d pt_2;
     cv::Point2d pt_3;
     cv::Point2d pt_4;
 
+    /* Read coordinates */
     switch(ymltype)
     {
     case YMLType::Detector:
+
+        /* Parse square edges points */
         areaNode["p1"] >> pt_1;
         areaNode["p2"] >> pt_3;
         break;
     case YMLType::Validator:
+
+        /* Parse polygon points */
         areaNode["p1"] >> pt_1;
         areaNode["p2"] >> pt_2;
         areaNode["p3"] >> pt_3;
@@ -145,12 +249,13 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
         break;
     }
 
+    /* Set object coordinates */
     object->setPoints(QPointF(pt_1.x, pt_1.y),
                       QPointF(pt_2.x, pt_2.y),
                       QPointF(pt_3.x, pt_3.y),
                       QPointF(pt_4.x, pt_4.y));
 
-    // Parse gnomonic params
+    /* Parse gnomonic parameters */
     cv::FileNode paramsNode = (*iterator)["params"];
     float azimuth = 0.0;
     float elevation = 0.0;
@@ -164,38 +269,49 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
     paramsNode["width"] >> width;
     paramsNode["height"] >> height;
 
+    /* Set object projection parameters */
     object->setProjectionParametters(azimuth,
                                     elevation,
                                     aperture,
                                     width,
                                     height);
 
-    object->setProjectionParametters(azimuth, elevation, aperture, width, height);
+    /* Set object projection points */
     object->setProjectionPoints();
 
-    // Parse auto status
+    /* Parse auto status */
     std::string autoStatus;
     (*iterator)["autoStatus"] >> autoStatus;
 
+    /* Convert values to lower case */
     QString lowerAutoStatus = QString( autoStatus.c_str() ).toLower();
     lowerAutoStatus = lowerAutoStatus.length() > 0 ? lowerAutoStatus : "none";
 
+    /* Check presence of auto status */
     if(lowerAutoStatus != "none")
     {
+        /* Check if auto status is valid */
         if(lowerAutoStatus == "valid")
         {
+            /* Set values */
             object->setObjectAutomaticState( ObjectAutomaticState::Valid );
             object->setAutomaticStatus( "Valid" );
 
+            /* Tag object for blurring */
             if( ymltype == YMLType::Detector )
             object->setBlurred( true );
 
         } else {
+
+            /* Set automatic state as invalid */
             object->setObjectAutomaticState( ObjectAutomaticState::Invalid );
 
+            /* Restore automatic status */
             switch(ymltype)
             {
             case YMLType::Detector:
+
+                /* Assign proper automatic filtering flag */
                 if( lowerAutoStatus == "filtered-ratio" )
                 {
                    object->setAutomaticStatus( "Ratio" );
@@ -206,6 +322,8 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
                 }
                 break;
             case YMLType::Validator:
+
+                /* Assign proper automatic filtering flag */
                 if( lowerAutoStatus == "ratio" )
                 {
                    object->setAutomaticStatus( "Ratio" );
@@ -223,16 +341,20 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
         object->setObjectAutomaticState( ObjectAutomaticState::Manual );
     }
 
+    /* Set automatic status to none if null */
     object->setAutomaticStatus( (object->getAutomaticStatus().length() > 0 ? object->getAutomaticStatus() : "None") );
 
-    // Parse manual status
+    /* Parse manual status */
     std::string manualStatus;
     (*iterator)["manualStatus"] >> manualStatus;
     object->setManualStatus( QString(manualStatus.c_str()) );
     object->setManualStatus( (object->getManualStatus().length() > 0 ? object->getManualStatus() : "None") );
 
+    /* Restore manual status tag */
+    /* Check if object is tagged as falsePositive */
     if(lowerFalsePositive == "no")
     {
+        /* CHeck if object is manual */
         if(lowerAutoStatus == "none")
         {
             object->setManualStatus("Valid");
@@ -242,13 +364,17 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
         object->setManualStatus("Invalid");
     }
 
+    /* Restore manual state */
+    /* Check if object is a "ToBlur" element */
     if(object->getObjectType() == ObjectType::ToBlur)
     {
         object->setObjectManualState( ObjectManualState::ToBlur );
     } else {
 
+        /* Check if object is manual */
         if(object->getManualStatus() != "None")
         {
+            /* CHeck if object manual state is valid */
             if(object->getManualStatus() == "Valid")
             {
                 object->setObjectManualState( ObjectManualState::Valid );
@@ -261,115 +387,27 @@ ObjectRect* YMLParser::readItem(cv::FileNodeIterator iterator, int ymltype)
 
     }
 
+    /* Restore blur tag */
     if( ymltype == YMLType::Validator )
     {
+        /* Read blur tag */
         std::string blurObject;
         (*iterator)["blurObject"] >> blurObject;
-
         QString blurObject_lower = QString( blurObject.c_str() ).toLower();
 
+        /* Set blur tag */
         object->setBlurred( blurObject_lower == "yes" ? true : false );
     }
 
+    /* Load childrens */
     cv::FileNode childNode = (*iterator)["childrens"];
     for (cv::FileNodeIterator child = childNode.begin(); child != childNode.end(); ++child) {
         object->childrens.append( this->readItem( child ) );
     }
 
+    /* Disable object resizing */
     object->setResizeEnabled( false );
 
-    // Return object
+    /* Return object */
     return object;
 }
-
-void YMLParser::writeYML(QList<ObjectRect*> objects, QString path)
-{
-    // Open storage for writing
-    cv::FileStorage fs(path.toStdString(), cv::FileStorage::WRITE);
-
-    // Write source file path
-    fs << "source_image" << objects.first()->getSourceImagePath().toStdString();
-
-    // Write objects
-    fs << "objects" << "[";
-
-    // Iterate over objects
-    foreach (ObjectRect* obj, objects) {
-
-        // Open array element
-        fs << "{";
-
-        // Object writer method
-        this->writeItem(fs, obj);
-
-        // Write childrens if present
-        if(obj->childrens.length() > 0)
-        {
-            fs << "childrens" << "[";
-            foreach (ObjectRect* child, obj->childrens) {
-                fs << "{";
-                this->writeItem(fs, child);
-                fs << "}";
-            }
-            fs << "]";
-        }
-
-        // Close array element
-        fs << "}";
-    }
-
-    // Close array
-    fs << "]";
-}
-
-QList<ObjectRect*> YMLParser::loadYML(QString path, int ymltype)
-{
-    // Init output list
-    QList<ObjectRect*> out_list;
-
-    // Read YML file
-    cv::FileStorage fs(path.toStdString(), cv::FileStorage::READ);
-
-    // Retrieve objects node
-    cv::FileNode objectsNode = fs["objects"];
-
-    // Retrieve invalid objects node
-    cv::FileNode invalidObjectsNode = fs["invalidObjects"];
-
-    // Iterate over objects
-    for (cv::FileNodeIterator it = objectsNode.begin(); it != objectsNode.end(); ++it) {
-
-        // Initialize detected object
-        ObjectRect* object = this->readItem(it, ymltype);
-
-        std::string source_image;
-        fs["source_image"] >> source_image;
-
-        object->setSourceImagePath( QString(source_image.c_str()) );
-
-        // Append to list
-        out_list.append(object);
-    }
-
-    // Iterate over objects
-    for (cv::FileNodeIterator it = invalidObjectsNode.begin(); it != invalidObjectsNode.end(); ++it) {
-
-        // Initialize detected object
-        ObjectRect* object = this->readItem(it, ymltype);
-
-        object->setObjectAutomaticState( ObjectAutomaticState::Invalid );
-        object->setAutomaticStatus( (object->getAutomaticStatus().length() <= 0 || object->getAutomaticStatus() == "None") ? "MissingOption" : object->getAutomaticStatus() );
-
-        std::string source_image;
-        fs["source_image"] >> source_image;
-
-        object->setSourceImagePath( QString(source_image.c_str()) );
-
-        // Append to list
-        out_list.append(object);
-    }
-
-    // Return results
-    return out_list;
-}
-

@@ -146,16 +146,6 @@ int main(int argc, char *argv[])
         argcheck = false;
     }
 
-    /* Check destination YML */
-    if( destinationYMLPath.length() <= 0 )
-    {
-        /* Info output */
-        std::cout << "Missing destination YML path." << std::endl;
-
-        /* Assign result */
-        argcheck = false;
-    }
-
     /* If some arguments are missing */
     if( !argcheck )
     {

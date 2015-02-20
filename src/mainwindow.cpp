@@ -282,9 +282,20 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
         /* Destination YML path not specified */
         } else {
 
-            /* Exit program */
-            exit( 0 );
         }
+    }
+
+    /* Check if no YML files are specified */
+    if( ( this->options.destinationYMLPath.length() <= 0) && ( this->options.detectorYMLPath.length() <= 0 ) )
+    {
+        /* Disable batche actions elements */
+        this->ui->groupBox->setVisible( false );
+
+        /* Disable visibility groups elements */
+        this->ui->groupBox_3->setVisible( false );
+
+        /* Disable object creation */
+        this->pano->setCreateEnabled( false );
     }
 
     /* Bind ESC key to window close */
@@ -477,34 +488,38 @@ void MainWindow::updateScaleSlider(int value)
 /* Window close event */
 void MainWindow::closeEvent (QCloseEvent *event)
 {
-    /* Warn user about exit and ask to save changes */
-    QMessageBox::StandardButton resBtn = QMessageBox::question( this, "",
-                                                                tr("Do you want to save your work\n(You can resume later)"),
-                                                                QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
-                                                                QMessageBox::Yes);
-    /* Cancel */
-    if (resBtn == QMessageBox::Cancel) {
+    /* Check if destination YML path is specified */
+    if( ! ( this->options.destinationYMLPath.length() <= 0) && ( this->options.detectorYMLPath.length() <= 0 ) )
+    {
+        /* Warn user about exit and ask to save changes */
+        QMessageBox::StandardButton resBtn = QMessageBox::question( this, "",
+                                                                    tr("Do you want to save your work\n(You can resume later)"),
+                                                                    QMessageBox::Cancel | QMessageBox::No | QMessageBox::Yes,
+                                                                    QMessageBox::Yes);
+        /* Cancel */
+        if (resBtn == QMessageBox::Cancel) {
 
-        /* Ignore action */
-        event->ignore();
+            /* Ignore action */
+            event->ignore();
 
-    /* Yes */
-    } else if( resBtn == QMessageBox::Yes ) {
+        /* Yes */
+        } else if( resBtn == QMessageBox::Yes ) {
 
-        /* Initialize YMLparser */
-        YMLParser parser;
+            /* Initialize YMLparser */
+            YMLParser parser;
 
-        /* Save YML */
-        parser.writeYML( this->pano->rect_list, this->options.destinationYMLPath );
+            /* Save YML */
+            parser.writeYML( this->pano->rect_list, this->options.destinationYMLPath );
 
-        /* Accept event */
-        event->accept();
+            /* Accept event */
+            event->accept();
 
-    /* No */
-    } else if(resBtn == QMessageBox::No) {
+        /* No */
+        } else if(resBtn == QMessageBox::No) {
 
-        /* Accept event */
-        event->accept();
+            /* Accept event */
+            event->accept();
+        }
     }
 }
 

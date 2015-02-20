@@ -1097,6 +1097,13 @@ void PanoramaViewer::setEditEnabled(bool value)
     this->editEnabled = value;
 }
 
+/* Function to toggle sight */
+void PanoramaViewer::setSightEnabled(bool value)
+{
+    /* Assign value */
+    this->sight->setVisible( value );
+}
+
 /* Slot for main window labels refresh */
 void PanoramaViewer::refreshLabels_slot()
 {

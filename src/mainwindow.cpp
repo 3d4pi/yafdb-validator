@@ -296,6 +296,9 @@ void MainWindow::initializeValidator(QString sourceImagePath, QString detectorYM
 
         /* Disable object creation */
         this->pano->setCreateEnabled( false );
+
+        /* Disable sight */
+        this->pano->setSightEnabled( false );
     }
 
     /* Bind ESC key to window close */

@@ -125,6 +125,9 @@ public:
     /* Function to toggle object edition */
     void setEditEnabled(bool value);
 
+    /* Function to toggle sight */
+    void setSightEnabled(bool value);
+
     /* Function to determine if an object is visible or not */
     bool isObjectVisible(ObjectRect* rect);
 
